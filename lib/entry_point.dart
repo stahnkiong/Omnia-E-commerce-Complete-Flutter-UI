@@ -30,8 +30,12 @@ class _EntryPointState extends State<EntryPoint> {
         height: 24,
         colorFilter: ColorFilter.mode(
             color ??
-                Theme.of(context).iconTheme.color!.withOpacity(
-                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 1),
+                Theme.of(context).iconTheme.color!.withAlpha(
+                    ((Theme.of(context).brightness == Brightness.dark
+                                ? 0.3
+                                : 1) *
+                            255)
+                        .toInt()),
             BlendMode.srcIn),
       );
     }
