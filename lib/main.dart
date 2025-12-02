@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:shop/route/route_constants.dart';
+import 'package:shop/providers/auth_provider.dart'; // Ensure this is the correct path to AuthProvider
+import 'package:provider/provider.dart';
 import 'package:shop/route/router.dart' as router;
 import 'package:shop/theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 // Thanks for using our template. You are using the free version of the template.

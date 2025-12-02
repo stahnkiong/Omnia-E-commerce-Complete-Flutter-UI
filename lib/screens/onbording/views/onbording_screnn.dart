@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:shop/components/dot_indicators.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/api_service.dart';
 
 import 'components/onbording_content.dart';
 
@@ -75,32 +74,32 @@ class _OnBordingScreenState extends State<OnBordingScreen> {
           child: Column(
             children: [
               Align(
-                  alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final response =
-                          await ApiService().client.get("/store/products");
-                      print(response.data);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      foregroundColor:
-                          Theme.of(context).textTheme.bodyLarge!.color,
-                    ),
-                    child: const Text("Test API"),
-                  )
-                  // child: TextButton(
-                  //   onPressed: () {
-                  //     Navigator.pushNamed(context, logInScreenRoute);
-                  //   },
-                  //   child: Text(
-                  //     "Skip",
-                  //     style: TextStyle(
-                  //         color: Theme.of(context).textTheme.bodyLarge!.color),
-                  //   ),
-                  // ),
+                alignment: Alignment.centerRight,
+                // child: ElevatedButton(
+                //   onPressed: () async {
+                //     final response =
+                //         await ApiService().client.get("/store/products");
+                //     print(response.data);
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: Colors.transparent,
+                //     elevation: 0,
+                //     foregroundColor:
+                //         Theme.of(context).textTheme.bodyLarge!.color,
+                //   ),
+                //   child: const Text("Test API"),
+                // )
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, logInScreenRoute);
+                  },
+                  child: Text(
+                    "Skip",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge!.color),
                   ),
+                ),
+              ),
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,

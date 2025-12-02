@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
+import 'package:shop/providers/auth_provider.dart';
 import 'package:shop/route/route_constants.dart';
+import 'package:shop/services/api_service.dart';
+import 'package:provider/provider.dart';
 
 import 'components/login_form.dart';
 
@@ -13,6 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _email = "";
+  String _password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Log in with your data that you intered during your registration.",
                   ),
                   const SizedBox(height: defaultPadding),
-                  LogInForm(formKey: _formKey),
+                  LogInForm(
+                    formKey: _formKey,
+                    onEmailSaved: (v) => _email = v,
+                    onPasswordSaved: (v) => _password = v,
+                  ),
+
                   Align(
                     child: TextButton(
                       child: const Text("Forgot password"),
@@ -51,20 +61,60 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: size.height > 700
-                        ? size.height * 0.1
-                        : defaultPadding,
+                    height:
+                        size.height > 700 ? size.height * 0.1 : defaultPadding,
                   ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     if (_formKey.currentState!.validate()) {
+                  //       Navigator.pushNamedAndRemoveUntil(
+                  //           context,
+                  //           entryPointScreenRoute,
+                  //           ModalRoute.withName(logInScreenRoute));
+                  //     }
+                  //   },
+                  //   child: const Text("Log in"),
+                  // ),
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            entryPointScreenRoute,
-                            ModalRoute.withName(logInScreenRoute));
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+
+                          try {
+                            // Access AuthProvider
+
+                            final auth = Provider.of<AuthProvider>(context,
+                                listen: false);
+
+                            print("Saved email: $_email");
+                            print("Saved password: $_password");
+                            await auth.login(_email, _password);
+
+                            // Logged in successfully
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                entryPointScreenRoute, (route) => false);
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Login failed. Check email/password or connection.')),
+                            );
+                          }
+                        }
+                      },
+                      child: const Text("Log in")),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final response = await ApiService()
+                            .client
+                            .get("/auth/customer/emailpass");
+                        print(response.data);
+                      } catch (e) {
+                        print("API test failed: $e");
                       }
                     },
-                    child: const Text("Log in"),
+                    child: const Text("Test API"),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

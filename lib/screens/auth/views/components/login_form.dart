@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../../../constants.dart';
 
 class LogInForm extends StatelessWidget {
   const LogInForm({
     super.key,
     required this.formKey,
+    required this.onEmailSaved,
+    required this.onPasswordSaved,
   });
 
   final GlobalKey<FormState> formKey;
+  final Function(String) onEmailSaved;
+  final Function(String) onPasswordSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +21,7 @@ class LogInForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
-            onSaved: (emal) {
-              // Email
-            },
+            onSaved: (email) => onEmailSaved(email ?? ""),
             validator: emaildValidator.call,
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.emailAddress,
@@ -34,21 +35,16 @@ class LogInForm extends StatelessWidget {
                   height: 24,
                   width: 24,
                   colorFilter: ColorFilter.mode(
-                      Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .color!
-                          .withOpacity(0.3),
-                      BlendMode.srcIn),
+                    Theme.of(context).textTheme.bodyLarge!.color!,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
           ),
           const SizedBox(height: defaultPadding),
           TextFormField(
-            onSaved: (pass) {
-              // Password
-            },
+            onSaved: (pass) => onPasswordSaved(pass ?? ""),
             validator: passwordValidator.call,
             obscureText: true,
             decoration: InputDecoration(
@@ -61,12 +57,9 @@ class LogInForm extends StatelessWidget {
                   height: 24,
                   width: 24,
                   colorFilter: ColorFilter.mode(
-                      Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .color!
-                          .withOpacity(0.3),
-                      BlendMode.srcIn),
+                    Theme.of(context).textTheme.bodyLarge!.color!,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ),
