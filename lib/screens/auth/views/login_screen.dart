@@ -80,24 +80,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
 
-                          try {
-                            // Access AuthProvider
+                          final auth =
+                              Provider.of<AuthProvider>(context, listen: false);
 
-                            final auth = Provider.of<AuthProvider>(context,
-                                listen: false);
-
-                            print("Saved email: $_email");
-                            print("Saved password: $_password");
-                            await auth.login(_email, _password);
-
+                          final success = await auth.login(_email, _password);
+                          if (!context.mounted) return;
+                          if (success) {
                             // Logged in successfully
                             Navigator.pushNamedAndRemoveUntil(context,
                                 entryPointScreenRoute, (route) => false);
-                          } catch (e) {
+                          } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content: Text(
-                                      'Login failed. Check email/password or connection.')),
+                                      'Login failed. Check email/password.')),
                             );
                           }
                         }

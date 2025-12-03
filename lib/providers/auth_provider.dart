@@ -1,33 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
-
-  AuthProvider() {
-    print('AuthProvider initialized');
-  }
   bool _isLoading = false;
+  String? _token;
 
   bool get isLoading => _isLoading;
+  String? get token => _token;
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
+
     try {
-      final response = await _authService.login(email, password);
-      return {
-        'success': true,
-        'data': response,
-      };
+      final responseData = await _authService.login(email, password);
+      _token = responseData['token'] as String?;
+
+      // Save token to shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', _token ?? '');
+      return true;
     } catch (e) {
-      return {
-        'success': false,
-        'message': e.toString(),
-      };
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
+
+  Future<void> initialize() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('auth_token');
+    } catch (e) {
+      // Handle potential errors like PlatformException during getInstance
+      _token = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Helper method to check if the user is authenticated
+  bool get isAuthenticated => _token != null;
 }

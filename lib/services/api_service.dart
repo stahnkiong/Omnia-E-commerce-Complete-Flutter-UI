@@ -1,16 +1,25 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 
 class ApiService {
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: const Duration(seconds: AppConfig.timeoutDuration),
-    receiveTimeout: const Duration(seconds: AppConfig.timeoutDuration),
-    headers: {
-      "x-publishable-api-key": AppConfig.publishableKey,
-      "Content-Type": "application/json",
-    },
-  ));
+  final Dio client = Dio();
 
-  Dio get client => _dio;
+  ApiService() {
+    client.options.baseUrl = AppConfig.apiBaseUrl;
+    client.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString('auth_token');
+
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          options.headers['x-publishable-api-key'] = AppConfig.publishableKey;
+          return handler.next(options);
+        },
+      ),
+    );
+  }
 }

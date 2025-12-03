@@ -16,23 +16,41 @@ void main() {
   );
 }
 
-// Thanks for using our template. You are using the free version of the template.
-// 🔗 Full template: https://theflutterway.gumroad.com/l/fluttershop
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  Widget _buildMaterialApp(BuildContext context, String initialRoute) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Omnia Shop',
+      theme: AppTheme.lightTheme(context),
+      themeMode: ThemeMode.light,
+      onGenerateRoute: router.generateRoute,
+      initialRoute: initialRoute,
+    );
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Shop Template by The Flutter Way',
-      theme: AppTheme.lightTheme(context),
-      // Dark theme is inclided in the Full template
-      themeMode: ThemeMode.light,
-      onGenerateRoute: router.generateRoute,
-      initialRoute: onbordingScreenRoute,
+    final authProvider = context.read<AuthProvider>();
+
+    return FutureBuilder(
+      future: authProvider.initialize(), // Run the check here
+      builder: (context, snapshot) {
+        final authStatus = Provider.of<AuthProvider>(context);
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            authProvider.isLoading) {
+          // Show a splash screen while checking the token
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        // Decide the entry route based on the token status
+        if (authStatus.isAuthenticated) {
+          return _buildMaterialApp(context, entryPointScreenRoute);
+        } else {
+          return _buildMaterialApp(context, logInScreenRoute);
+        }
+      },
     );
   }
 }

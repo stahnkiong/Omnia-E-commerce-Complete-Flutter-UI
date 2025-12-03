@@ -13,7 +13,9 @@ class AuthService {
           'password': password,
         },
       );
-      return response.data;
+
+      // Assuming the API returns user data on successful login
+      return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Login failed: $e');
     }
