@@ -5,6 +5,9 @@ import 'package:shop/route/route_constants.dart';
 
 import '../../../constants.dart';
 
+import 'package:provider/provider.dart';
+import 'package:shop/providers/auth_provider.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -14,6 +17,15 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +53,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     "Please enter your valid data in order to create an account.",
                   ),
                   const SizedBox(height: defaultPadding),
-                  SignUpForm(formKey: _formKey),
+                  SignUpForm(
+                    formKey: _formKey,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                  ),
                   const SizedBox(height: defaultPadding),
                   Row(
                     children: [
@@ -76,14 +92,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                   const SizedBox(height: defaultPadding * 2),
-                  ElevatedButton(
-                    onPressed: () {
-                      // There is 2 more screens while user complete their profile
-                      // afre sign up, it's available on the pro version get it now
-                      // 🔗 https://theflutterway.gumroad.com/l/fluttershop
-                      Navigator.pushNamed(context, entryPointScreenRoute);
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      return ElevatedButton(
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final success = await authProvider.register(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                  );
+                                  if (success && context.mounted) {
+                                    Navigator.pushNamed(
+                                        context, entryPointScreenRoute);
+                                  } else if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Registration failed"),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        child: authProvider.isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text("Continue"),
+                      );
                     },
-                    child: const Text("Continue"),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

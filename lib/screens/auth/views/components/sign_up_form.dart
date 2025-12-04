@@ -7,9 +7,13 @@ class SignUpForm extends StatelessWidget {
   const SignUpForm({
     super.key,
     required this.formKey,
+    required this.emailController,
+    required this.passwordController,
   });
 
   final GlobalKey<FormState> formKey;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +22,7 @@ class SignUpForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
-            onSaved: (emal) {
-              // Email
-            },
+            controller: emailController,
             validator: emaildValidator.call,
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.emailAddress,
@@ -38,7 +40,7 @@ class SignUpForm extends StatelessWidget {
                         .textTheme
                         .bodyLarge!
                         .color!
-                        .withOpacity(0.3),
+                        .withValues(alpha: 0.3),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -47,9 +49,7 @@ class SignUpForm extends StatelessWidget {
           ),
           const SizedBox(height: defaultPadding),
           TextFormField(
-            onSaved: (pass) {
-              // Password
-            },
+            controller: passwordController,
             validator: passwordValidator.call,
             obscureText: true,
             decoration: InputDecoration(
@@ -66,7 +66,7 @@ class SignUpForm extends StatelessWidget {
                         .textTheme
                         .bodyLarge!
                         .color!
-                        .withOpacity(0.3),
+                        .withValues(alpha: 0.3),
                     BlendMode.srcIn,
                   ),
                 ),

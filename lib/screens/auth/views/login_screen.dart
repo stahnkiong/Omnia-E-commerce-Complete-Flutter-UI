@@ -50,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     onEmailSaved: (v) => _email = v,
                     onPasswordSaved: (v) => _password = v,
                   ),
-
                   Align(
                     child: TextButton(
                       child: const Text("Forgot password"),
@@ -64,17 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     height:
                         size.height > 700 ? size.height * 0.1 : defaultPadding,
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     if (_formKey.currentState!.validate()) {
-                  //       Navigator.pushNamedAndRemoveUntil(
-                  //           context,
-                  //           entryPointScreenRoute,
-                  //           ModalRoute.withName(logInScreenRoute));
-                  //     }
-                  //   },
-                  //   child: const Text("Log in"),
-                  // ),
                   ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {

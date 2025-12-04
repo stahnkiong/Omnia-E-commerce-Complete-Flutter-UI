@@ -7,6 +7,8 @@ import 'package:shop/route/screen_export.dart';
 
 import 'components/profile_card.dart';
 import 'components/profile_menu_item_list_tile.dart';
+import 'package:shop/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -156,7 +158,13 @@ class ProfileScreen extends StatelessWidget {
 
           // Log Out
           ListTile(
-            onTap: () {},
+            onTap: () async {
+              final authProvider = context.read<AuthProvider>();
+              await authProvider.logout();
+
+              if (!context.mounted) return;
+              Navigator.pushNamed(context, logInScreenRoute);
+            },
             minLeadingWidth: 24,
             leading: SvgPicture.asset(
               "assets/icons/Logout.svg",

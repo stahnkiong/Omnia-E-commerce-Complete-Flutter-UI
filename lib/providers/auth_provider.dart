@@ -30,9 +30,34 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> initialize() async {
+  Future<bool> register(String email, String password) async {
     _isLoading = true;
     notifyListeners();
+
+    try {
+      final responseData = await _authService.register(email, password);
+      _token = responseData['token'] as String?;
+
+      // Save token to shared preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', _token ?? '');
+
+      // Create customer in store backend
+      if (_token != null) {
+        await _authService.createCustomer(email);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> initialize() async {
+    _isLoading = true;
     try {
       final prefs = await SharedPreferences.getInstance();
       _token = prefs.getString('auth_token');
@@ -43,6 +68,13 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    _token = null;
+    notifyListeners();
   }
 
   // Helper method to check if the user is authenticated
