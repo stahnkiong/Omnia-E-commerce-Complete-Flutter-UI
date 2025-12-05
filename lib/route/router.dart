@@ -104,10 +104,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const DoneResetPasswordScreen(),
     //   );
-    // case termsOfServicesScreenRoute:
-    //   return MaterialPageRoute(
-    //     builder: (context) => const TermsOfServicesScreen(),
-    //   );
+    case termsOfServicesScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const TermsOfServicesScreen(),
+      );
     // case noInternetScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const NoInternetScreen(),
@@ -131,8 +131,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case productDetailsScreenRoute:
       return MaterialPageRoute(
         builder: (context) {
-          bool isProductAvailable = settings.arguments as bool? ?? true;
-          return ProductDetailsScreen(isProductAvailable: isProductAvailable);
+          String productId = '';
+          bool isProductAvailable = true;
+          if (settings.arguments is String) {
+            productId = settings.arguments as String;
+          } else if (settings.arguments is Map) {
+            final args = settings.arguments as Map;
+            productId = args['productId'] ?? '';
+            isProductAvailable = args['isProductAvailable'] ?? true;
+          }
+          return ProductDetailsScreen(
+              productId: productId, isProductAvailable: isProductAvailable);
         },
       );
     case productReviewsScreenRoute:

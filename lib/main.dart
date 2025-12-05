@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop/route/route_constants.dart';
-import 'package:shop/providers/auth_provider.dart'; // Ensure this is the correct path to AuthProvider
+import 'package:shop/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/providers/product_provider.dart';
 import 'package:shop/route/router.dart' as router;
 import 'package:shop/theme/app_theme.dart';
 
@@ -10,6 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
       child: const MyApp(),
     ),
@@ -38,8 +40,7 @@ class MyApp extends StatelessWidget {
       future: authProvider.initialize(), // Run the check here
       builder: (context, snapshot) {
         final authStatus = Provider.of<AuthProvider>(context);
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            authProvider.isLoading) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a splash screen while checking the token
           return const Center(child: CircularProgressIndicator());
         }

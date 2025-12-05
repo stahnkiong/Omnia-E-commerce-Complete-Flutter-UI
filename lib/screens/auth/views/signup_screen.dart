@@ -19,6 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _agreeToTerms = false;
 
   @override
   void dispose() {
@@ -62,8 +63,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Row(
                     children: [
                       Checkbox(
-                        onChanged: (value) {},
-                        value: false,
+                        onChanged: (value) {
+                          setState(() {
+                            _agreeToTerms = value ?? false;
+                          });
+                        },
+                        value: _agreeToTerms,
                       ),
                       Expanded(
                         child: Text.rich(
@@ -99,6 +104,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ? null
                             : () async {
                                 if (_formKey.currentState!.validate()) {
+                                  if (!_agreeToTerms) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            "Please agree to the terms and privacy policy."),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   final success = await authProvider.register(
                                     _emailController.text,
                                     _passwordController.text,

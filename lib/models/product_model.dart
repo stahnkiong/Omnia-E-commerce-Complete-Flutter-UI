@@ -1,20 +1,54 @@
-// For demo only
 import 'package:shop/constants.dart';
 
 class ProductModel {
+  final String id;
   final String image, brandName, title;
+  final List<String> images;
+  final String description;
   final double price;
   final double? priceAfetDiscount;
   final int? dicountpercent;
 
   ProductModel({
+    this.id = "demo_id",
     required this.image,
+    this.images = const [],
+    this.description = "",
     required this.brandName,
     required this.title,
     required this.price,
     this.priceAfetDiscount,
     this.dicountpercent,
   });
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    double price = 0.0;
+    if (json['variants'] != null && (json['variants'] as List).isNotEmpty) {
+      final firstVariant = json['variants'][0];
+      if (firstVariant != null &&
+          firstVariant['prices'] != null &&
+          (firstVariant['prices'] as List).isNotEmpty) {
+        final firstPrice = firstVariant['prices'][0];
+        if (firstPrice != null && firstPrice['amount'] != null) {
+          price = (firstPrice['amount'] / 100).toDouble();
+        }
+      }
+    }
+
+    return ProductModel(
+      id: json['id'] ?? '',
+      image: json['thumbnail'] ?? productDemoImg1,
+      images: json['images'] != null
+          ? (json['images'] as List).map((e) => e['url'] as String).toList()
+          : [],
+      description: json['description'] ?? '',
+      brandName: (json['collection'] != null)
+          ? (json['collection']['title'] ?? '')
+          : '',
+      title: json['title'] ?? '',
+      price: price,
+    );
+  }
 }
 
 List<ProductModel> demoPopularProducts = [
