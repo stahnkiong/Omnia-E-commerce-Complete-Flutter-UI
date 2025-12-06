@@ -13,7 +13,6 @@ class ProductService {
           'limit': 10,
         },
       );
-      print(response.data);
 
       if (response.data != null && response.data['products'] != null) {
         final List<dynamic> productsJson = response.data['products'];
@@ -22,8 +21,49 @@ class ProductService {
       }
       return [];
     } catch (e) {
-      print(e);
       throw Exception('Failed to fetch popular products: $e');
+    }
+  }
+
+  Future<List<ProductModel>> fetchBestSellers() async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'tag_id': 'ptag_01KBSAG9VG1E8RHZAGWHR2HN41',
+          'limit': 10,
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch best sellers: $e');
+    }
+  }
+
+  Future<List<ProductModel>> fetchMostPopular() async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'tag_id': 'ptag_01KBSANZY7K5B8YDB68RZQ177B',
+          'limit': 10,
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch most popular: $e');
     }
   }
 
@@ -35,7 +75,6 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print(e);
       throw Exception('Failed to fetch product: $e');
     }
   }

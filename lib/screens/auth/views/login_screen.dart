@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/providers/auth_provider.dart';
 import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/api_service.dart';
 import 'package:provider/provider.dart';
 
 import 'components/login_form.dart';

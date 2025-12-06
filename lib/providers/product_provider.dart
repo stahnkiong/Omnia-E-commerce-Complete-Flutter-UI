@@ -27,4 +27,40 @@ class ProductProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  List<ProductModel> _bestSellers = [];
+  List<ProductModel> get bestSellers => _bestSellers;
+
+  Future<void> fetchBestSellers() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _bestSellers = await _productService.fetchBestSellers();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<ProductModel> _mostPopular = [];
+  List<ProductModel> get mostPopular => _mostPopular;
+
+  Future<void> fetchMostPopular() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _mostPopular = await _productService.fetchMostPopular();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
