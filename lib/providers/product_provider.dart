@@ -46,16 +46,34 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  List<ProductModel> _mostPopular = [];
-  List<ProductModel> get mostPopular => _mostPopular;
+  List<ProductModel> _featuredProducts = [];
+  List<ProductModel> get featuredProducts => _featuredProducts;
 
-  Future<void> fetchMostPopular() async {
+  Future<void> fetchFeaturedProducts() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _mostPopular = await _productService.fetchMostPopular();
+      _featuredProducts = await _productService.fetchFeaturedProducts();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<ProductModel> _flashSaleProducts = [];
+  List<ProductModel> get flashSaleProducts => _flashSaleProducts;
+
+  Future<void> fetchFlashSaleProducts() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _flashSaleProducts = await _productService.fetchFlashSaleProducts();
     } catch (e) {
       _error = e.toString();
     } finally {

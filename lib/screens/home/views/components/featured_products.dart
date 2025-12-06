@@ -5,22 +5,22 @@ import 'package:shop/providers/product_provider.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shop/components/skleton/product/products_skelton.dart';
 
-import '../../../../constants.dart';
+import 'package:shop/constants.dart';
 
-class MostPopular extends StatefulWidget {
-  const MostPopular({super.key});
+class FeaturedProducts extends StatefulWidget {
+  const FeaturedProducts({super.key});
 
   @override
-  State<MostPopular> createState() => _MostPopularState();
+  State<FeaturedProducts> createState() => _FeaturedProductsState();
 }
 
-class _MostPopularState extends State<MostPopular> {
+class _FeaturedProductsState extends State<FeaturedProducts> {
   @override
   void initState() {
     super.initState();
     // Fetch products when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductProvider>().fetchPopularProducts();
+      context.read<ProductProvider>().fetchFeaturedProducts();
     });
   }
 
@@ -54,14 +54,14 @@ class _MostPopularState extends State<MostPopular> {
                 height: 220,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: productProvider.popularProducts.length,
+                  itemCount: productProvider.featuredProducts.length,
                   itemBuilder: (context, index) {
-                    final product = productProvider.popularProducts[index];
+                    final product = productProvider.featuredProducts[index];
                     return Padding(
                       padding: EdgeInsets.only(
                         left: defaultPadding,
                         right:
-                            index == productProvider.popularProducts.length - 1
+                            index == productProvider.featuredProducts.length - 1
                                 ? defaultPadding
                                 : 0,
                       ),

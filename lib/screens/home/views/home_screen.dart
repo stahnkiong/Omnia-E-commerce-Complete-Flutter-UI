@@ -6,7 +6,7 @@ import 'package:shop/route/screen_export.dart';
 
 import 'components/best_sellers.dart';
 import 'components/flash_sale.dart';
-import 'components/most_popular.dart';
+import 'components/featured_products.dart';
 import 'components/offer_carousel_and_categories.dart';
 import 'components/popular_products.dart';
 
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SliverToBoxAdapter(child: BestSellers()),
-            const SliverToBoxAdapter(child: MostPopular()),
+            const SliverToBoxAdapter(child: FeaturedProducts()),
             SliverToBoxAdapter(
               child: Column(
                 children: [

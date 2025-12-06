@@ -5,7 +5,7 @@ import 'package:shop/providers/product_provider.dart';
 import 'package:shop/route/screen_export.dart';
 import 'package:shop/components/skleton/product/products_skelton.dart';
 
-import '../../../../constants.dart';
+import 'package:shop/constants.dart';
 
 class PopularProducts extends StatefulWidget {
   const PopularProducts({super.key});

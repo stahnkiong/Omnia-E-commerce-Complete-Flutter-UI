@@ -46,7 +46,7 @@ class ProductService {
     }
   }
 
-  Future<List<ProductModel>> fetchMostPopular() async {
+  Future<List<ProductModel>> fetchFeaturedProducts() async {
     try {
       final response = await _api.client.get(
         '/store/products',
@@ -63,7 +63,28 @@ class ProductService {
       }
       return [];
     } catch (e) {
-      throw Exception('Failed to fetch most popular: $e');
+      throw Exception('Failed to fetch featured products: $e');
+    }
+  }
+
+  Future<List<ProductModel>> fetchFlashSaleProducts() async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'tag_id': 'ptag_01KBSDR2WPW75KEJ2YHFVG8JJJ',
+          'limit': 10,
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch flash sale products: $e');
     }
   }
 
