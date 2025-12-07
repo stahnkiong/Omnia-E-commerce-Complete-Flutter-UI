@@ -128,6 +128,24 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const SetupFaceIdScreen(),
     //   );
+
+    case productCollectionScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) {
+          String collectionId = '';
+          bool isProductAvailable = true;
+          if (settings.arguments is String) {
+            collectionId = settings.arguments as String;
+          } else if (settings.arguments is Map) {
+            final args = settings.arguments as Map;
+            collectionId = args['collectionId'] ?? '';
+            isProductAvailable = args['isProductAvailable'] ?? true;
+          }
+          return ProductCollectionScreen(
+              collectionId: collectionId,
+              isProductAvailable: isProductAvailable);
+        },
+      );
     case productDetailsScreenRoute:
       return MaterialPageRoute(
         builder: (context) {

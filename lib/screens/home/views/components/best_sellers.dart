@@ -20,7 +20,7 @@ class _BestSellersState extends State<BestSellers> {
     super.initState();
     // Fetch products when the widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductProvider>().fetchPopularProducts();
+      context.read<ProductProvider>().fetchBestSellers();
     });
   }
 
@@ -54,16 +54,15 @@ class _BestSellersState extends State<BestSellers> {
                 height: 220,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: productProvider.popularProducts.length,
+                  itemCount: productProvider.bestSellers.length,
                   itemBuilder: (context, index) {
-                    final product = productProvider.popularProducts[index];
+                    final product = productProvider.bestSellers[index];
                     return Padding(
                       padding: EdgeInsets.only(
                         left: defaultPadding,
-                        right:
-                            index == productProvider.popularProducts.length - 1
-                                ? defaultPadding
-                                : 0,
+                        right: index == productProvider.bestSellers.length - 1
+                            ? defaultPadding
+                            : 0,
                       ),
                       child: ProductCard(
                         image: product.image,

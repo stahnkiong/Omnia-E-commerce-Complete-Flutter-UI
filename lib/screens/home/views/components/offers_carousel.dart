@@ -6,6 +6,7 @@ import 'package:shop/components/Banner/M/banner_m_style_2.dart';
 import 'package:shop/components/Banner/M/banner_m_style_3.dart';
 import 'package:shop/components/Banner/M/banner_m_style_4.dart';
 import 'package:shop/components/dot_indicators.dart';
+import 'package:shop/route/screen_export.dart';
 
 import '../../../../constants.dart';
 
@@ -24,33 +25,46 @@ class _OffersCarouselState extends State<OffersCarousel> {
   late Timer _timer;
 
   // Offers List
-  List offers = [
-    BannerMStyle1(
-      text: "New items with \nFree shipping",
-      press: () {},
-    ),
-    BannerMStyle2(
-      title: "Black \nfriday",
-      subtitle: "Collection",
-      discountParcent: 50,
-      press: () {},
-    ),
-    BannerMStyle3(
-      title: "Grab \nyours now",
-      discountParcent: 50,
-      press: () {},
-    ),
-    BannerMStyle4(
-      // image: , user your image
-      title: "SUMMER \nSALE",
-      subtitle: "SPECIAL OFFER",
-      discountParcent: 80,
-      press: () {},
-    ),
-  ];
+  late List offers;
 
   @override
   void initState() {
+    super.initState();
+    offers = [
+      BannerMStyle1(
+        text: "New items with \nFree shipping",
+        // image: "https://i.imgur.com/J1Qjut7.png", use custom image
+        press: () {
+          Navigator.pushNamed(context, productCollectionScreenRoute,
+              arguments: "pcol_01KBW9TVVXRJDDWBK7S4876DBB");
+        },
+      ),
+      BannerMStyle2(
+        title: "Black \nfriday",
+        subtitle: "Collection",
+        discountParcent: 50,
+        press: () {
+          Navigator.pushNamed(context, productCollectionScreenRoute,
+              arguments: "pcol_01KBQKQXBG5460ANQZY9B0JQKX");
+        },
+      ),
+      // BannerMStyle3(
+      //   title: "Grab \nyours now",
+      //   discountParcent: 50,
+      //   press: () {
+      //     Navigator.pushNamed(context, onSaleScreenRoute);
+      //   },
+      // ),
+      // BannerMStyle4(
+      //   // image: , user your image
+      //   title: "SUMMER \nSALE",
+      //   subtitle: "SPECIAL OFFER",
+      //   discountParcent: 80,
+      //   press: () {
+      //     Navigator.pushNamed(context, onSaleScreenRoute);
+      //   },
+      // ),
+    ];
     _pageController = PageController(initialPage: 0);
     _timer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (_selectedIndex < offers.length - 1) {
@@ -65,7 +79,6 @@ class _OffersCarouselState extends State<OffersCarousel> {
         curve: Curves.easeOutCubic,
       );
     });
-    super.initState();
   }
 
   @override

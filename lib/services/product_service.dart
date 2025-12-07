@@ -99,4 +99,25 @@ class ProductService {
       throw Exception('Failed to fetch product: $e');
     }
   }
+
+  Future<List<ProductModel>> fetchProductsByCollection(
+      String collectionId) async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'collection_id': collectionId,
+          'limit': 10,
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch products by collection: $e');
+    }
+  }
 }
