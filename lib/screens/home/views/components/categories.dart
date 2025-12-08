@@ -1,66 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop/route/screen_export.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/providers/product_provider.dart';
+import 'package:shop/screens/product/views/product_categories.dart';
 
 import '../../../../constants.dart';
 
 // For preview
-class CategoryModel {
-  final String name;
-  final String? svgSrc, route;
 
-  CategoryModel({
-    required this.name,
-    this.svgSrc,
-    this.route,
-  });
+// For preview
+// Local CategoryModel removed to avoid conflict with the actual model
+
+class Categories extends StatefulWidget {
+  const Categories({super.key});
+
+  @override
+  State<Categories> createState() => _CategoriesState();
 }
 
-List<CategoryModel> demoCategories = [
-  CategoryModel(name: "All Categories"),
-  CategoryModel(
-      name: "On Sale",
-      svgSrc: "assets/icons/Sale.svg",
-      route: onSaleScreenRoute),
-  CategoryModel(name: "Man's", svgSrc: "assets/icons/Man.svg"),
-  CategoryModel(name: "Woman’s", svgSrc: "assets/icons/Woman.svg"),
-  CategoryModel(
-      name: "Kids", svgSrc: "assets/icons/Child.svg", route: kidsScreenRoute),
-];
-// End For Preview
+class _CategoriesState extends State<Categories> {
+  // Map of category handles to icon assets
+  final Map<String, String> _categoryIcons = {
+    'all': 'assets/icons/Category.svg',
+    'shirts': 'assets/icons/Man.svg',
+    'sweatshirts': 'assets/icons/Woman.svg',
+    'merch': 'assets/icons/Accessories.svg',
+    'pants': 'assets/icons/Sale.svg',
+  };
 
-class Categories extends StatelessWidget {
-  const Categories({
-    super.key,
-  });
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductProvider>().fetchCategories();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          ...List.generate(
-            demoCategories.length,
-            (index) => Padding(
-              padding: EdgeInsets.only(
-                  left: index == 0 ? defaultPadding : defaultPadding / 2,
-                  right:
-                      index == demoCategories.length - 1 ? defaultPadding : 0),
-              child: CategoryBtn(
-                category: demoCategories[index].name,
-                svgSrc: demoCategories[index].svgSrc,
-                isActive: index == 0,
-                press: () {
-                  if (demoCategories[index].route != null) {
-                    Navigator.pushNamed(context, demoCategories[index].route!);
-                  }
-                },
+    return Consumer<ProductProvider>(
+      builder: (context, productProvider, child) {
+        if (productProvider.isLoading) {
+          return const SizedBox(
+            height: 36,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // Filter out categories that might not have an ID or name if necessary,
+        // though the model enforces it.
+        final categories = productProvider.categories;
+
+        if (categories.isEmpty) {
+          return const SizedBox(); // Or show a message
+        }
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              ...List.generate(
+                categories.length,
+                (index) => Padding(
+                  padding: EdgeInsets.only(
+                      left: index == 0 ? defaultPadding : defaultPadding / 2,
+                      right:
+                          index == categories.length - 1 ? defaultPadding : 0),
+                  child: CategoryBtn(
+                    category: categories[index].name,
+                    svgSrc: _categoryIcons[
+                            categories[index].handle?.toLowerCase()] ??
+                        "assets/icons/Category.svg",
+                    // You might want to map handles to icons or just show text if no icon
+                    isActive:
+                        false, // You can implement selection logic if needed
+                    press: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductCategoriesScreen(
+                            categoryId: categories[index].id,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

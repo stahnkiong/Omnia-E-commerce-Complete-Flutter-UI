@@ -101,13 +101,12 @@ class _BuyFullKitState extends State<BuyFullKit> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Get the full template",
+                        "Under Development",
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: defaultPadding),
                       const Text(
-                        "Thank you for using The Flutter Way shop template. You're currently using the free version. Please get the full kit to use this screen.",
-                      ),
+                          "This feature is currently under development."),
                       const SizedBox(height: defaultPadding),
                       Row(
                         children: [
@@ -115,8 +114,7 @@ class _BuyFullKitState extends State<BuyFullKit> {
                             child: ElevatedButton.icon(
                               onPressed: () async {
                                 await Clipboard.setData(const ClipboardData(
-                                        text:
-                                            "https://app.gumroad.com/checkout?_gl=1*1j1owy*_ga*Nzc0MTA1NTYwLjE3MjAwMTA3MzM.*_ga_6LJN6D94N6*MTcyMDA0MjQzMC41LjEuMTcyMDA0MjQzMS4wLjAuMA..&product=uxznc&option=B3wWhE6QH46cfm31C7jEmQ%3D%3D&quantity=1&referrer=App"))
+                                        text: "wa.me/60168880650"))
                                     .then((value) {
                                   setState(() {
                                     _isCopied = true;
@@ -131,7 +129,7 @@ class _BuyFullKitState extends State<BuyFullKit> {
                               },
                               // child: Text("Get full kit"),
                               label:
-                                  Text(_isCopied ? "Link Copyed" : "Copy link"),
+                                  Text(_isCopied ? "Link Copyed" : "Whatsapp"),
                               icon: SvgPicture.asset(
                                 "assets/icons/world_map.svg",
                                 colorFilter: const ColorFilter.mode(
@@ -145,19 +143,10 @@ class _BuyFullKitState extends State<BuyFullKit> {
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () async {
-                                buyLink();
+                                Navigator.pop(context);
                               },
                               // child: Text("Get full kit"),
-                              label: const Text("Get full code"),
-                              icon: SvgPicture.asset(
-                                "assets/icons/Bag.svg",
-                                colorFilter: const ColorFilter.mode(
-                                  primaryColor,
-                                  BlendMode.srcIn,
-                                ),
-                                // height: 24,
-                                // width: 24,
-                              ),
+                              label: const Text("Back"),
                             ),
                           ),
                         ],

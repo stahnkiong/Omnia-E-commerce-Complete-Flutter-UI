@@ -1,59 +1,40 @@
 class CategoryModel {
-  final String title;
-  final String? image, svgSrc;
-  final List<CategoryModel>? subCategories;
+  final String id;
+  final String name;
+  final String? description;
+  final String? handle;
+  final int? rank;
+  final String? parentCategoryId;
+  final CategoryModel? parentCategory;
+  final List<CategoryModel>? categoryChildren;
 
   CategoryModel({
-    required this.title,
-    this.image,
-    this.svgSrc,
-    this.subCategories,
+    required this.id,
+    required this.name,
+    this.description,
+    this.handle,
+    this.rank,
+    this.parentCategoryId,
+    this.parentCategory,
+    this.categoryChildren,
   });
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    return CategoryModel(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      handle: json['handle'],
+      rank: json['rank'],
+      parentCategoryId: json['parent_category_id'],
+      parentCategory: json['parent_category'] != null
+          ? CategoryModel.fromJson(json['parent_category'])
+          : null,
+      categoryChildren: json['category_children'] != null
+          ? (json['category_children'] as List)
+              .map((e) => CategoryModel.fromJson(e))
+              .toList()
+          : [],
+    );
+  }
 }
-
-final List<CategoryModel> demoCategoriesWithImage = [
-  CategoryModel(title: "Woman’s", image: "https://i.imgur.com/5M89G2P.png"),
-  CategoryModel(title: "Man’s", image: "https://i.imgur.com/UM3GdWg.png"),
-  CategoryModel(title: "Kid’s", image: "https://i.imgur.com/Lp0D6k5.png"),
-  CategoryModel(title: "Accessories", image: "https://i.imgur.com/3mSE5sN.png"),
-];
-
-final List<CategoryModel> demoCategories = [
-  CategoryModel(
-    title: "On sale",
-    svgSrc: "assets/icons/Sale.svg",
-    subCategories: [
-      CategoryModel(title: "All Clothing"),
-      CategoryModel(title: "New In"),
-      CategoryModel(title: "Coats & Jackets"),
-      CategoryModel(title: "Dresses"),
-      CategoryModel(title: "Jeans"),
-    ],
-  ),
-  CategoryModel(
-    title: "Man’s & Woman’s",
-    svgSrc: "assets/icons/Man&Woman.svg",
-    subCategories: [
-      CategoryModel(title: "All Clothing"),
-      CategoryModel(title: "New In"),
-      CategoryModel(title: "Coats & Jackets"),
-    ],
-  ),
-  CategoryModel(
-    title: "Kids",
-    svgSrc: "assets/icons/Child.svg",
-    subCategories: [
-      CategoryModel(title: "All Clothing"),
-      CategoryModel(title: "New In"),
-      CategoryModel(title: "Coats & Jackets"),
-    ],
-  ),
-  CategoryModel(
-    title: "Accessories",
-    svgSrc: "assets/icons/Accessories.svg",
-    subCategories: [
-      CategoryModel(title: "All Clothing"),
-      CategoryModel(title: "New In"),
-    ],
-  ),
-];

@@ -24,14 +24,18 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     double price = 0.0;
     if (json['variants'] != null && (json['variants'] as List).isNotEmpty) {
-      final firstVariant = json['variants'][0];
-      if (firstVariant != null &&
-          firstVariant['prices'] != null &&
-          (firstVariant['prices'] as List).isNotEmpty) {
-        final firstPrice = firstVariant['prices'][0];
-        if (firstPrice != null && firstPrice['amount'] != null) {
-          price = (firstPrice['amount'] / 100).toDouble();
+      final variants = json['variants'] as List;
+      List<double> prices = [];
+      for (var variant in variants) {
+        if (variant['calculated_price'] != null &&
+            variant['calculated_price']['calculated_amount'] != null) {
+          prices.add((variant['calculated_price']['calculated_amount'] as num)
+              .toDouble());
         }
+      }
+      if (prices.isNotEmpty) {
+        price = prices.reduce((curr, next) =>
+            curr < next ? curr : next); // find the minimum price
       }
     }
 

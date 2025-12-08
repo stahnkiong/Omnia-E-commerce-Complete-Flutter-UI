@@ -11,10 +11,10 @@ class PopularProducts extends StatefulWidget {
   const PopularProducts({super.key});
 
   @override
-  State<PopularProducts> createState() => _PopularProductsState();
+  State<PopularProducts> createState() => PopularProductsState();
 }
 
-class _PopularProductsState extends State<PopularProducts> {
+class PopularProductsState extends State<PopularProducts> {
   @override
   void initState() {
     super.initState();

@@ -1,5 +1,6 @@
 import 'api_service.dart';
 import '../models/product_model.dart';
+import '../models/category_model.dart';
 
 class ProductService {
   final ApiService _api = ApiService();
@@ -11,6 +12,7 @@ class ProductService {
         queryParameters: {
           'tag_id': 'ptag_01KBPS5PM2MYA6KT373DX3NYJE',
           'limit': 10,
+          'fields': '*variants.calculated_price'
         },
       );
 
@@ -32,6 +34,7 @@ class ProductService {
         queryParameters: {
           'tag_id': 'ptag_01KBSAG9VG1E8RHZAGWHR2HN41',
           'limit': 10,
+          'fields': '*variants.calculated_price'
         },
       );
 
@@ -53,6 +56,7 @@ class ProductService {
         queryParameters: {
           'tag_id': 'ptag_01KBSANZY7K5B8YDB68RZQ177B',
           'limit': 10,
+          'fields': '*variants.calculated_price'
         },
       );
 
@@ -74,6 +78,7 @@ class ProductService {
         queryParameters: {
           'tag_id': 'ptag_01KBSDR2WPW75KEJ2YHFVG8JJJ',
           'limit': 10,
+          'fields': '*variants.calculated_price'
         },
       );
 
@@ -90,7 +95,8 @@ class ProductService {
 
   Future<ProductModel?> fetchProduct(String id) async {
     try {
-      final response = await _api.client.get('/store/products/$id');
+      final response = await _api.client.get('/store/products/$id',
+          queryParameters: {'fields': '*variants.calculated_price'});
       if (response.data != null && response.data['product'] != null) {
         return ProductModel.fromJson(response.data['product']);
       }
@@ -108,6 +114,7 @@ class ProductService {
         queryParameters: {
           'collection_id': collectionId,
           'limit': 10,
+          'fields': '*variants.calculated_price'
         },
       );
 
@@ -118,6 +125,45 @@ class ProductService {
       return [];
     } catch (e) {
       throw Exception('Failed to fetch products by collection: $e');
+    }
+  }
+
+  Future<List<ProductModel>> fetchProductsByCategory(String categoryId) async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'category_id': categoryId,
+          'limit': 10,
+          'fields': '*variants.calculated_price'
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch products by collection: $e');
+    }
+  }
+
+  Future<List<CategoryModel>> fetchCategories() async {
+    try {
+      final response = await _api.client.get('/store/product-categories');
+
+      if (response.data != null &&
+          response.data['product_categories'] != null) {
+        final List<dynamic> categoriesJson =
+            response.data['product_categories'];
+        return categoriesJson
+            .map((json) => CategoryModel.fromJson(json))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch categories: $e');
     }
   }
 }

@@ -51,7 +51,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     customModalBottomSheet(
                       context,
                       height: MediaQuery.of(context).size.height * 0.92,
-                      child: const ProductBuyNowScreen(),
+                      child: ProductBuyNowScreen(productId: product.id),
                     );
                   },
                 )

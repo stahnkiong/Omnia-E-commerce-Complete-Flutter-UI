@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
-import 'package:shop/models/category_model.dart';
+
+import 'package:provider/provider.dart';
+
 import 'package:shop/screens/search/views/components/search_form.dart';
+import 'package:shop/providers/product_provider.dart';
+import 'package:shop/screens/discover/views/components/expansion_category.dart';
 
-import 'components/expansion_category.dart';
-
-class DiscoverScreen extends StatelessWidget {
+class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
+
+  @override
+  State<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends State<DiscoverScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProductProvider>().fetchCategories();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +46,22 @@ class DiscoverScreen extends StatelessWidget {
             // const Expanded(
             //   child: DiscoverCategoriesSkelton(),
             // ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: demoCategories.length,
-                itemBuilder: (context, index) => ExpansionCategory(
-                  svgSrc: demoCategories[index].svgSrc!,
-                  title: demoCategories[index].title,
-                  subCategory: demoCategories[index].subCategories!,
-                ),
-              ),
+            Consumer<ProductProvider>(
+              builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: provider.categories.length,
+                    itemBuilder: (context, index) => ExpansionCategory(
+                      category: provider.categories[index],
+                    ),
+                  ),
+                );
+              },
             )
           ],
         ),

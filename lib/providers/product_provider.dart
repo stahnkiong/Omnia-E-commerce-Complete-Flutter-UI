@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/product_model.dart';
 import '../services/product_service.dart';
 
+import '../models/category_model.dart';
+
 class ProductProvider with ChangeNotifier {
   final ProductService _productService = ProductService();
 
@@ -74,6 +76,24 @@ class ProductProvider with ChangeNotifier {
 
     try {
       _flashSaleProducts = await _productService.fetchFlashSaleProducts();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<CategoryModel> _categories = [];
+  List<CategoryModel> get categories => _categories;
+
+  Future<void> fetchCategories() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _categories = await _productService.fetchCategories();
     } catch (e) {
       _error = e.toString();
     } finally {

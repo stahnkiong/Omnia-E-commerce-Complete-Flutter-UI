@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/entry_point.dart';
+import 'package:shop/screens/product/views/product_collection.dart';
 
 import 'screen_export.dart';
 
@@ -146,6 +147,24 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               isProductAvailable: isProductAvailable);
         },
       );
+
+    case productCategoriesScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) {
+          String categoryId = '';
+          bool isProductAvailable = true;
+          if (settings.arguments is String) {
+            categoryId = settings.arguments as String;
+          } else if (settings.arguments is Map) {
+            final args = settings.arguments as Map;
+            categoryId = args['categoryId'] ?? '';
+            isProductAvailable = args['isProductAvailable'] ?? true;
+          }
+          return ProductCategoriesScreen(
+              categoryId: categoryId, isProductAvailable: isProductAvailable);
+        },
+      );
+
     case productDetailsScreenRoute:
       return MaterialPageRoute(
         builder: (context) {

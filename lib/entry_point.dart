@@ -49,12 +49,9 @@ class _EntryPointState extends State<EntryPoint> {
         leading: const SizedBox(),
         leadingWidth: 0,
         centerTitle: false,
-        title: SvgPicture.asset(
-          "assets/logo/Shoplon.svg",
-          colorFilter: ColorFilter.mode(
-              Theme.of(context).iconTheme.color!, BlendMode.srcIn),
-          height: 20,
-          width: 100,
+        title: Text(
+          "Omnia Foods",
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         actions: [
           IconButton(
@@ -119,8 +116,9 @@ class _EntryPointState extends State<EntryPoint> {
           unselectedItemColor: Colors.transparent,
           items: [
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Shop.svg"),
-              activeIcon: svgIcon("assets/icons/Shop.svg", color: primaryColor),
+              icon: svgIcon("assets/icons/shop01.svg"),
+              activeIcon:
+                  svgIcon("assets/icons/Delivery.svg", color: primaryColor),
               label: "Shop",
             ),
             BottomNavigationBarItem(
@@ -130,9 +128,9 @@ class _EntryPointState extends State<EntryPoint> {
               label: "Discover",
             ),
             BottomNavigationBarItem(
-              icon: svgIcon("assets/icons/Bookmark.svg"),
+              icon: svgIcon("assets/icons/Shop02.svg"),
               activeIcon:
-                  svgIcon("assets/icons/Bookmark.svg", color: primaryColor),
+                  svgIcon("assets/icons/Shop03.svg", color: primaryColor),
               label: "Bookmark",
             ),
             BottomNavigationBarItem(
