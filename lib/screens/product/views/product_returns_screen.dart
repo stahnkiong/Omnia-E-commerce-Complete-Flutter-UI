@@ -30,10 +30,34 @@ class ProductReturnsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(defaultPadding),
-              child: Text(
-                "Free pre-paid returns and exchanges for orders shipped to the US. Get refunded faster with easy online returns and print a FREE pre-paid return SmartLabel@ online! Return or exchange any unused or defective merchandise by mail or at one of our US or Canada store locations. Made to order items cannot be canceled, exchange or returned.",
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: RichText(
+                text: const TextSpan(
+                  text:
+                      "Free pre-paid returns and exchanges for orders shipped to the ",
+                  style: TextStyle(color: Colors.black),
+                  children: [
+                    TextSpan(
+                      text: "Sarawak",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text:
+                          ". Get refunded faster with easy online returns and FREE pre-paid return Omnia Fodds online! Return or exchange any unused or defective merchandise by mail or at one of our store locations.",
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: RichText(
+                text: const TextSpan(
+                  text:
+                      "Damaged or expired items cannot be returned or exchanged. Please check your goods upon receiving them and report any issues to us immediately.",
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             )
           ],

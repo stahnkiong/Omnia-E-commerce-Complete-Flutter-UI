@@ -9,6 +9,8 @@ class ProductModel {
   final double price;
   final double? priceAfetDiscount;
   final int? dicountpercent;
+  final String? subtitle;
+  final String? weight;
 
   ProductModel({
     this.id = "demo_id",
@@ -21,6 +23,8 @@ class ProductModel {
     required this.price,
     this.priceAfetDiscount,
     this.dicountpercent,
+    this.subtitle,
+    this.weight,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +52,7 @@ class ProductModel {
           ? (json['images'] as List).map((e) => e['url'] as String).toList()
           : [],
       description: json['description'] ?? '',
+      subtitle: json['subtitle'] ?? '',
       brandName: (json['collection'] != null)
           ? (json['collection']['title'] ?? '')
           : '',
@@ -56,6 +61,7 @@ class ProductModel {
           : '',
       title: json['title'] ?? '',
       price: price,
+      weight: json['weight'] ?? 0,
     );
   }
 }

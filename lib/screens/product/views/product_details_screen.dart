@@ -8,7 +8,6 @@ import 'package:shop/route/screen_export.dart';
 import 'package:shop/screens/product/views/product_returns_screen.dart';
 import 'package:shop/services/product_service.dart';
 import 'package:shop/models/product_model.dart';
-import 'package:shop/screens/product/views/product_attributes_screen.dart';
 import 'components/notify_me_card.dart';
 import 'components/product_images.dart';
 import 'components/product_info.dart';
@@ -98,7 +97,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   press: () {
                     customModalBottomSheet(
                       context,
-                      height: MediaQuery.of(context).size.height * 0.92,
+                      height: MediaQuery.of(context).size.height * 0.7,
                       child: ProductAttributesScreen(productId: product.id),
                     );
                   },
@@ -123,7 +122,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   press: () {
                     customModalBottomSheet(
                       context,
-                      height: MediaQuery.of(context).size.height * 0.92,
+                      height: MediaQuery.of(context).size.height * 0.7,
                       child: const ProductReturnsScreen(),
                     );
                   },

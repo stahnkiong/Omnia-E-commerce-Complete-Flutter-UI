@@ -7,7 +7,6 @@ import 'package:shop/screens/product/views/components/notify_me_card.dart';
 import 'package:shop/services/product_service.dart';
 import 'package:shop/models/product_model.dart';
 
-import 'components/product_info.dart';
 import 'product_buy_now_screen.dart';
 
 class ProductAttributesScreen extends StatelessWidget {
@@ -60,14 +59,22 @@ class ProductAttributesScreen extends StatelessWidget {
                   floating: true,
                   title: Text(product.title),
                 ),
-                ProductInfo(
-                  brand: product.brandName,
-                  title: product.title,
-                  isAvailable: isProductAvailable,
-                  description:
-                      product.description.isNotEmpty ? product.description : "",
-                  rating: 0.0,
-                  numOfReviews: 0,
+                SliverPadding(
+                  padding: const EdgeInsets.all(defaultPadding),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(product.subtitle ?? '',
+                              style: Theme.of(context).textTheme.titleSmall),
+                          const SizedBox(height: defaultPadding),
+                          Text(product.description,
+                              style: Theme.of(context).textTheme.bodyMedium),
+                          const SizedBox(height: defaultPadding),
+                          Text('Weight: ${product.weight ?? ''}g',
+                              style: Theme.of(context).textTheme.bodyMedium),
+                        ]),
+                  ),
                 ),
                 const SliverToBoxAdapter(
                   child: SizedBox(height: defaultPadding),
