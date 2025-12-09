@@ -16,6 +16,7 @@ const String serverErrorScreenRoute = "server_error";
 const String setupFingerprintScreenRoute = "setup_fingerprint";
 const String setupFaceIdScreenRoute = "setup_faceid";
 const String productDetailsScreenRoute = "product_details";
+const String productAttributesScreenRoute = "product_attributes";
 const String productReviewsScreenRoute = "product_reviews";
 const String addReviewsScreenRoute = "add_reviews";
 const String homeScreenRoute = "home";

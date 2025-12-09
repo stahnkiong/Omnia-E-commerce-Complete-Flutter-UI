@@ -11,6 +11,7 @@ export '/screens/home/views/home_screen.dart';
 export '/screens/kids/views/kids_screen.dart';
 export '/screens/on_sale/views/on_sale_screen.dart';
 export '/screens/product/views/product_details_screen.dart';
+export '/screens/product/views/product_attributes_screen.dart';
 export '/screens/product/views/product_categories.dart';
 
 export '/screens/reviews/view/product_reviews_screen.dart';

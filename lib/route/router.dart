@@ -181,6 +181,22 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               productId: productId, isProductAvailable: isProductAvailable);
         },
       );
+    case productAttributesScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) {
+          String productId = '';
+          bool isProductAvailable = true;
+          if (settings.arguments is String) {
+            productId = settings.arguments as String;
+          } else if (settings.arguments is Map) {
+            final args = settings.arguments as Map;
+            productId = args['productId'] ?? '';
+            isProductAvailable = args['isProductAvailable'] ?? true;
+          }
+          return ProductAttributesScreen(
+              productId: productId, isProductAvailable: isProductAvailable);
+        },
+      );
     case productReviewsScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const ProductReviewsScreen(),

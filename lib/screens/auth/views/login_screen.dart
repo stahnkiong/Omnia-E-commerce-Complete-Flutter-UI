@@ -3,6 +3,7 @@ import 'package:shop/constants.dart';
 import 'package:shop/providers/auth_provider.dart';
 import 'package:shop/route/route_constants.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/services/api_service.dart';
 
 import 'components/login_form.dart';
 
@@ -86,19 +87,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                       child: const Text("Log in")),
-                  // ElevatedButton(
-                  //   onPressed: () async {
-                  //     try {
-                  //       final response = await ApiService()
-                  //           .client
-                  //           .get("/auth/customer/emailpass");
-                  //       print(response.data);
-                  //     } catch (e) {
-                  //       print("API test failed: $e");
-                  //     }
-                  //   },
-                  //   child: const Text("Test API"),
-                  // ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final response = await ApiService()
+                            .client
+                            .get("/auth/customer/emailpass");
+                        print(response.data);
+                      } catch (e) {
+                        print("API test failed: $e");
+                      }
+                    },
+                    child: const Text("Test API"),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

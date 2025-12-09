@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:shop/components/buy_full_ui_kit.dart';
+// import 'package:flutter_svg/svg.dart';
 import 'package:shop/components/cart_button.dart';
 import 'package:shop/components/custom_modal_bottom_sheet.dart';
-import 'package:shop/components/product/product_card.dart';
 import 'package:shop/constants.dart';
-import 'package:shop/screens/product/views/product_returns_screen.dart';
 import 'package:shop/route/screen_export.dart';
+import 'package:shop/screens/product/views/product_returns_screen.dart';
 import 'package:shop/services/product_service.dart';
 import 'package:shop/models/product_model.dart';
-
+import 'package:shop/screens/product/views/product_attributes_screen.dart';
 import 'components/notify_me_card.dart';
 import 'components/product_images.dart';
 import 'components/product_info.dart';
 import 'components/product_list_tile.dart';
-import '../../../components/review_card.dart';
+
+import 'package:shop/components/product/product_card.dart';
+import 'package:shop/components/review_card.dart';
 import 'product_buy_now_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
@@ -65,15 +66,17 @@ class ProductDetailsScreen extends StatelessWidget {
                 SliverAppBar(
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   floating: true,
-                  actions: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset("assets/icons/Bookmark.svg",
-                          colorFilter: ColorFilter.mode(
-                              Theme.of(context).textTheme.bodyLarge!.color!,
-                              BlendMode.srcIn)),
-                    ),
-                  ],
+                  title: Text(product.categories),
+                  // bookmark button
+                  // actions: [
+                  //   IconButton(
+                  //     onPressed: () {},
+                  //     icon: SvgPicture.asset("assets/icons/Bookmark.svg",
+                  //         colorFilter: ColorFilter.mode(
+                  //             Theme.of(context).textTheme.bodyLarge!.color!,
+                  //             BlendMode.srcIn)),
+                  //   ),
+                  // ],
                 ),
                 ProductImages(
                   images: product.images.isNotEmpty
@@ -84,11 +87,10 @@ class ProductDetailsScreen extends StatelessWidget {
                   brand: product.brandName,
                   title: product.title,
                   isAvailable: isProductAvailable,
-                  description: product.description.isNotEmpty
-                      ? product.description
-                      : "A cool gray cap in soft corduroy. Watch me.' By buying cotton products from Lindex, you’re supporting more responsibly...",
-                  rating: 4.4,
-                  numOfReviews: 126,
+                  description:
+                      product.description.isNotEmpty ? product.description : "",
+                  rating: 0.0,
+                  numOfReviews: 0,
                 ),
                 ProductListTile(
                   svgSrc: "assets/icons/Product.svg",
@@ -97,8 +99,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     customModalBottomSheet(
                       context,
                       height: MediaQuery.of(context).size.height * 0.92,
-                      child: const BuyFullKit(
-                          images: ["assets/screens/Product detail.png"]),
+                      child: ProductAttributesScreen(productId: product.id),
                     );
                   },
                 ),
@@ -131,7 +132,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(defaultPadding),
                     child: ReviewCard(
-                      rating: 4.3,
+                      rating: 4.5,
                       numOfReviews: 128,
                       numOfFiveStar: 80,
                       numOfFourStar: 30,
@@ -143,7 +144,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
                 ProductListTile(
                   svgSrc: "assets/icons/Chat.svg",
-                  title: "Reviews",
+                  title: "Reviews Under Development",
                   isShowBottomBorder: true,
                   press: () {
                     Navigator.pushNamed(context, productReviewsScreenRoute);
