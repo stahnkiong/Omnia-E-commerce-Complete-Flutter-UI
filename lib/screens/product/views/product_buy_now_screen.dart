@@ -8,6 +8,7 @@ import 'package:shop/screens/product/views/added_to_cart_message_screen.dart';
 import 'package:shop/screens/product/views/components/product_list_tile.dart';
 import 'package:shop/screens/product/views/contact_supplier.dart';
 import 'package:shop/services/product_service.dart';
+import 'package:shop/services/cart_service.dart';
 
 import '../../../constants.dart';
 import 'components/product_quantity.dart';
@@ -60,12 +61,23 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
             price: product.price * _quantity,
             title: "Add to cart",
             subTitle: "Total price",
-            press: () {
-              customModalBottomSheet(
-                context,
-                isDismissible: false,
-                child: const AddedToCartMessageScreen(),
-              );
+            press: () async {
+              try {
+                await CartService().addToCart(product.variant, _quantity);
+                if (context.mounted) {
+                  customModalBottomSheet(
+                    context,
+                    isDismissible: false,
+                    child: const AddedToCartMessageScreen(),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Failed to add to cart: $e")),
+                  );
+                }
+              }
             },
           ),
           body: Column(
@@ -240,7 +252,7 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                         press: () {
                           customModalBottomSheet(
                             context,
-                            height: MediaQuery.of(context).size.height * 0.92,
+                            height: MediaQuery.of(context).size.height * 0.8,
                             child: const ContactSupplier(),
                           );
                         },

@@ -21,14 +21,20 @@ class ProductQuantity extends StatelessWidget {
       children: [
         Text(
           "Quantity",
-          style: Theme.of(context).textTheme.titleSmall,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .color!
+                    .withAlpha(128),
+              ),
         ),
         const SizedBox(height: defaultPadding),
         Row(
           children: [
             SizedBox(
-              height: 40,
-              width: 40,
+              height: 30,
+              width: 30,
               child: OutlinedButton(
                 onPressed: onDecrement,
                 style: OutlinedButton.styleFrom(
@@ -44,16 +50,14 @@ class ProductQuantity extends StatelessWidget {
               child: Center(
                 child: Text(
                   numOfItem.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.w500, color: Colors.black),
                 ),
               ),
             ),
             SizedBox(
-              height: 40,
-              width: 40,
+              height: 30,
+              width: 30,
               child: OutlinedButton(
                 onPressed: onIncrement,
                 style: OutlinedButton.styleFrom(
