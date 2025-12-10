@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/buy_full_ui_kit.dart';
+// import 'package:shop/components/buy_full_ui_kit.dart';
 // import 'package:flutter_svg/svg.dart';
 import 'package:shop/components/cart_button.dart';
 import 'package:shop/components/custom_modal_bottom_sheet.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/route/screen_export.dart';
+import 'package:shop/screens/home/views/components/flash_sale.dart';
+import 'package:shop/screens/product/views/components/unavailable_card.dart';
 import 'package:shop/screens/product/views/product_returns_screen.dart';
 import 'package:shop/services/product_service.dart';
 import 'package:shop/models/product_model.dart';
-import 'components/notify_me_card.dart';
+// import 'components/notify_me_card.dart';
 import 'components/product_images.dart';
 import 'components/product_info.dart';
 import 'components/product_list_tile.dart';
@@ -50,15 +52,12 @@ class ProductDetailsScreen extends StatelessWidget {
                   press: () {
                     customModalBottomSheet(
                       context,
-                      height: MediaQuery.of(context).size.height * 0.92,
+                      height: MediaQuery.of(context).size.height * 0.8,
                       child: ProductBuyNowScreen(productId: product.id),
                     );
                   },
                 )
-              : NotifyMeCard(
-                  isNotify: false,
-                  onChanged: (value) {},
-                ),
+              : const UnavailableCard(),
           body: SafeArea(
             child: CustomScrollView(
               slivers: [
@@ -88,8 +87,8 @@ class ProductDetailsScreen extends StatelessWidget {
                   isAvailable: isProductAvailable,
                   description:
                       product.description.isNotEmpty ? product.description : "",
-                  rating: 0.0,
-                  numOfReviews: 0,
+                  rating: 5.0,
+                  numOfReviews: 1,
                 ),
                 ProductListTile(
                   svgSrc: "assets/icons/Product.svg",
@@ -102,19 +101,19 @@ class ProductDetailsScreen extends StatelessWidget {
                     );
                   },
                 ),
-                ProductListTile(
-                  svgSrc: "assets/icons/Delivery.svg",
-                  title: "Shipping Information",
-                  press: () {
-                    customModalBottomSheet(
-                      context,
-                      height: MediaQuery.of(context).size.height * 0.92,
-                      child: const BuyFullKit(
-                        images: ["assets/screens/Shipping information.png"],
-                      ),
-                    );
-                  },
-                ),
+                // ProductListTile(
+                //   svgSrc: "assets/icons/Delivery.svg",
+                //   title: "Shipping Information",
+                //   press: () {
+                //     customModalBottomSheet(
+                //       context,
+                //       height: MediaQuery.of(context).size.height * 0.92,
+                //       child: const BuyFullKit(
+                //         images: ["assets/screens/Shipping information.png"],
+                //       ),
+                //     );
+                //   },
+                // ),
                 ProductListTile(
                   svgSrc: "assets/icons/Return.svg",
                   title: "Returns",
@@ -131,13 +130,13 @@ class ProductDetailsScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(defaultPadding),
                     child: ReviewCard(
-                      rating: 4.5,
-                      numOfReviews: 128,
-                      numOfFiveStar: 80,
-                      numOfFourStar: 30,
-                      numOfThreeStar: 5,
-                      numOfTwoStar: 4,
-                      numOfOneStar: 1,
+                      rating: 5.0,
+                      numOfReviews: 1,
+                      numOfFiveStar: 1,
+                      numOfFourStar: 0,
+                      numOfThreeStar: 0,
+                      numOfTwoStar: 0,
+                      numOfOneStar: 0,
                     ),
                   ),
                 ),
@@ -149,6 +148,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     Navigator.pushNamed(context, productReviewsScreenRoute);
                   },
                 ),
+                const SliverToBoxAdapter(child: FlashSale()),
                 SliverPadding(
                   padding: const EdgeInsets.all(defaultPadding),
                   sliver: SliverToBoxAdapter(
@@ -169,9 +169,9 @@ class ProductDetailsScreen extends StatelessWidget {
                             left: defaultPadding,
                             right: index == 4 ? defaultPadding : 0),
                         child: ProductCard(
-                          image: productDemoImg2,
-                          title: "Sleeveless Tiered Dobby Swing Dress",
-                          brandName: "LIPSY LONDON",
+                          image: productDemoImg7,
+                          title: "Pizza Pepperoni 320g",
+                          brandName: "Ristorante",
                           price: 24.65,
                           priceAfetDiscount: index.isEven ? 20.99 : null,
                           dicountpercent: index.isEven ? 25 : null,

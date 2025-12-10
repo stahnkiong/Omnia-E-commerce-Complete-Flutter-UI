@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 // Just for demo
-const productDemoImg1 = "https://i.imgur.com/CGCyp1d.png";
+const productDemoImg1 =
+    "https://img2.cdn.91app.com.my/webapi/imagesV3/Original/SalePage/272236/0/638684701249330000";
 const productDemoImg2 = "https://i.imgur.com/AkzWQuJ.png";
 const productDemoImg3 = "https://i.imgur.com/J7mGZ12.png";
 const productDemoImg4 = "https://i.imgur.com/q9oF9Yq.png";
 const productDemoImg5 = "https://i.imgur.com/MsppAcx.png";
 const productDemoImg6 = "https://i.imgur.com/JfyZlnO.png";
+const productDemoImg7 =
+    "https://www.oetker.com.my/assets/hygraph/AVtdz8Pl3QxerK0kYX32fz/compress=metadata:true/quality=value:75/output=format:webp/resize=fit:clip,height:350,width:350/cmdr9ub8p7lrl07vx76mrmmq3?opt";
 
 // End For demo
 
