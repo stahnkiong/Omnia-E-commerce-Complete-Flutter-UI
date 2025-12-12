@@ -349,6 +349,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const CartScreen(),
       );
+
+    case itemsUsageScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const ItemsUsageScreen(),
+      );
     // case paymentMethodScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const PaymentMethodScreen(),

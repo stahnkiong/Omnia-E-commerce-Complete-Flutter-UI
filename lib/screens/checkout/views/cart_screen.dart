@@ -6,6 +6,8 @@ import 'package:shop/models/cart_model.dart';
 import 'package:shop/services/cart_service.dart';
 import 'package:shop/screens/product/views/components/product_quantity.dart';
 
+import 'checkout_screen.dart';
+
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -231,7 +233,13 @@ class _CartScreenState extends State<CartScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  // Navigate to checkout
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CheckoutScreen(),
+                                    ),
+                                  );
                                 },
                                 child: const Text("Checkout"),
                               ),

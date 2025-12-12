@@ -17,6 +17,7 @@ class _EntryPointState extends State<EntryPoint> {
     DiscoverScreen(),
     // BookmarkScreen(),
     // EmptyCartScreen(), // if Cart is empty
+    ItemsUsageScreen(),
     CartScreen(),
     ProfileScreen(),
   ];
@@ -56,7 +57,7 @@ class _EntryPointState extends State<EntryPoint> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, searchScreenRoute);
+              Navigator.pushNamed(context, discoverScreenRoute);
             },
             icon: SvgPicture.asset(
               "assets/icons/Search.svg",
@@ -127,11 +128,12 @@ class _EntryPointState extends State<EntryPoint> {
                   svgIcon("assets/icons/Category.svg", color: primaryColor),
               label: "Discover",
             ),
-            // BottomNavigationBarItem(
-            //   icon: svgIcon("assets/icons/Truck.svg"),
-            //   activeIcon: svgIcon("assets/icons/Truck.svg", color: primaryColor),
-            //   label: "Bookmark",
-            // ),
+            BottomNavigationBarItem(
+              icon: svgIcon("assets/icons/Trackorder.svg"),
+              activeIcon:
+                  svgIcon("assets/icons/Trackorder.svg", color: primaryColor),
+              label: "Reorder",
+            ),
             BottomNavigationBarItem(
               icon: svgIcon("assets/icons/Bag.svg"),
               activeIcon: svgIcon("assets/icons/Bag.svg", color: primaryColor),
