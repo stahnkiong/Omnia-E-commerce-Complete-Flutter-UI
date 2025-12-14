@@ -7,11 +7,6 @@ import 'package:shop/screens/product/views/product_categories.dart';
 
 import '../../../../constants.dart';
 
-// For preview
-
-// For preview
-// Local CategoryModel removed to avoid conflict with the actual model
-
 class Categories extends StatefulWidget {
   const Categories({super.key});
 

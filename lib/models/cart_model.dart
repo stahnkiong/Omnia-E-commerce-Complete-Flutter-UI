@@ -40,10 +40,19 @@ class CartItemModel {
     required this.unitPrice,
   });
 
+  // Helper method to replace localhost URLs with network IP
+  static String _replaceLocalhostUrl(String url) {
+    if (url.startsWith('http://localhost:9000')) {
+      return url.replaceFirst(
+          'http://localhost:9000', 'http://192.168.50.50:9000');
+    }
+    return url;
+  }
+
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
     return CartItemModel(
       id: json['id'],
-      thumbnail: json['thumbnail'],
+      thumbnail: _replaceLocalhostUrl(json['thumbnail']),
       productTitle: json['product_title'] ?? '',
       variantTitle: json['variant_title'] ?? '',
       quantity: json['quantity'] ?? 0,

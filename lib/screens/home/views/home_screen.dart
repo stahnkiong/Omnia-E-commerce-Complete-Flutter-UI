@@ -33,7 +33,9 @@ class HomeScreen extends StatelessWidget {
                   BannerSStyle1(
                     title: "New \narrival",
                     subtitle: "SPECIAL OFFER",
-                    discountParcent: 50,
+                    image:
+                        "https://frenchly.us/wp-content/uploads/2022/06/Seafood-oysters-shutterstock-clean.jpg.webp",
+                    discountParcent: 30,
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,
                           arguments: "pcol_01KBW9VHQ59C8BF6HHJYJYYWJG");
@@ -55,8 +57,10 @@ class HomeScreen extends StatelessWidget {
                   // While loading use 👇
                   // const BannerSSkelton(),
                   BannerSStyle5(
-                    title: "Black \nfriday",
+                    title: "TGI \nFriday",
                     subtitle: "50% Off",
+                    image:
+                        "https://johnsonsfoodservices.com.au/cdn/shop/products/website-710x532px-jpg.jpg",
                     bottomText: "Collection".toUpperCase(),
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,

@@ -29,6 +29,15 @@ class ProductModel {
     this.weight,
   });
 
+  // Helper method to replace localhost URLs with network IP
+  static String _replaceLocalhostUrl(String url) {
+    if (url.startsWith('http://localhost:9000')) {
+      return url.replaceFirst(
+          'http://localhost:9000', 'http://192.168.50.50:9000');
+    }
+    return url;
+  }
+
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     double price = 0.0;
     String variantId = "";
@@ -52,13 +61,25 @@ class ProductModel {
       }
     }
 
+    // Process thumbnail URL
+    String thumbnailUrl = json['thumbnail'] ?? productDemoImg1;
+    thumbnailUrl = _replaceLocalhostUrl(thumbnailUrl);
+
+    // Process images URLs
+    List<String> imagesList;
+    if (json['images'] != null) {
+      imagesList = (json['images'] as List)
+          .map((e) => _replaceLocalhostUrl(e['url'] as String))
+          .toList();
+    } else {
+      imagesList = [productDemoImg1, productDemoImg2, productDemoImg3];
+    }
+
     return ProductModel(
       id: json['id'] ?? '',
       variant: variantId,
-      image: json['thumbnail'] ?? productDemoImg1,
-      images: json['images'] != null
-          ? (json['images'] as List).map((e) => e['url'] as String).toList()
-          : [productDemoImg1, productDemoImg2, productDemoImg3],
+      image: thumbnailUrl,
+      images: imagesList,
       description: json['description'] ?? '',
       subtitle: json['subtitle'] ?? '',
       brandName: (json['collection'] != null)

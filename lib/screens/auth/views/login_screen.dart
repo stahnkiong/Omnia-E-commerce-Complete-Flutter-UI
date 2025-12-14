@@ -87,18 +87,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                       child: const Text("Log in")),
+                  const SizedBox(height: defaultPadding),
                   ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        final response = await ApiService()
-                            .client
-                            .get("/auth/customer/emailpass");
-                        print(response.data);
-                      } catch (e) {
-                        print("API test failed: $e");
-                      }
+                    onPressed: () {
+                      Navigator.pushNamed(context, entryPointScreenRoute);
                     },
-                    child: const Text("Test API"),
+                    child: const Text("Demo"),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -112,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     ],
                   ),
+                  const SizedBox(height: defaultPadding * 2),
                 ],
               ),
             )

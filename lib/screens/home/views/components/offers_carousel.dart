@@ -31,23 +31,27 @@ class _OffersCarouselState extends State<OffersCarousel> {
   void initState() {
     super.initState();
     offers = [
-      BannerMStyle1(
-        text: "New items with \nFree shipping",
-        // image: "https://i.imgur.com/J1Qjut7.png", use custom image
-        press: () {
-          Navigator.pushNamed(context, productCollectionScreenRoute,
-              arguments: "pcol_01KBW9TVVXRJDDWBK7S4876DBB");
-        },
-      ),
       BannerMStyle2(
-        title: "Black \nfriday",
-        subtitle: "Collection",
-        discountParcent: 50,
+        title: "Year End \n Promo",
+        subtitle: "Free Shipping",
+        image:
+            "https://www.thewagyufactory.com.au/wp-content/uploads/2021/08/shutterstock_633879398-scaled.jpg",
+        discountParcent: 20,
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,
               arguments: "pcol_01KBQKQXBG5460ANQZY9B0JQKX");
         },
       ),
+      BannerMStyle1(
+        text: "NZ Premium \n Free shipping",
+        image:
+            "https://beeflambnz.com/sites/default/files/styles/width_1440/public/2023-06/1200x383-origin-brand.jpg", //use custom image
+        press: () {
+          Navigator.pushNamed(context, productCollectionScreenRoute,
+              arguments: "pcol_01KBW9TVVXRJDDWBK7S4876DBB");
+        },
+      ),
+
       // BannerMStyle3(
       //   title: "Grab \nyours now",
       //   discountParcent: 50,
