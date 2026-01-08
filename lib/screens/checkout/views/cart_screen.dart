@@ -244,6 +244,7 @@ class _CartScreenState extends State<CartScreen> {
                                 child: const Text("Checkout"),
                               ),
                             ),
+                            const SizedBox(height: defaultPadding * 2),
                           ],
                         ),
                       ),

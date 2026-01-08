@@ -22,4 +22,13 @@ class ApiService {
       ),
     );
   }
+  Future<List<dynamic>> getAddresses() async {
+    try {
+      final response = await client.get('/store/customers/me/addresses');
+      return response.data['addresses'] ?? [];
+    } catch (e) {
+      // Handle error or return empty list
+      return [];
+    }
+  }
 }
