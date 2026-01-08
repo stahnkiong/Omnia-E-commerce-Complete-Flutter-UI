@@ -3,7 +3,6 @@ import 'package:shop/constants.dart';
 import 'package:shop/providers/auth_provider.dart';
 import 'package:shop/route/route_constants.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/services/api_service.dart';
 
 import 'components/login_form.dart';
 
@@ -28,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             Image.asset(
-              "assets/images/login_dark.png",
+              "assets/images/food_20and_20drink.webp",
               fit: BoxFit.cover,
             ),
             Padding(
@@ -36,13 +35,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: defaultPadding),
                   Text(
-                    "Welcome back!",
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    "PasarNow",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   const Text(
-                    "Log in with your data that you intered during your registration.",
+                    "Members enjoy lower Cash on Delivery rates\nLog in now!",
                   ),
                   const SizedBox(height: defaultPadding),
                   LogInForm(
@@ -50,18 +50,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     onEmailSaved: (v) => _email = v,
                     onPasswordSaved: (v) => _password = v,
                   ),
-                  Align(
-                    child: TextButton(
-                      child: const Text("Forgot password"),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                            context, passwordRecoveryScreenRoute);
-                      },
-                    ),
-                  ),
+                  // Align(
+                  //   child: TextButton(
+                  //     child: const Text("Forgot password"),
+                  //     onPressed: () {
+                  //       Navigator.pushNamed(
+                  //           context, passwordRecoveryScreenRoute);
+                  //     },
+                  //   ),
+                  // ),
                   SizedBox(
                     height:
-                        size.height > 700 ? size.height * 0.08 : defaultPadding,
+                        size.height > 700 ? size.height * 0.04 : defaultPadding,
                   ),
                   ElevatedButton(
                       onPressed: () async {

@@ -261,7 +261,7 @@ class _UsageProductCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.1),
+                      color: primaryColor.withAlpha(25),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Row(

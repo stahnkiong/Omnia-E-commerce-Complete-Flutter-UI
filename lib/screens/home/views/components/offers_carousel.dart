@@ -34,8 +34,10 @@ class _OffersCarouselState extends State<OffersCarousel> {
       BannerMStyle2(
         title: "Year End \n Promo",
         subtitle: "Free Shipping",
+        // image:
+        //     "https://www.thewagyufactory.com.au/wp-content/uploads/2021/08/shutterstock_633879398-scaled.jpg",
         image:
-            "https://www.thewagyufactory.com.au/wp-content/uploads/2021/08/shutterstock_633879398-scaled.jpg",
+            "https://www.shutterstock.com/image-photo/wagyu-beef-beautiful-red-pattern-600nw-2486090373.jpg",
         discountParcent: 20,
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,

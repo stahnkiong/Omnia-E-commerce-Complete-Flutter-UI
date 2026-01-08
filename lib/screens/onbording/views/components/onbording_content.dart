@@ -8,11 +8,12 @@ class OnbordingContent extends StatelessWidget {
     this.isTextOnTop = false,
     required this.title,
     required this.description,
-    required this.image,
+    this.image,
   });
 
   final bool isTextOnTop;
-  final String title, description, image;
+  final String title, description;
+  final String? image;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +29,11 @@ class OnbordingContent extends StatelessWidget {
         if (isTextOnTop) const Spacer(),
 
         /// if you are using SVG then replace [Image.asset] with [SvgPicture.asset]
-
-        Image.asset(
-          image,
-          height: 250,
-        ),
+        if (image != null)
+          Image.asset(
+            image!,
+            height: 250,
+          ),
         if (!isTextOnTop) const Spacer(),
         if (!isTextOnTop)
           const OnbordTitleDescription(

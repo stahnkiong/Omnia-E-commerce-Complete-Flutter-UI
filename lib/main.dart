@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget _buildMaterialApp(BuildContext context, String initialRoute) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Omnia Shop',
+      title: 'PasarNow',
       theme: AppTheme.lightTheme(context),
       themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         if (authStatus.isAuthenticated) {
           return _buildMaterialApp(context, entryPointScreenRoute);
         } else {
-          return _buildMaterialApp(context, logInScreenRoute);
+          return _buildMaterialApp(context, onbordingScreenRoute);
         }
       },
     );

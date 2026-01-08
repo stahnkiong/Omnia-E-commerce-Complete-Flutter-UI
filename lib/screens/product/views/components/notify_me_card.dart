@@ -29,11 +29,7 @@ class NotifyMeCard extends StatelessWidget {
             border: Border.all(
               color: isNotify
                   ? Colors.transparent
-                  : Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .color!
-                      .withOpacity(0.1),
+                  : Theme.of(context).textTheme.bodyLarge!.color!.withAlpha(25),
             ),
           ),
           child: Padding(
@@ -52,7 +48,10 @@ class NotifyMeCard extends StatelessWidget {
                     ),
                     child: SvgPicture.asset(
                       "assets/icons/Notification.svg",
-                      color: Colors.white,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),

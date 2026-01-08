@@ -1,4 +1,4 @@
-export '/screens/onbording/views/onbording_screnn.dart';
+export '../screens/onbording/views/onbording_screen.dart';
 export '/screens/onbording/views/terms_of_services_screen.dart';
 export '/screens/auth/views/login_screen.dart';
 export '/screens/auth/views/password_recovery_screen.dart';
