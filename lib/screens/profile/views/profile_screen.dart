@@ -17,15 +17,24 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: ListView(
         children: [
-          ProfileCard(
-            name: "Andrew",
-            email: "andrew@gmail.com",
-            imageSrc:
-                "https://t3.ftcdn.net/jpg/03/95/29/76/360_F_395297652_J7Bo5IVAkYo1LFzPjEhldbOPNstxYx4i.jpg",
-            // proLableText: "Sliver",
-            // isPro: true, if the user is pro
-            press: () {
-              Navigator.pushNamed(context, userInfoScreenRoute);
+          Consumer<AuthProvider>(
+            builder: (context, auth, child) {
+              final customer = auth.customer;
+              return ProfileCard(
+                name: customer != null
+                    ? "${customer['first_name'] ?? ''} ${customer['last_name'] ?? ''}"
+                            .trim()
+                            .isEmpty
+                        ? "User"
+                        : "${customer['first_name'] ?? ''} ${customer['last_name'] ?? ''}"
+                    : "Guest",
+                email: customer?['email'] ?? "No Email",
+                imageSrc:
+                    "https://t3.ftcdn.net/jpg/03/95/29/76/360_F_395297652_J7Bo5IVAkYo1LFzPjEhldbOPNstxYx4i.jpg",
+                press: () {
+                  Navigator.pushNamed(context, userInfoScreenRoute);
+                },
+              );
             },
           ),
           // Padding(

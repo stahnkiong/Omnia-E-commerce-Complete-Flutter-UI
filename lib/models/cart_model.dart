@@ -1,14 +1,18 @@
+import 'package:shop/models/payment_collection_model.dart';
+
 class CartModel {
   final String id;
   final double total;
   final double subtotal;
   final List<CartItemModel> items;
+  final PaymentCollection? paymentCollection;
 
   CartModel({
     required this.id,
     required this.total,
     required this.subtotal,
     required this.items,
+    this.paymentCollection,
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,9 @@ class CartModel {
       items: (json['items'] as List)
           .map((item) => CartItemModel.fromJson(item))
           .toList(),
+      paymentCollection: json['payment_collection'] != null
+          ? PaymentCollection.fromJson(json['payment_collection'])
+          : null,
     );
   }
 }

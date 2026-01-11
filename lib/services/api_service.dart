@@ -3,8 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 
 import 'package:shop/models/payment_provider_model.dart';
-
 import 'package:shop/models/shipping_option_model.dart';
+import 'package:shop/models/payment_collection_model.dart';
+import 'package:shop/models/order_model.dart';
 
 class ApiService {
   final Dio client = Dio();
@@ -56,6 +57,69 @@ class ApiService {
           await client.get('/store/shipping-options?cart_id=$cartId');
       final List<dynamic> optionsData = response.data['shipping_options'] ?? [];
       return optionsData.map((json) => ShippingOption.fromJson(json)).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<bool> addAddress(Map<String, dynamic> data) async {
+    try {
+      await client.post(
+        '/store/customers/me/addresses',
+        data: data,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<PaymentCollection?> createPaymentCollection(String cartId) async {
+    try {
+      final response = await client.post(
+        '/store/payment-collections',
+        data: {'cart_id': cartId},
+      );
+      return PaymentCollection.fromJson(response.data['payment_collection']);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<PaymentCollection?> initiatePaymentSession(
+      String paymentCollectionId, String providerId) async {
+    try {
+      final response = await client.post(
+        '/store/payment-collections/$paymentCollectionId/payment-sessions',
+        data: {'provider_id': providerId},
+      );
+      return PaymentCollection.fromJson(response.data['payment_collection']);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> completeCart(String cartId) async {
+    try {
+      final response = await client.post(
+        '/store/carts/$cartId/complete',
+      );
+      return response.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<List<OrderModel>> getOrders() async {
+    try {
+      final response = await client.get(
+        '/store/customers/me/orders',
+        queryParameters: {
+          'expand': 'items,fulfillments,shipping_address',
+        },
+      );
+      final List<dynamic> ordersData = response.data['orders'] ?? [];
+      return ordersData.map((json) => OrderModel.fromJson(json)).toList();
     } catch (e) {
       return [];
     }

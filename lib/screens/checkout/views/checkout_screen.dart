@@ -7,6 +7,8 @@ import 'package:shop/models/cart_model.dart';
 
 import 'package:shop/models/payment_provider_model.dart';
 import 'package:shop/models/shipping_option_model.dart';
+import 'package:shop/models/payment_collection_model.dart';
+import 'package:shop/screens/address/views/add_new_address_screen.dart';
 
 const String codPaymentProviderId = 'pp_system_default';
 
@@ -130,6 +132,68 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return cartTotal;
   }
 
+  bool _isProcessing = false;
+
+  Future<void> _handlePayment() async {
+    if (_cart == null || _selectedPaymentProvider == null) return;
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      final api = ApiService();
+      PaymentCollection? paymentCollection = _cart!.paymentCollection;
+
+      // 1. Create Payment Collection if not exists
+      if (paymentCollection == null) {
+        paymentCollection = await api.createPaymentCollection(_cart!.id);
+        if (paymentCollection == null) {
+          throw Exception("Failed to create payment collection");
+        }
+      }
+
+      // 2. Initiate Payment Session
+      paymentCollection = await api.initiatePaymentSession(
+        paymentCollection.id,
+        _selectedPaymentProvider!.id,
+      );
+
+      if (paymentCollection == null) {
+        throw Exception("Failed to initiate payment session");
+      }
+
+      // 3. Complete Cart
+      final completionResult = await api.completeCart(_cart!.id);
+
+      if (completionResult != null && completionResult['type'] == 'order') {
+        // Success
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Order placed successfully!")),
+          );
+          // Clear cart locally (optional, but good practice)
+          // Navigate to success screen or home
+          Navigator.pop(context);
+        }
+      } else {
+        throw Exception("Failed to complete order");
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -239,8 +303,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             child: Text("No address found. Please add one."),
                           ),
                           TextButton(
-                            onPressed: () {
-                              // Navigate to add address screen (to be implemented)
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AddNewAddressScreen(),
+                                ),
+                              );
+                              if (result == true) {
+                                _fetchAddresses();
+                              }
                             },
                             child: const Text("Add"),
                           ),
@@ -248,29 +321,50 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     )
                   else
-                    DropdownButtonFormField<Address>(
-                      value: _selectedAddress,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: defaultPadding,
-                            vertical: defaultPadding),
-                      ),
-                      isExpanded: true,
-                      items: _addresses.map((address) {
-                        return DropdownMenuItem(
-                          value: address,
-                          child: Text(
-                            "${address.addressName} - ${address.address1}, ${address.city}",
-                            overflow: TextOverflow.ellipsis,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        DropdownButtonFormField<Address>(
+                          initialValue: _selectedAddress,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: defaultPadding,
+                                vertical: defaultPadding),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedAddress = value;
-                        });
-                      },
+                          isExpanded: true,
+                          items: _addresses.map((address) {
+                            return DropdownMenuItem(
+                              value: address,
+                              child: Text(
+                                "${address.addressName} - ${address.address1}, ${address.city}",
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedAddress = value;
+                            });
+                          },
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AddNewAddressScreen(),
+                              ),
+                            );
+                            if (result == true) {
+                              _fetchAddresses();
+                            }
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text("Add New Address"),
+                        ),
+                      ],
                     ),
                   const SizedBox(height: defaultPadding * 2),
 
@@ -343,28 +437,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: ElevatedButton(
-            onPressed: (_cart == null || _addresses.isEmpty)
+            onPressed: (_cart == null || _addresses.isEmpty || _isProcessing)
                 ? null
-                : () {
-                    // Handle Payment
-                    if (_selectedPaymentProvider?.id
-                            .toLowerCase()
-                            .contains('stripe') ??
-                        false) {
-                      // Initialize Stripe Payment
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Stripe integration coming soon")),
-                      );
-                    } else {
-                      // Place COD Order
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Order placed successfully!")),
-                      );
-                    }
-                  },
-            child: Text("Pay RM ${(_totalAmount).toStringAsFixed(2)}"),
+                : _handlePayment,
+            child: _isProcessing
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text("Pay RM ${(_totalAmount).toStringAsFixed(2)}"),
           ),
         ),
       ),

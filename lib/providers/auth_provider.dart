@@ -6,9 +6,11 @@ class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
   String? _token;
+  Map<String, dynamic>? _customer;
 
   bool get isLoading => _isLoading;
   String? get token => _token;
+  Map<String, dynamic>? get customer => _customer;
 
   Future<bool> login(String email, String password) async {
     _isLoading = true;
@@ -21,6 +23,9 @@ class AuthProvider with ChangeNotifier {
       // Save token to shared preferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', _token ?? '');
+
+      await fetchCustomer();
+
       return true;
     } catch (e) {
       return false;
@@ -61,6 +66,9 @@ class AuthProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _token = prefs.getString('auth_token');
+      if (_token != null) {
+        await fetchCustomer();
+      }
     } catch (e) {
       // Handle potential errors like PlatformException during getInstance
       _token = null;
@@ -74,9 +82,19 @@ class AuthProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
     _token = null;
+    _customer = null;
     notifyListeners();
   }
 
   // Helper method to check if the user is authenticated
   bool get isAuthenticated => _token != null;
+
+  Future<void> fetchCustomer() async {
+    try {
+      _customer = await _authService.getCustomer();
+      notifyListeners();
+    } catch (e) {
+      // Handle error
+    }
+  }
 }

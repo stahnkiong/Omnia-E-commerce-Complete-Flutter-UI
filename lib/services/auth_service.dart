@@ -51,4 +51,13 @@ class AuthService {
       throw Exception('Failed to create customer: $e');
     }
   }
+
+  Future<Map<String, dynamic>> getCustomer() async {
+    try {
+      final response = await _api.client.get('/store/customers/me');
+      return response.data['customer'];
+    } catch (e) {
+      throw Exception('Failed to get customer: $e');
+    }
+  }
 }
