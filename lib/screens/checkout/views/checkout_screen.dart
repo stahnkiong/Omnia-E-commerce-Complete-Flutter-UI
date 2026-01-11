@@ -5,7 +5,10 @@ import 'package:shop/services/api_service.dart';
 import 'package:shop/services/cart_service.dart';
 import 'package:shop/models/cart_model.dart';
 
-enum PaymentMethod { stripe, cod }
+import 'package:shop/models/payment_provider_model.dart';
+import 'package:shop/models/shipping_option_model.dart';
+
+const String codPaymentProviderId = 'pp_system_default';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -15,12 +18,17 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  PaymentMethod _selectedPaymentMethod = PaymentMethod.cod;
+  PaymentProvider? _selectedPaymentProvider;
   Address? _selectedAddress;
   List<Address> _addresses = [];
   bool _isLoadingAddresses = true;
   CartModel? _cart;
   bool _isLoadingCart = true;
+  List<PaymentProvider> _paymentProviders = [];
+  bool _isLoadingPaymentProviders = true;
+  List<ShippingOption> _shippingOptions = [];
+  ShippingOption? _selectedShippingOption;
+  bool _isLoadingShippingOptions = true;
 
   @override
   void initState() {
@@ -29,10 +37,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _fetchData() async {
+    await _fetchCart();
     await Future.wait([
       _fetchAddresses(),
-      _fetchCart(),
+      _fetchPaymentProviders(),
+      if (_cart != null) _fetchShippingOptions(_cart!.id),
     ]);
+  }
+
+  Future<void> _fetchShippingOptions(String cartId) async {
+    try {
+      final options = await ApiService().getShippingOptions(cartId);
+      setState(() {
+        _shippingOptions = options;
+        if (_shippingOptions.isNotEmpty) {
+          _selectedShippingOption = _shippingOptions.first;
+        }
+        _isLoadingShippingOptions = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingShippingOptions = false;
+      });
+    }
+  }
+
+  Future<void> _fetchPaymentProviders() async {
+    try {
+      final providersData = await ApiService().getPaymentProviders();
+      setState(() {
+        _paymentProviders = providersData;
+        if (_paymentProviders.isNotEmpty) {
+          _selectedPaymentProvider = _paymentProviders.first;
+        }
+        _isLoadingPaymentProviders = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingPaymentProviders = false;
+      });
+    }
   }
 
   Future<void> _fetchAddresses() async {
@@ -69,20 +113,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   double get _totalAmount {
     if (_cart == null) return 0.0;
-    // If COD is selected, we assume the backend price (which is marked up 10%)
-    // should be discounted to the "lower rate".
-    // "markup all the price by 10% ... unless they pick this option [COD]"
-    // This implies COD price = Base Price. Stripe Price = Base Price + 10%.
-    // If the cart total from backend is the "Stripe Price" (Marked up):
-    // COD Total = Cart Total / 1.10
-    // If the cart total from backend is the "Base Price":
-    // Stripe Total = Cart Total * 1.10
 
-    // Assuming backend sends the "Stripe Price" (Marked up by 10%):
-    if (_selectedPaymentMethod == PaymentMethod.cod) {
-      return _cart!.total / 1.10;
+    double cartTotal = _cart!.total;
+
+    // Apply COD discount to the cart total (items)
+    if (_selectedPaymentProvider?.id.toLowerCase() ==
+        codPaymentProviderId.toLowerCase()) {
+      cartTotal = cartTotal / 1.05;
     }
-    return _cart!.total;
+
+    // Add shipping cost
+    if (_selectedShippingOption != null) {
+      cartTotal += _selectedShippingOption!.amount;
+    }
+
+    return cartTotal;
   }
 
   @override
@@ -91,7 +136,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         title: const Text("Checkout"),
       ),
-      body: _isLoadingAddresses || _isLoadingCart
+      body: _isLoadingAddresses ||
+              _isLoadingCart ||
+              _isLoadingPaymentProviders ||
+              _isLoadingShippingOptions
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(defaultPadding),
@@ -99,6 +147,76 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Address Section
+
+                  // Order Summary Section
+                  Text(
+                    "Order Summary",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: defaultPadding / 2),
+                  Container(
+                    padding: const EdgeInsets.all(defaultPadding),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(defaultBorderRadious),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Subtotal"),
+                            Text("RM ${(_cart!.subtotal).toStringAsFixed(2)}"),
+                          ],
+                        ),
+                        const SizedBox(height: defaultPadding / 2),
+                        if (_selectedShippingOption != null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Shipping"),
+                              Text(
+                                  "RM ${(_selectedShippingOption!.amount).toStringAsFixed(2)}"),
+                            ],
+                          ),
+                        const SizedBox(height: defaultPadding / 2),
+                        if (_selectedPaymentProvider?.id.toLowerCase() ==
+                            codPaymentProviderId.toLowerCase())
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Discount",
+                                  style: TextStyle(color: successColor)),
+                              Text(
+                                  "- RM ${((_cart!.total - (_cart!.total / 1.05))).toStringAsFixed(2)}",
+                                  style: const TextStyle(color: successColor)),
+                            ],
+                          ),
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "RM ${(_totalAmount).toStringAsFixed(2)}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: defaultPadding * 2),
                   Text(
                     "Delivery Address",
                     style: Theme.of(context).textTheme.titleMedium,
@@ -156,63 +274,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   const SizedBox(height: defaultPadding * 2),
 
-                  // Order Summary Section
+                  // Shipping Method Section
                   Text(
-                    "Order Summary",
+                    "Shipping Method",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: defaultPadding / 2),
-                  Container(
-                    padding: const EdgeInsets.all(defaultPadding),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(defaultBorderRadious),
-                      border: Border.all(color: Theme.of(context).dividerColor),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Subtotal"),
-                            Text(
-                                "RM ${_cart?.subtotal.toStringAsFixed(2) ?? '0.00'}"),
-                          ],
-                        ),
-                        const SizedBox(height: defaultPadding / 2),
-                        if (_selectedPaymentMethod == PaymentMethod.cod)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("COD Discount",
-                                  style: TextStyle(color: successColor)),
-                              Text(
-                                  "- RM ${(_cart!.total - _totalAmount).toStringAsFixed(2)}",
-                                  style: const TextStyle(color: successColor)),
-                            ],
-                          ),
-                        const Divider(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Total",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "RM ${_totalAmount.toStringAsFixed(2)}",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Column(
+                    children: _shippingOptions.map((option) {
+                      return RadioListTile<ShippingOption>(
+                        value: option,
+                        groupValue: _selectedShippingOption,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedShippingOption = value;
+                          });
+                        },
+                        title: Text(option.name),
+                        subtitle:
+                            Text("RM ${(option.amount).toStringAsFixed(2)}"),
+                        secondary: const Icon(Icons.local_shipping),
+                      );
+                    }).toList(),
                   ),
                   const SizedBox(height: defaultPadding * 2),
 
@@ -223,32 +306,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   Column(
-                    children: [
-                      RadioListTile<PaymentMethod>(
-                        value: PaymentMethod.stripe,
-                        groupValue: _selectedPaymentMethod,
+                    children: _paymentProviders.map((provider) {
+                      bool isCod =
+                          provider.id.toLowerCase() == codPaymentProviderId;
+                      return RadioListTile<PaymentProvider>(
+                        value: provider,
+                        groupValue: _selectedPaymentProvider,
                         onChanged: (value) {
                           setState(() {
-                            _selectedPaymentMethod = value!;
+                            _selectedPaymentProvider = value!;
                           });
                         },
-                        title: const Text("Credit/Debit Card (Stripe)"),
-                        subtitle: const Text("Pay securely online"),
-                        secondary: const Icon(Icons.credit_card),
-                      ),
-                      RadioListTile<PaymentMethod>(
-                        value: PaymentMethod.cod,
-                        groupValue: _selectedPaymentMethod,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedPaymentMethod = value!;
-                          });
-                        },
-                        title: const Text("Cash on Delivery"),
-                        subtitle: const Text("Pay when you receive"),
-                        secondary: const Icon(Icons.money),
-                      ),
-                    ],
+                        title: Text(isCod
+                            ? "Cash on Delivery"
+                            : "Card / Online Payment"),
+                        subtitle: Text(
+                          isCod
+                              ? "Pay less with cash on delivery"
+                              : "Pay securely online",
+                          style: isCod
+                              ? const TextStyle(
+                                  color: successColor,
+                                  fontWeight: FontWeight.bold,
+                                )
+                              : null,
+                        ),
+                        secondary:
+                            Icon(isCod ? Icons.money : Icons.credit_card),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -261,7 +347,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ? null
                 : () {
                     // Handle Payment
-                    if (_selectedPaymentMethod == PaymentMethod.stripe) {
+                    if (_selectedPaymentProvider?.id
+                            .toLowerCase()
+                            .contains('stripe') ??
+                        false) {
                       // Initialize Stripe Payment
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -275,7 +364,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       );
                     }
                   },
-            child: Text("Pay RM ${_totalAmount.toStringAsFixed(2)}"),
+            child: Text("Pay RM ${(_totalAmount).toStringAsFixed(2)}"),
           ),
         ),
       ),
