@@ -99,6 +99,15 @@ class ApiService {
     }
   }
 
+  Future<bool> deleteAddress(String addressId) async {
+    try {
+      await client.delete('/store/customers/me/addresses/$addressId');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<PaymentCollection?> createPaymentCollection(String cartId) async {
     try {
       final response = await client.post(

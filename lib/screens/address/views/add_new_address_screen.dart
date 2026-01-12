@@ -36,9 +36,7 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
       _address2Controller.text = widget.address!.address2 ?? '';
       _cityController.text = widget.address!.city ?? '';
       _postalCodeController.text = widget.address!.postalCode ?? '';
-      // Assuming address_name isn't in the model yet or mapped differently,
-      // but if it was, we'd map it here. For now leaving blank or mapping if available.
-      // _addressNameController.text = widget.address!.metadata?['address_name'] ?? '';
+      _addressNameController.text = widget.address!.addressName;
       _provinceController.text = widget.address!.province ?? 'Sarawak';
     }
   }
