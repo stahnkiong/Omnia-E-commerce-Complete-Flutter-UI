@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/services/api_service.dart';
 
+import 'package:shop/models/address_model.dart';
+
 class AddNewAddressScreen extends StatefulWidget {
-  const AddNewAddressScreen({super.key});
+  final Address? address;
+  const AddNewAddressScreen({super.key, this.address});
 
   @override
   State<AddNewAddressScreen> createState() => _AddNewAddressScreenState();
@@ -13,8 +16,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
   final TextEditingController _address1Controller = TextEditingController();
@@ -26,9 +27,24 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
       TextEditingController(text: "Sarawak");
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.address != null) {
+      _phoneController.text = widget.address!.phone ?? '';
+      _companyController.text = widget.address!.company ?? '';
+      _address1Controller.text = widget.address!.address1 ?? '';
+      _address2Controller.text = widget.address!.address2 ?? '';
+      _cityController.text = widget.address!.city ?? '';
+      _postalCodeController.text = widget.address!.postalCode ?? '';
+      // Assuming address_name isn't in the model yet or mapped differently,
+      // but if it was, we'd map it here. For now leaving blank or mapping if available.
+      // _addressNameController.text = widget.address!.metadata?['address_name'] ?? '';
+      _provinceController.text = widget.address!.province ?? 'Sarawak';
+    }
+  }
+
+  @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
     _phoneController.dispose();
     _companyController.dispose();
     _address1Controller.dispose();
@@ -47,8 +63,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
       });
 
       final data = {
-        "first_name": _firstNameController.text,
-        "last_name": _lastNameController.text,
         "phone": _phoneController.text,
         "company": _companyController.text,
         "address_1": _address1Controller.text,
@@ -57,11 +71,18 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
         "country_code": "my", // Hardcoded as requested
         "province": _provinceController.text,
         "postal_code": _postalCodeController.text,
-        "address_name": _addressNameController.text,
-        "metadata": {}
+        "metadata": {
+          if (widget.address == null)
+            "address_name": _addressNameController.text,
+        }
       };
 
-      final success = await ApiService().addAddress(data);
+      bool success;
+      if (widget.address != null) {
+        success = await ApiService().updateAddress(widget.address!.id, data);
+      } else {
+        success = await ApiService().addAddress(data);
+      }
 
       setState(() {
         _isLoading = false;
@@ -85,7 +106,8 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add New Address"),
+        title:
+            Text(widget.address != null ? "Edit Address" : "Add New Address"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPadding),
@@ -93,56 +115,22 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
-                controller: _addressNameController,
-                decoration: const InputDecoration(
-                  labelText: "Address Name (e.g. Home, Office)",
-                  border: OutlineInputBorder(),
+              if (widget.address == null)
+                TextFormField(
+                  controller: _addressNameController,
+                  decoration: const InputDecoration(
+                    labelText: "Address Name (e.g. Home, Office)",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter address name';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: defaultPadding),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _firstNameController,
-                      decoration: const InputDecoration(
-                        labelText: "First Name",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: defaultPadding),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _lastNameController,
-                      decoration: const InputDecoration(
-                        labelText: "Last Name",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: defaultPadding),
+              if (widget.address == null)
+                const SizedBox(height: defaultPadding),
               TextFormField(
                 controller: _phoneController,
                 decoration: const InputDecoration(

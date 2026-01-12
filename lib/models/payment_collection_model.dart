@@ -25,11 +25,13 @@ class PaymentSession {
   final String id;
   final String providerId;
   final String status;
+  final Map<String, dynamic> data;
 
   PaymentSession({
     required this.id,
     required this.providerId,
     required this.status,
+    required this.data,
   });
 
   factory PaymentSession.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class PaymentSession {
       id: json['id'],
       providerId: json['provider_id'],
       status: json['status'],
+      data: json['data'] ?? {},
     );
   }
 }

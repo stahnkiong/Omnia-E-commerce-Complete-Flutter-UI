@@ -6,9 +6,9 @@ class AppConfig {
   static String get apiBaseUrl {
     if (isDev) {
       // Use 10.0.2.2 for Android Emulator, localhost for iOS/Web
-      return "http://10.0.2.2:9000";
+      return "http://192.168.50.50:9000";
     }
-    return "https://api.yourdomain.com";
+    return "https://api-medusa.winwinlssb.com";
   }
 
   static const int timeoutDuration = 8; // in seconds

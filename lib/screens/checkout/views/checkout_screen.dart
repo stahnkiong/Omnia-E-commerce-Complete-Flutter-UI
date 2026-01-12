@@ -9,6 +9,7 @@ import 'package:shop/models/payment_provider_model.dart';
 import 'package:shop/models/shipping_option_model.dart';
 import 'package:shop/models/payment_collection_model.dart';
 import 'package:shop/screens/address/views/add_new_address_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' hide Address;
 
 const String codPaymentProviderId = 'pp_system_default';
 
@@ -163,7 +164,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         throw Exception("Failed to initiate payment session");
       }
 
-      // 3. Complete Cart
+      // 3. Handle Stripe Payment
+      if (_selectedPaymentProvider!.id == 'pp_stripe_stripe') {
+        // Find the Stripe payment session
+        final stripeSession = paymentCollection.paymentSessions.firstWhere(
+          (session) => session.providerId == 'pp_stripe_stripe',
+          orElse: () => throw Exception("Stripe session not found"),
+        );
+
+        final clientSecret = stripeSession.data['client_secret'];
+        if (clientSecret == null) {
+          throw Exception("Client secret not found");
+        }
+
+        // Initialize Payment Sheet
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: clientSecret,
+            merchantDisplayName: 'PasarNow',
+          ),
+        );
+
+        // Present Payment Sheet
+        await Stripe.instance.presentPaymentSheet();
+      }
+
+      // 4. Complete Cart
       final completionResult = await api.completeCart(_cart!.id);
 
       if (completionResult != null && completionResult['type'] == 'order') {
@@ -178,6 +204,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
       } else {
         throw Exception("Failed to complete order");
+      }
+    } on StripeException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Payment cancelled or failed: ${e.error.localizedMessage}")),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -324,29 +358,54 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        DropdownButtonFormField<Address>(
-                          initialValue: _selectedAddress,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: defaultPadding,
-                                vertical: defaultPadding),
-                          ),
-                          isExpanded: true,
-                          items: _addresses.map((address) {
-                            return DropdownMenuItem(
-                              value: address,
-                              child: Text(
-                                "${address.addressName} - ${address.address1}, ${address.city}",
-                                overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<Address>(
+                                initialValue: _selectedAddress,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: defaultPadding,
+                                      vertical: defaultPadding),
+                                ),
+                                isExpanded: true,
+                                items: _addresses.map((address) {
+                                  return DropdownMenuItem(
+                                    value: address,
+                                    child: Text(
+                                      "${address.address1}, ${address.city}",
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedAddress = value;
+                                  });
+                                },
                               ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedAddress = value;
-                            });
-                          },
+                            ),
+                            const SizedBox(width: defaultPadding),
+                            IconButton(
+                              onPressed: () async {
+                                if (_selectedAddress != null) {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddNewAddressScreen(
+                                          address: _selectedAddress),
+                                    ),
+                                  );
+                                  if (result == true) {
+                                    _fetchAddresses();
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.edit),
+                              tooltip: "Edit Address",
+                            ),
+                          ],
                         ),
                         TextButton.icon(
                           onPressed: () async {
@@ -379,10 +438,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       return RadioListTile<ShippingOption>(
                         value: option,
                         groupValue: _selectedShippingOption,
-                        onChanged: (value) {
+                        onChanged: (value) async {
                           setState(() {
                             _selectedShippingOption = value;
                           });
+                          if (value != null && _cart != null) {
+                            await ApiService()
+                                .addShippingMethod(_cart!.id, value.id);
+                            _fetchCart(); // Refresh cart to get updated totals
+                          }
                         },
                         title: Text(option.name),
                         subtitle:

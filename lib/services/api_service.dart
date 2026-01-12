@@ -62,10 +62,35 @@ class ApiService {
     }
   }
 
+  Future<bool> addShippingMethod(String cartId, String optionId) async {
+    try {
+      await client.post(
+        '/store/carts/$cartId/shipping-methods',
+        data: {'option_id': optionId},
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> addAddress(Map<String, dynamic> data) async {
     try {
       await client.post(
         '/store/customers/me/addresses',
+        data: data,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> updateAddress(
+      String addressId, Map<String, dynamic> data) async {
+    try {
+      await client.post(
+        '/store/customers/me/addresses/$addressId',
         data: data,
       );
       return true;
