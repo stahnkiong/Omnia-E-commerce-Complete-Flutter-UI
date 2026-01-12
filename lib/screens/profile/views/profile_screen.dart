@@ -30,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
                     : "Guest",
                 email: customer?['email'] ?? "No Email",
                 imageSrc:
-                    "https://t3.ftcdn.net/jpg/03/95/29/76/360_F_395297652_J7Bo5IVAkYo1LFzPjEhldbOPNstxYx4i.jpg",
+                    "https://images.unsplash.com/vector-1740296178042-868e47a99833?q=80&w=240&auto=format&fit=crop",
                 press: () {
                   Navigator.pushNamed(context, userInfoScreenRoute);
                 },

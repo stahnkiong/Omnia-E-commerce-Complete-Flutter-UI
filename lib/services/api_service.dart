@@ -144,13 +144,23 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>?> updateCart(
+      String cartId, Map<String, dynamic> data) async {
+    try {
+      final response = await client.post(
+        '/store/carts/$cartId',
+        data: data,
+      );
+      return response.data['cart'];
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<List<OrderModel>> getOrders() async {
     try {
       final response = await client.get(
-        '/store/customers/me/orders',
-        queryParameters: {
-          'expand': 'items,fulfillments,shipping_address',
-        },
+        '/store/orders',
       );
       final List<dynamic> ordersData = response.data['orders'] ?? [];
       return ordersData.map((json) => OrderModel.fromJson(json)).toList();

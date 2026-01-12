@@ -94,4 +94,24 @@ class CartService {
       throw Exception('Failed to delete line item: $e');
     }
   }
+
+  Future<Map<String, dynamic>?> completeCart() async {
+    try {
+      final cartId = await getOrCreateCartId();
+      final result = await _api.completeCart(cartId);
+      if (result != null && result['type'] == 'order') {
+        await clearCartId();
+      }
+      return result;
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error completing cart: $e');
+      return null;
+    }
+  }
+
+  Future<void> clearCartId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cartIdKey);
+  }
 }

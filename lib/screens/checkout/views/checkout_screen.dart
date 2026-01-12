@@ -93,9 +93,49 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
         _isLoadingAddresses = false;
       });
+
+      if (_selectedAddress != null) {
+        await _updateCartAddress(_selectedAddress!);
+      }
     } catch (e) {
       setState(() {
         _isLoadingAddresses = false;
+      });
+    }
+  }
+
+  Future<void> _updateCartAddress(Address address) async {
+    if (_cart == null) return;
+
+    setState(() {
+      _isLoadingCart = true;
+    });
+
+    try {
+      final addressData = {
+        'shipping_address': {
+          'first_name': address.firstName ?? '',
+          'last_name': address.lastName ?? '',
+          'address_1': address.address1 ?? '',
+          'address_2': address.address2 ?? '',
+          'city': address.city ?? '',
+          'country_code': address.countryCode ?? 'my',
+          'postal_code': address.postalCode ?? '',
+          'province': address.province ?? '',
+          'phone': address.phone ?? '',
+          'company': address.company ?? '',
+        }
+      };
+
+      await ApiService().updateCart(_cart!.id, addressData);
+
+      // Refresh cart and shipping options
+      await _fetchCart();
+      await _fetchShippingOptions(_cart!.id);
+    } catch (e) {
+      debugPrint("Error updating cart address: $e");
+      setState(() {
+        _isLoadingCart = false;
       });
     }
   }
@@ -190,7 +230,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       // 4. Complete Cart
-      final completionResult = await api.completeCart(_cart!.id);
+      final completionResult = await CartService().completeCart();
 
       if (completionResult != null && completionResult['type'] == 'order') {
         // Success
@@ -198,7 +238,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Order placed successfully!")),
           );
-          // Clear cart locally (optional, but good practice)
           // Navigate to success screen or home
           Navigator.pop(context);
         }
@@ -383,6 +422,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   setState(() {
                                     _selectedAddress = value;
                                   });
+                                  if (value != null) {
+                                    _updateCartAddress(value);
+                                  }
                                 },
                               ),
                             ),

@@ -293,7 +293,7 @@ class _UsageProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${(product.price / 100).toStringAsFixed(2)}',
+                        '\$${(product.price).toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

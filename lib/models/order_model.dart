@@ -3,7 +3,7 @@ import 'package:shop/models/address_model.dart';
 
 class OrderModel {
   final String id;
-  final int displayId;
+  final String displayId;
   final String status;
   final String fulfillmentStatus;
   final String paymentStatus;
@@ -31,12 +31,11 @@ class OrderModel {
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
       id: json['id'],
-      displayId: json['display_id'],
+      displayId: json['display_id']?.toString() ?? json['id'],
       status: json['status'],
       fulfillmentStatus: json['fulfillment_status'],
       paymentStatus: json['payment_status'],
-      total: (json['total'] as num).toDouble() /
-          100, // Medusa amounts are in cents
+      total: (json['total'] as num).toDouble(), // Medusa amounts are in cents
       currencyCode: json['currency_code'].toString().toUpperCase(),
       createdAt: DateTime.parse(json['created_at']),
       items: (json['items'] as List)
@@ -80,7 +79,7 @@ class LineItemModel {
       title: json['title'],
       thumbnail: thumb,
       quantity: json['quantity'],
-      unitPrice: (json['unit_price'] as num).toDouble() / 100,
+      unitPrice: (json['unit_price'] as num).toDouble(),
     );
   }
 }
