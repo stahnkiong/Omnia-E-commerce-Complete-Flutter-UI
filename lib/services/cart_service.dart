@@ -114,4 +114,26 @@ class CartService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_cartIdKey);
   }
+
+  Future<void> validateCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartId = prefs.getString(_cartIdKey);
+
+    if (cartId != null) {
+      try {
+        final response = await _api.client.get('/store/carts/$cartId');
+        if (response.data != null && response.data['cart'] != null) {
+          final cart = response.data['cart'];
+          if (cart['completed_at'] != null) {
+            await clearCartId();
+          }
+        }
+      } catch (e) {
+        // ignore: avoid_print
+        print('Error validating cart: $e');
+        // Optional: if 404, maybe clear cart?
+        // For now, sticking to user requirement of checking completed_at.
+      }
+    }
+  }
 }

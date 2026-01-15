@@ -4,6 +4,9 @@ class CartModel {
   final String id;
   final double total;
   final double subtotal;
+  final double shippingTotal;
+  final double taxTotal;
+  final double discountTotal;
   final List<CartItemModel> items;
   final PaymentCollection? paymentCollection;
 
@@ -11,6 +14,9 @@ class CartModel {
     required this.id,
     required this.total,
     required this.subtotal,
+    required this.shippingTotal,
+    required this.taxTotal,
+    required this.discountTotal,
     required this.items,
     this.paymentCollection,
   });
@@ -20,6 +26,9 @@ class CartModel {
       id: json['id'],
       total: (json['total'] as num).toDouble(),
       subtotal: (json['subtotal'] as num).toDouble(),
+      shippingTotal: (json['shipping_total'] as num?)?.toDouble() ?? 0.0,
+      taxTotal: (json['tax_total'] as num?)?.toDouble() ?? 0.0,
+      discountTotal: (json['discount_total'] as num?)?.toDouble() ?? 0.0,
       items: (json['items'] as List)
           .map((item) => CartItemModel.fromJson(item))
           .toList(),

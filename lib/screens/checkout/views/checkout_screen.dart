@@ -10,6 +10,8 @@ import 'package:shop/models/shipping_option_model.dart';
 import 'package:shop/models/payment_collection_model.dart';
 import 'package:shop/screens/address/views/add_new_address_screen.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' hide Address;
+import 'package:provider/provider.dart';
+import 'package:shop/providers/auth_provider.dart';
 
 const String codPaymentProviderId = 'pp_system_default';
 
@@ -41,6 +43,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _fetchData() async {
     await _fetchCart();
+
+    // Update email if available
+    if (mounted) {
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.customer != null && _cart != null) {
+        final email = authProvider.customer!['email'];
+        if (email != null) {
+          await ApiService().updateCart(_cart!.id, {'email': email});
+        }
+      }
+    }
+
     await Future.wait([
       _fetchAddresses(),
       _fetchPaymentProviders(),
@@ -58,6 +72,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
         _isLoadingShippingOptions = false;
       });
+
+      // Select first option by default if available
+      if (_selectedShippingOption != null && _cart != null) {
+        await ApiService()
+            .addShippingMethod(_cart!.id, _selectedShippingOption!.id);
+        await _fetchCart();
+      }
     } catch (e) {
       setState(() {
         _isLoadingShippingOptions = false;
@@ -114,7 +135,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       final addressData = {
         'shipping_address': {
-          'first_name': address.firstName ?? '',
+          'first_name': address.firstName ?? 'user',
           'last_name': address.lastName ?? '',
           'address_1': address.address1 ?? '',
           'address_2': address.address2 ?? '',
@@ -157,20 +178,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   double get _totalAmount {
     if (_cart == null) return 0.0;
 
-    double cartTotal = _cart!.total;
+    double total = _cart!.total;
 
-    // Apply COD discount to the cart total (items)
+    // Apply COD discount to the subtotal (items) only
     if (_selectedPaymentProvider?.id.toLowerCase() ==
         codPaymentProviderId.toLowerCase()) {
-      cartTotal = cartTotal / 1.05;
+      // Discount = Subtotal - (Subtotal / 1.05)
+      double discount = _cart!.subtotal - (_cart!.subtotal / 1.05);
+      total -= discount;
     }
 
-    // Add shipping cost
-    if (_selectedShippingOption != null) {
-      cartTotal += _selectedShippingOption!.amount;
-    }
-
-    return cartTotal;
+    return total;
   }
 
   bool _isProcessing = false;
@@ -184,6 +202,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     try {
       final api = ApiService();
+
+      // 0. Ensure shipping method is set (just in case)
+      if (_selectedShippingOption != null) {
+        await api.addShippingMethod(_cart!.id, _selectedShippingOption!.id);
+        // Refresh cart to ensure totals are 100% accurate before payment
+        final updatedCart = await CartService().fetchCart();
+        if (updatedCart != null) {
+          setState(() {
+            _cart = updatedCart;
+          });
+        }
+      }
+
       PaymentCollection? paymentCollection = _cart!.paymentCollection;
 
       // 1. Create Payment Collection if not exists
@@ -308,13 +339,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ],
                         ),
                         const SizedBox(height: defaultPadding / 2),
-                        if (_selectedShippingOption != null)
+                        if (_cart!.shippingTotal > 0)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Shipping"),
+                              Text(
+                                  "RM ${(_cart!.shippingTotal).toStringAsFixed(2)}"),
+                            ],
+                          )
+                        else if (_selectedShippingOption != null)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text("Shipping"),
                               Text(
                                   "RM ${(_selectedShippingOption!.amount).toStringAsFixed(2)}"),
+                            ],
+                          ),
+                        const SizedBox(height: defaultPadding / 2),
+                        if (_cart!.taxTotal > 0)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Tax"),
+                              Text(
+                                  "RM ${(_cart!.taxTotal).toStringAsFixed(2)}"),
                             ],
                           ),
                         const SizedBox(height: defaultPadding / 2),
@@ -326,7 +376,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               const Text("Discount",
                                   style: TextStyle(color: successColor)),
                               Text(
-                                  "- RM ${((_cart!.total - (_cart!.total / 1.05))).toStringAsFixed(2)}",
+                                  "- RM ${(_cart!.subtotal - (_cart!.subtotal / 1.05)).toStringAsFixed(2)}",
                                   style: const TextStyle(color: successColor)),
                             ],
                           ),
@@ -483,11 +533,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         onChanged: (value) async {
                           setState(() {
                             _selectedShippingOption = value;
+                            _isLoadingCart =
+                                true; // Show loading while updating
                           });
                           if (value != null && _cart != null) {
                             await ApiService()
                                 .addShippingMethod(_cart!.id, value.id);
-                            _fetchCart(); // Refresh cart to get updated totals
+                            await _fetchCart(); // Refresh cart to get updated totals
                           }
                         },
                         title: Text(option.name),

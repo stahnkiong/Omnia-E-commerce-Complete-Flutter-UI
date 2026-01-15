@@ -7,6 +7,8 @@ import 'package:shop/route/router.dart' as router;
 import 'package:shop/theme/app_theme.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
+import 'package:shop/services/cart_service.dart';
+
 void main() {
   Stripe.publishableKey =
       'pk_test_51SnE0nHVeaSTBf7hNyFNTAy1pPL12sXYAFbnBRp8VYdHPlzdIQqxMflRyefGQWCzVKp2BSPp6fXt87yGVSHtEcrt00tvxjkD03';
@@ -40,7 +42,10 @@ class MyApp extends StatelessWidget {
     final authProvider = context.read<AuthProvider>();
 
     return FutureBuilder(
-      future: authProvider.initialize(), // Run the check here
+      future: Future.wait([
+        authProvider.initialize(),
+        CartService().validateCart(),
+      ]), // Run the check here
       builder: (context, snapshot) {
         final authStatus = Provider.of<AuthProvider>(context);
         if (snapshot.connectionState == ConnectionState.waiting) {
