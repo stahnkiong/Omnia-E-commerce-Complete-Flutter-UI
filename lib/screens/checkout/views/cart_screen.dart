@@ -207,20 +207,9 @@ class _CartScreenState extends State<CartScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text("Subtotal"),
+                                const Text("Items Total"),
                                 Text(
                                   "RM ${_cart!.subtotal.toStringAsFixed(2)}",
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: defaultPadding),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text("Total"),
-                                Text(
-                                  "RM ${_cart!.total.toStringAsFixed(2)}",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium!

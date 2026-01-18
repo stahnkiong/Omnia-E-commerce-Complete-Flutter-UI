@@ -25,6 +25,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Future<void> _fetchOrders() async {
     try {
       final orders = await _apiService.getOrders();
+      // Sort by created date (latest first)
+      orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
       setState(() {
         _orders = orders;
         _isLoading = false;
@@ -149,7 +152,7 @@ class OrderCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color),
       ),

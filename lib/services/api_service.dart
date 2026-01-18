@@ -168,4 +168,30 @@ class ApiService {
       return [];
     }
   }
+
+  Future<Map<String, dynamic>?> addPromotion(
+      String cartId, List<String> promoCodes) async {
+    try {
+      final response = await client.post(
+        '/store/carts/$cartId/promotions',
+        data: {'promo_codes': promoCodes},
+      );
+      return response.data['cart'];
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> removePromotion(
+      String cartId, List<String> promoCodes) async {
+    try {
+      final response = await client.delete(
+        '/store/carts/$cartId/promotions',
+        data: {'promo_codes': promoCodes},
+      );
+      return response.data['cart'];
+    } catch (e) {
+      return null;
+    }
+  }
 }

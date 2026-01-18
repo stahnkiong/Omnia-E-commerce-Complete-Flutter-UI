@@ -25,7 +25,7 @@ class CartModel {
     return CartModel(
       id: json['id'],
       total: (json['total'] as num).toDouble(),
-      subtotal: (json['subtotal'] as num).toDouble(),
+      subtotal: (json['item_subtotal'] as num).toDouble(),
       shippingTotal: (json['shipping_total'] as num?)?.toDouble() ?? 0.0,
       taxTotal: (json['tax_total'] as num?)?.toDouble() ?? 0.0,
       discountTotal: (json['discount_total'] as num?)?.toDouble() ?? 0.0,

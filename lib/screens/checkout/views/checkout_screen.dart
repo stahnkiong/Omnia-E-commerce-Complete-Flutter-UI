@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/models/address_model.dart';
+import 'package:shop/route/route_constants.dart';
 import 'package:shop/services/api_service.dart';
 import 'package:shop/services/cart_service.dart';
 import 'package:shop/models/cart_model.dart';
@@ -44,6 +45,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _fetchData() async {
     await _fetchCart();
 
+    // Remove COD promotion if exists to reset state
+    if (_cart != null) {
+      await ApiService().removePromotion(_cart!.id, ['COD_OFFER_8996']);
+      // Refresh cart to reflect changes
+      await _fetchCart();
+    }
+
     // Update email if available
     if (mounted) {
       final authProvider = context.read<AuthProvider>();
@@ -65,6 +73,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _fetchShippingOptions(String cartId) async {
     try {
       final options = await ApiService().getShippingOptions(cartId);
+      // Sort by amount (smaller first)
+      options.sort((a, b) => a.amount.compareTo(b.amount));
+
       setState(() {
         _shippingOptions = options;
         if (_shippingOptions.isNotEmpty) {
@@ -91,9 +102,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final providersData = await ApiService().getPaymentProviders();
       setState(() {
         _paymentProviders = providersData;
-        if (_paymentProviders.isNotEmpty) {
-          _selectedPaymentProvider = _paymentProviders.first;
-        }
+        _selectedPaymentProvider = null; // Ensure unselected
         _isLoadingPaymentProviders = false;
       });
     } catch (e) {
@@ -177,21 +186,42 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   double get _totalAmount {
     if (_cart == null) return 0.0;
-
-    double total = _cart!.total;
-
-    // Apply COD discount to the subtotal (items) only
-    if (_selectedPaymentProvider?.id.toLowerCase() ==
-        codPaymentProviderId.toLowerCase()) {
-      // Discount = Subtotal - (Subtotal / 1.05)
-      double discount = _cart!.subtotal - (_cart!.subtotal / 1.05);
-      total -= discount;
-    }
-
-    return total;
+    return _cart!.total;
   }
 
   bool _isProcessing = false;
+
+  Future<void> _handlePaymentProviderChange(PaymentProvider? value) async {
+    if (value == null || _cart == null) return;
+
+    setState(() {
+      _selectedPaymentProvider = value;
+      _isLoadingCart = true;
+    });
+
+    try {
+      Map<String, dynamic>? updatedCartData;
+      if (value.id.toLowerCase() == codPaymentProviderId.toLowerCase()) {
+        updatedCartData =
+            await ApiService().addPromotion(_cart!.id, ['COD_OFFER_8996']);
+      } else {
+        updatedCartData =
+            await ApiService().removePromotion(_cart!.id, ['COD_OFFER_8996']);
+      }
+
+      if (updatedCartData != null) {
+        setState(() {
+          _cart = CartModel.fromJson(updatedCartData!);
+        });
+      }
+    } catch (e) {
+      debugPrint("Error updating promotion: $e");
+    } finally {
+      setState(() {
+        _isLoadingCart = false;
+      });
+    }
+  }
 
   Future<void> _handlePayment() async {
     if (_cart == null || _selectedPaymentProvider == null) return;
@@ -269,8 +299,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Order placed successfully!")),
           );
-          // Navigate to success screen or home
-          Navigator.pop(context);
+          // Navigate to order history
+          Navigator.popAndPushNamed(context, ordersScreenRoute);
         }
       } else {
         throw Exception("Failed to complete order");
@@ -310,7 +340,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _isLoadingShippingOptions
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(defaultPadding),
+              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -319,9 +349,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   // Order Summary Section
                   Text(
                     "Order Summary",
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const SizedBox(height: defaultPadding / 2),
+                  const SizedBox(height: defaultPadding / 4),
                   Container(
                     padding: const EdgeInsets.all(defaultPadding),
                     decoration: BoxDecoration(
@@ -334,50 +364,73 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text("Subtotal"),
-                            Text("RM ${(_cart!.subtotal).toStringAsFixed(2)}"),
+                            Text(
+                              "Subtotal",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            Text(
+                              "RM ${(_cart!.subtotal).toStringAsFixed(2)}",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ],
                         ),
-                        const SizedBox(height: defaultPadding / 2),
+                        const SizedBox(height: defaultPadding / 4),
                         if (_cart!.shippingTotal > 0)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Shipping"),
                               Text(
-                                  "RM ${(_cart!.shippingTotal).toStringAsFixed(2)}"),
+                                "Shipping",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              Text(
+                                "RM ${(_cart!.shippingTotal).toStringAsFixed(2)}",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             ],
                           )
                         else if (_selectedShippingOption != null)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Shipping"),
                               Text(
-                                  "RM ${(_selectedShippingOption!.amount).toStringAsFixed(2)}"),
+                                "Shipping",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              Text(
+                                "RM ${(_selectedShippingOption!.amount).toStringAsFixed(2)}",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             ],
                           ),
-                        const SizedBox(height: defaultPadding / 2),
+                        const SizedBox(height: defaultPadding / 4),
                         if (_cart!.taxTotal > 0)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Tax"),
                               Text(
-                                  "RM ${(_cart!.taxTotal).toStringAsFixed(2)}"),
+                                "Tax",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              Text(
+                                "RM ${(_cart!.taxTotal).toStringAsFixed(2)}",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             ],
                           ),
-                        const SizedBox(height: defaultPadding / 2),
-                        if (_selectedPaymentProvider?.id.toLowerCase() ==
-                            codPaymentProviderId.toLowerCase())
+                        const SizedBox(height: defaultPadding / 4),
+                        if (_cart!.discountTotal > 0)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Discount",
-                                  style: TextStyle(color: successColor)),
                               Text(
-                                  "- RM ${(_cart!.subtotal - (_cart!.subtotal / 1.05)).toStringAsFixed(2)}",
-                                  style: const TextStyle(color: successColor)),
+                                "Discount",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              Text(
+                                "- RM ${(_cart!.discountTotal).toStringAsFixed(2)}",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
                             ],
                           ),
                         const Divider(),
@@ -388,14 +441,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               "Total",
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium!
+                                  .titleSmall!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               "RM ${(_totalAmount).toStringAsFixed(2)}",
                               style: Theme.of(context)
                                   .textTheme
-                                  .titleMedium!
+                                  .titleSmall!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -403,12 +456,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: defaultPadding * 2),
+                  const SizedBox(height: defaultPadding),
                   Text(
                     "Delivery Address",
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const SizedBox(height: defaultPadding / 2),
+                  const SizedBox(height: defaultPadding / 4),
                   if (_addresses.isEmpty)
                     Container(
                       padding: const EdgeInsets.all(defaultPadding),
@@ -422,8 +475,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         children: [
                           const Icon(Icons.location_off_outlined),
                           const SizedBox(width: defaultPadding),
-                          const Expanded(
-                            child: Text("No address found. Please add one."),
+                          Expanded(
+                            child: Text(
+                              "No address found. Please add one.",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                           TextButton(
                             onPressed: () async {
@@ -438,7 +494,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 _fetchAddresses();
                               }
                             },
-                            child: const Text("Add"),
+                            child: Text(
+                              "Add",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                         ],
                       ),
@@ -465,6 +524,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     child: Text(
                                       "${address.address1}, ${address.city}",
                                       overflow: TextOverflow.ellipsis,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
                                     ),
                                   );
                                 }).toList(),
@@ -513,80 +574,93 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             }
                           },
                           icon: const Icon(Icons.add),
-                          label: const Text("Add New Address"),
+                          label: Text(
+                            "Add New Address",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
                       ],
                     ),
-                  const SizedBox(height: defaultPadding * 2),
+                  const SizedBox(height: defaultPadding),
 
                   // Shipping Method Section
                   Text(
                     "Shipping Method",
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const SizedBox(height: defaultPadding / 2),
-                  Column(
-                    children: _shippingOptions.map((option) {
-                      return RadioListTile<ShippingOption>(
-                        value: option,
-                        groupValue: _selectedShippingOption,
-                        onChanged: (value) async {
-                          setState(() {
-                            _selectedShippingOption = value;
-                            _isLoadingCart =
-                                true; // Show loading while updating
-                          });
-                          if (value != null && _cart != null) {
-                            await ApiService()
-                                .addShippingMethod(_cart!.id, value.id);
-                            await _fetchCart(); // Refresh cart to get updated totals
-                          }
-                        },
-                        title: Text(option.name),
-                        subtitle:
-                            Text("RM ${(option.amount).toStringAsFixed(2)}"),
-                        secondary: const Icon(Icons.local_shipping),
-                      );
-                    }).toList(),
+                  const SizedBox(height: defaultPadding / 4),
+                  RadioGroup<ShippingOption>(
+                    groupValue: _selectedShippingOption,
+                    onChanged: (value) async {
+                      setState(() {
+                        _selectedShippingOption = value;
+                        _isLoadingCart = true; // Show loading while updating
+                      });
+                      if (value != null && _cart != null) {
+                        await ApiService()
+                            .addShippingMethod(_cart!.id, value.id);
+                        await _fetchCart(); // Refresh cart to get updated totals
+                      }
+                    },
+                    child: Column(
+                      children: _shippingOptions.map((option) {
+                        return RadioListTile<ShippingOption>(
+                          contentPadding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                          dense: true,
+                          value: option,
+                          title: Text(option.name,
+                              style: Theme.of(context).textTheme.bodySmall),
+                          subtitle: Text(
+                              "RM ${(option.amount).toStringAsFixed(2)}",
+                              style: Theme.of(context).textTheme.bodySmall),
+                          secondary: const Icon(Icons.local_shipping),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  const SizedBox(height: defaultPadding * 2),
+                  const SizedBox(height: defaultPadding),
 
                   // Payment Method Section
                   Text(
                     "Payment Method",
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const SizedBox(height: defaultPadding / 2),
-                  Column(
-                    children: _paymentProviders.map((provider) {
-                      bool isCod =
-                          provider.id.toLowerCase() == codPaymentProviderId;
-                      return RadioListTile<PaymentProvider>(
-                        value: provider,
-                        groupValue: _selectedPaymentProvider,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedPaymentProvider = value!;
-                          });
-                        },
-                        title: Text(isCod
-                            ? "Cash on Delivery"
-                            : "Card / Online Payment"),
-                        subtitle: Text(
-                          isCod
-                              ? "Pay less with cash on delivery"
-                              : "Pay securely online",
-                          style: isCod
-                              ? const TextStyle(
-                                  color: successColor,
-                                  fontWeight: FontWeight.bold,
-                                )
-                              : null,
-                        ),
-                        secondary:
-                            Icon(isCod ? Icons.money : Icons.credit_card),
-                      );
-                    }).toList(),
+                  const SizedBox(height: defaultPadding / 4),
+                  RadioGroup<PaymentProvider>(
+                    groupValue: _selectedPaymentProvider,
+                    onChanged: _handlePaymentProviderChange,
+                    child: Column(
+                      children: _paymentProviders.map((provider) {
+                        bool isCod =
+                            provider.id.toLowerCase() == codPaymentProviderId;
+                        return RadioListTile<PaymentProvider>(
+                          contentPadding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                          dense: true,
+                          value: provider,
+                          title: Text(
+                            isCod
+                                ? "Cash on Delivery"
+                                : "Card / Online Payment",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          subtitle: Text(
+                            isCod
+                                ? "Pay less with cash on delivery"
+                                : "Pay securely online",
+                            style: isCod
+                                ? const TextStyle(
+                                    color: successColor,
+                                    fontWeight: FontWeight.bold,
+                                  )
+                                : Theme.of(context).textTheme.bodySmall,
+                          ),
+                          secondary:
+                              Icon(isCod ? Icons.money : Icons.credit_card),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -595,7 +669,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: ElevatedButton(
-            onPressed: (_cart == null || _addresses.isEmpty || _isProcessing)
+            onPressed: (_cart == null ||
+                    _addresses.isEmpty ||
+                    _isProcessing ||
+                    _selectedPaymentProvider == null ||
+                    _selectedShippingOption == null)
                 ? null
                 : _handlePayment,
             child: _isProcessing

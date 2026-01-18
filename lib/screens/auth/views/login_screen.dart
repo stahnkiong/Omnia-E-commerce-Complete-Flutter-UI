@@ -88,12 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text("Log in")),
                   const SizedBox(height: defaultPadding),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, entryPointScreenRoute);
-                    },
-                    child: const Text("Demo"),
-                  ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
