@@ -24,6 +24,14 @@ class ApiService {
           options.headers['x-publishable-api-key'] = AppConfig.publishableKey;
           return handler.next(options);
         },
+        onError: (DioException e, handler) async {
+          if (e.response?.statusCode == 401) {
+            // Clear token and redirect to login if session expires
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove('auth_token');
+          }
+          return handler.next(e);
+        },
       ),
     );
   }

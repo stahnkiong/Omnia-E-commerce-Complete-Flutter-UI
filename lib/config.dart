@@ -1,14 +1,19 @@
 class AppConfig {
   static const String appName = "Omnia Foods";
 
-  static const bool isDev = true; // Toggle this for Dev/Prod
+  static const bool isDev = false; // Toggle this for Dev/Prod
 
   static String get apiBaseUrl {
-    if (isDev) {
-      // Use 10.0.2.2 for Android Emulator, localhost for iOS/Web
-      return "http://192.168.50.50:9000";
-    }
-    return "https://api-medusa.winwinlssb.com";
+    return isDev
+        ? "http://192.168.50.50:9000"
+        : "https://api-medusa.winwinlssb.com";
+  }
+
+  // ADD THIS: This ensures your Flutter app looks for images on the masked domain
+  static String get imageBaseUrl {
+    return isDev
+        ? "http://192.168.50.50:9000/static"
+        : "https://omnia.winwinlssb.com/static";
   }
 
   static const int timeoutDuration = 8; // in seconds
