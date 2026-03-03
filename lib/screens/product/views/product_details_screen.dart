@@ -82,13 +82,12 @@ class ProductDetailsScreen extends StatelessWidget {
                       : [product.image],
                 ),
                 ProductInfo(
+                  productId: product.id,
                   brand: product.brandName,
                   title: product.title,
                   isAvailable: isProductAvailable,
                   description:
                       product.description.isNotEmpty ? product.description : "",
-                  rating: 5.0,
-                  numOfReviews: 1,
                 ),
                 ProductListTile(
                   svgSrc: "assets/icons/Product.svg",
@@ -140,14 +139,14 @@ class ProductDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                ProductListTile(
-                  svgSrc: "assets/icons/Chat.svg",
-                  title: "Reviews Under Development",
-                  isShowBottomBorder: true,
-                  press: () {
-                    Navigator.pushNamed(context, productReviewsScreenRoute);
-                  },
-                ),
+                // ProductListTile(
+                //   svgSrc: "assets/icons/Chat.svg",
+                //   title: "Reviews Under Development",
+                //   isShowBottomBorder: true,
+                //   press: () {
+                //     Navigator.pushNamed(context, productReviewsScreenRoute);
+                //   },
+                // ),
                 const SliverToBoxAdapter(child: FlashSale()),
                 SliverPadding(
                   padding: const EdgeInsets.all(defaultPadding),
@@ -169,6 +168,7 @@ class ProductDetailsScreen extends StatelessWidget {
                             left: defaultPadding,
                             right: index == 4 ? defaultPadding : 0),
                         child: ProductCard(
+                          productId: "demo_related_$index",
                           image: productDemoImg7,
                           title: "Pizza Pepperoni 320g",
                           brandName: "Ristorante",

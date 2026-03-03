@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:provider/provider.dart';
+import 'package:shop/providers/wishlist_provider.dart';
 
 import '../../../../constants.dart';
 import 'product_availability_tag.dart';
@@ -7,17 +9,14 @@ import 'product_availability_tag.dart';
 class ProductInfo extends StatelessWidget {
   const ProductInfo({
     super.key,
+    required this.productId,
     required this.title,
     required this.brand,
     required this.description,
-    required this.rating,
-    required this.numOfReviews,
     required this.isAvailable,
   });
 
-  final String title, brand, description;
-  final double rating;
-  final int numOfReviews;
+  final String productId, title, brand, description;
   final bool isAvailable;
 
   @override
@@ -43,13 +42,23 @@ class ProductInfo extends StatelessWidget {
               children: [
                 ProductAvailabilityTag(isAvailable: isAvailable),
                 const Spacer(),
-                SvgPicture.asset("assets/icons/Star_filled.svg"),
-                const SizedBox(width: defaultPadding / 4),
-                Text(
-                  "$rating ",
-                  style: Theme.of(context).textTheme.bodyLarge,
+                Consumer<WishlistProvider>(
+                  builder: (context, wishlistProvider, child) {
+                    final isWishlisted =
+                        wishlistProvider.isWishlisted(productId);
+                    return IconButton(
+                      icon: Icon(
+                        isWishlisted ? Icons.favorite : Icons.favorite_border,
+                        color: isWishlisted
+                            ? errorColor
+                            : Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: () {
+                        wishlistProvider.toggleWishlist(productId);
+                      },
+                    );
+                  },
                 ),
-                Text("($numOfReviews Reviews)")
               ],
             ),
             const SizedBox(height: defaultPadding),

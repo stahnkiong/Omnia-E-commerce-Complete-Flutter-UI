@@ -77,6 +77,7 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                             return ProductCard(
+                              productId: products[index].id,
                               image: products[index].image,
                               brandName: products[index].brandName,
                               title: products[index].title,

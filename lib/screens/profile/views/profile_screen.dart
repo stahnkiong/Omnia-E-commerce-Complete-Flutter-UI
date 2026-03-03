@@ -59,7 +59,14 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: defaultPadding / 2),
           ProfileMenuListTile(
-            text: "Orders",
+            text: "Current Orders",
+            svgSrc: "assets/icons/Order.svg",
+            press: () {
+              Navigator.pushNamed(context, currentOrdersScreenRoute);
+            },
+          ),
+          ProfileMenuListTile(
+            text: "Past Orders",
             svgSrc: "assets/icons/Order.svg",
             press: () {
               Navigator.pushNamed(context, ordersScreenRoute);
@@ -170,6 +177,11 @@ class ProfileScreen extends StatelessWidget {
               await authProvider.logout();
 
               if (!context.mounted) return;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                onbordingScreenRoute,
+                (route) => false,
+              );
               Navigator.pushNamed(context, logInScreenRoute);
             },
             minLeadingWidth: 24,

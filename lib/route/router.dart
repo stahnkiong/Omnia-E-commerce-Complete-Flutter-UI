@@ -366,6 +366,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const OrderHistoryScreen(),
       );
+    case currentOrdersScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const CurrentOrdersScreen(),
+      );
     default:
       return MaterialPageRoute(
         // Make a screen for undefine

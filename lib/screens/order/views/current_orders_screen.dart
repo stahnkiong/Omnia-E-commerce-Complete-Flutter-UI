@@ -4,14 +4,14 @@ import 'package:shop/models/order_model.dart';
 import 'package:shop/services/api_service.dart';
 import 'package:shop/screens/order/views/order_detail_screen.dart';
 
-class OrderHistoryScreen extends StatefulWidget {
-  const OrderHistoryScreen({super.key});
+class CurrentOrdersScreen extends StatefulWidget {
+  const CurrentOrdersScreen({super.key});
 
   @override
-  State<OrderHistoryScreen> createState() => _OrderHistoryScreenState();
+  State<CurrentOrdersScreen> createState() => _CurrentOrdersScreenState();
 }
 
-class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
+class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
   final ApiService _apiService = ApiService();
   List<OrderModel> _orders = [];
   bool _isLoading = true;
@@ -24,7 +24,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Future<void> _fetchOrders() async {
     try {
-      final orders = await _apiService.getOrders(status: 'completed');
+      final orders = await _apiService.getOrders(status: 'pending');
       // Sort by created date (latest first)
       orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
@@ -43,12 +43,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Order History"),
+        title: const Text("Current Orders"),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _orders.isEmpty
-              ? const Center(child: Text("No orders found"))
+              ? const Center(child: Text("No current orders found"))
               : ListView.separated(
                   padding: const EdgeInsets.all(defaultPadding),
                   itemCount: _orders.length,
@@ -56,17 +56,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       const SizedBox(height: defaultPadding),
                   itemBuilder: (context, index) {
                     final order = _orders[index];
-                    return OrderCard(order: order);
+                    return CurrentOrderCard(order: order);
                   },
                 ),
     );
   }
 }
 
-class OrderCard extends StatelessWidget {
+class CurrentOrderCard extends StatelessWidget {
   final OrderModel order;
 
-  const OrderCard({super.key, required this.order});
+  const CurrentOrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +104,20 @@ class OrderCard extends StatelessWidget {
             Text(
               "Placed on ${order.createdAt.toLocal().toString().split(' ')[0]}",
               style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: defaultPadding / 2),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Payment: ${order.paymentStatus}",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  "Fulfillment: ${order.fulfillmentStatus}",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ),
             const SizedBox(height: defaultPadding / 2),
             Row(

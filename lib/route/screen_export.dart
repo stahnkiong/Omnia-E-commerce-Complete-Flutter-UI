@@ -30,3 +30,4 @@ export '/screens/wallet/views/wallet_screen.dart';
 export '/screens/profile/views/profile_screen.dart';
 export '/screens/user_info/views/user_info_screen.dart';
 export '/screens/order/views/order_history_screen.dart';
+export '/screens/order/views/current_orders_screen.dart';

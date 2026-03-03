@@ -47,8 +47,18 @@ class ApiService {
 
   Future<List<PaymentProvider>> getPaymentProviders() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      final options = Options(headers: {});
+      if (token != null) {
+        options.headers!['Authorization'] = 'Bearer $token';
+      }
+
       final response = await client.get(
-          '/store/payment-providers?region_id=reg_01KB5C4AEGCZPG55XAWFJBCFCH');
+        '/store/payment-providers?region_id=reg_01KB5C4AEGCZPG55XAWFJBCFCH',
+        options: options,
+      );
       final List<dynamic> providersData =
           response.data['payment_providers'] ?? [];
       return providersData
@@ -165,10 +175,12 @@ class ApiService {
     }
   }
 
-  Future<List<OrderModel>> getOrders() async {
+  Future<List<OrderModel>> getOrders({String? status}) async {
     try {
+      final String url =
+          status != null ? '/store/orders?status=$status' : '/store/orders';
       final response = await client.get(
-        '/store/orders',
+        url,
       );
       final List<dynamic> ordersData = response.data['orders'] ?? [];
       return ordersData.map((json) => OrderModel.fromJson(json)).toList();

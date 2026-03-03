@@ -7,6 +7,7 @@ import 'package:shop/route/router.dart' as router;
 import 'package:shop/theme/app_theme.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
+import 'package:shop/providers/wishlist_provider.dart';
 import 'package:shop/services/cart_service.dart';
 
 void main() {
@@ -17,6 +18,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
       ],
       child: const MyApp(),
     ),

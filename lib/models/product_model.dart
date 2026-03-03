@@ -97,6 +97,7 @@ class ProductModel {
 
 List<ProductModel> demoPopularProducts = [
   ProductModel(
+    id: "demo_popular_1",
     image: productDemoImg1,
     title: "Mountain Warehouse for Women",
     brandName: "Lipsy london",
@@ -106,6 +107,7 @@ List<ProductModel> demoPopularProducts = [
     dicountpercent: 20,
   ),
   ProductModel(
+    id: "demo_popular_2",
     image: productDemoImg4,
     title: "Mountain Beta Warehouse",
     brandName: "Lipsy london",
@@ -113,6 +115,7 @@ List<ProductModel> demoPopularProducts = [
     price: 800,
   ),
   ProductModel(
+    id: "demo_popular_3",
     image: productDemoImg5,
     title: "FS - Nike Air Max 270 Really React",
     brandName: "Lipsy london",
@@ -122,6 +125,7 @@ List<ProductModel> demoPopularProducts = [
     dicountpercent: 40,
   ),
   ProductModel(
+    id: "demo_popular_4",
     image: productDemoImg6,
     title: "Green Poplin Ruched Front",
     brandName: "Lipsy london",

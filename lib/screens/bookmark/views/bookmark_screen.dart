@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/components/product/product_card.dart';
 import 'package:shop/models/product_model.dart';
 import 'package:shop/route/route_constants.dart';
+import 'package:shop/providers/wishlist_provider.dart';
+import 'package:shop/providers/product_provider.dart';
 
 import '../../../constants.dart';
 
@@ -11,40 +14,76 @@ class BookmarkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // While loading use 👇
-          //  BookMarksSlelton(),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding, vertical: defaultPadding),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200.0,
-                mainAxisSpacing: defaultPadding,
-                crossAxisSpacing: defaultPadding,
-                childAspectRatio: 0.66,
+      body: Consumer2<WishlistProvider, ProductProvider>(
+        builder: (context, wishlistProvider, productProvider, child) {
+          final wishlistedIds = wishlistProvider.wishlistedIds;
+
+          final allProducts = [
+            ...demoPopularProducts,
+            ...productProvider.popularProducts,
+            ...productProvider.bestSellers,
+            ...productProvider.featuredProducts,
+            ...productProvider.flashSaleProducts,
+          ];
+
+          final Map<String, ProductModel> uniqueMap = {};
+          for (var p in allProducts) {
+            uniqueMap[p.id] = p;
+          }
+          final uniqueProducts = uniqueMap.values.toList();
+          final bookmarkedProducts = uniqueProducts
+              .where((p) => wishlistedIds.contains(p.id))
+              .toList();
+
+          return CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: defaultPadding, vertical: defaultPadding),
+                sliver: bookmarkedProducts.isEmpty
+                    ? const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(defaultPadding * 2),
+                            child: Text("No items in wishlist"),
+                          ),
+                        ),
+                      )
+                    : SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200.0,
+                          mainAxisSpacing: defaultPadding,
+                          crossAxisSpacing: defaultPadding,
+                          childAspectRatio: 0.66,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (BuildContext context, int index) {
+                            final product = bookmarkedProducts[index];
+                            return ProductCard(
+                              productId: product.id,
+                              image: product.image,
+                              brandName: product.brandName,
+                              title: product.title,
+                              price: product.price,
+                              priceAfetDiscount: product.priceAfetDiscount,
+                              dicountpercent: product.dicountpercent,
+                              press: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  productDetailsScreenRoute,
+                                  arguments: product.id,
+                                );
+                              },
+                            );
+                          },
+                          childCount: bookmarkedProducts.length,
+                        ),
+                      ),
               ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return ProductCard(
-                    image: demoPopularProducts[index].image,
-                    brandName: demoPopularProducts[index].brandName,
-                    title: demoPopularProducts[index].title,
-                    price: demoPopularProducts[index].price,
-                    priceAfetDiscount:
-                        demoPopularProducts[index].priceAfetDiscount,
-                    dicountpercent: demoPopularProducts[index].dicountpercent,
-                    press: () {
-                      Navigator.pushNamed(context, productDetailsScreenRoute);
-                    },
-                  );
-                },
-                childCount: demoPopularProducts.length,
-              ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

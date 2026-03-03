@@ -39,6 +39,7 @@ class PopularProductsDummy extends StatelessWidget {
                     : 0,
               ),
               child: ProductCard(
+                productId: demoPopularProducts[index].id,
                 image: demoPopularProducts[index].image,
                 brandName: demoPopularProducts[index].brandName,
                 title: demoPopularProducts[index].title,

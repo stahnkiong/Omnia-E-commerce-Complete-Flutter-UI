@@ -66,6 +66,7 @@ class _FeaturedProductsState extends State<FeaturedProducts> {
                                 : 0,
                       ),
                       child: ProductCard(
+                        productId: product.id,
                         image: product.image,
                         brandName: product.brandName,
                         title: product.title,
