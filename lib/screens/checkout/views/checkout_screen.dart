@@ -282,7 +282,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: clientSecret,
-            merchantDisplayName: 'PasarNow',
+            merchantDisplayName: 'Pasar Now',
           ),
         );
 

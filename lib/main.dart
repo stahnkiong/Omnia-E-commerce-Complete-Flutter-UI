@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget _buildMaterialApp(BuildContext context, String initialRoute) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'PasarNow',
+      title: 'Pasar Now',
       theme: AppTheme.lightTheme(context),
       themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
