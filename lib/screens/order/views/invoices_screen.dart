@@ -4,17 +4,18 @@ import 'package:shop/models/order_model.dart';
 import 'package:shop/services/api_service.dart';
 import 'package:shop/screens/order/views/order_detail_screen.dart';
 
-class CurrentOrdersScreen extends StatefulWidget {
-  const CurrentOrdersScreen({super.key});
+class InvoicesScreen extends StatefulWidget {
+  const InvoicesScreen({super.key});
 
   @override
-  State<CurrentOrdersScreen> createState() => _CurrentOrdersScreenState();
+  State<InvoicesScreen> createState() => _InvoicesScreenState();
 }
 
-class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
+class _InvoicesScreenState extends State<InvoicesScreen> {
   final ApiService _apiService = ApiService();
   List<OrderModel> _orders = [];
   bool _isLoading = true;
+  double _totalAmount = 0.0;
 
   @override
   void initState() {
@@ -26,12 +27,18 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
     try {
       final allOrders = await _apiService.getOrders();
       final filteredOrders =
-          allOrders.where((o) => o.fulfillmentStatus != 'delivered').toList();
+          allOrders.where((o) => o.paymentStatus != 'captured').toList();
       // Sort by created date (latest first)
       filteredOrders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+      double total = 0.0;
+      for (var order in filteredOrders) {
+        total += order.total;
+      }
+
       setState(() {
         _orders = filteredOrders;
+        _totalAmount = total;
         _isLoading = false;
       });
     } catch (e) {
@@ -45,30 +52,67 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Current Orders"),
+        title: const Text("Invoices"),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _orders.isEmpty
-              ? const Center(child: Text("No current orders found"))
-              : ListView.separated(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  itemCount: _orders.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: defaultPadding),
-                  itemBuilder: (context, index) {
-                    final order = _orders[index];
-                    return CurrentOrderCard(order: order);
-                  },
+              ? const Center(child: Text("No upcoming invoices"))
+              : Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(defaultPadding),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        border: Border(
+                          bottom:
+                              BorderSide(color: Theme.of(context).dividerColor),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Total Pending:",
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            _orders.isNotEmpty
+                                ? "${_orders.first.currencyCode} ${_totalAmount.toStringAsFixed(2)}"
+                                : "RM ${_totalAmount.toStringAsFixed(2)}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(defaultPadding),
+                        itemCount: _orders.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: defaultPadding),
+                        itemBuilder: (context, index) {
+                          final order = _orders[index];
+                          return InvoiceOrderCard(order: order);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
     );
   }
 }
 
-class CurrentOrderCard extends StatelessWidget {
+class InvoiceOrderCard extends StatelessWidget {
   final OrderModel order;
 
-  const CurrentOrderCard({super.key, required this.order});
+  const InvoiceOrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +151,20 @@ class CurrentOrderCard extends StatelessWidget {
               "Placed on ${order.createdAt.toLocal().toString().split(' ')[0]}",
               style: Theme.of(context).textTheme.bodySmall,
             ),
+            const SizedBox(height: defaultPadding / 2),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       "Payment: ${order.paymentStatus}",
+            //       style: Theme.of(context).textTheme.bodySmall,
+            //     ),
+            //     Text(
+            //       "Fulfillment: ${order.fulfillmentStatus}",
+            //       style: Theme.of(context).textTheme.bodySmall,
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: defaultPadding / 2),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

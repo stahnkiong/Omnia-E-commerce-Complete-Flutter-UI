@@ -93,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
             text: "Invoices",
             svgSrc: "assets/icons/card.svg",
             press: () {
-              Navigator.pushNamed(context, ordersScreenRoute);
+              Navigator.pushNamed(context, invoicesScreenRoute);
             },
           ),
           // ProfileMenuListTile(

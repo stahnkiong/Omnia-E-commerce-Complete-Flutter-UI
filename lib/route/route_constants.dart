@@ -48,6 +48,7 @@ const String addressesScreenRoute = "addresses";
 const String addNewAddressesScreenRoute = "add_new_addresses";
 const String ordersScreenRoute = "orders";
 const String currentOrdersScreenRoute = "current_orders";
+const String invoicesScreenRoute = "invoices";
 const String orderProcessingScreenRoute = "order_processing";
 const String orderDetailsScreenRoute = "order_details";
 const String cancleOrderScreenRoute = "cancle_order";

@@ -370,6 +370,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const CurrentOrdersScreen(),
       );
+    case invoicesScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const InvoicesScreen(),
+      );
     default:
       return MaterialPageRoute(
         // Make a screen for undefine

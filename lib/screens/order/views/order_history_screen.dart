@@ -24,12 +24,17 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
   Future<void> _fetchOrders() async {
     try {
-      final orders = await _apiService.getOrders(status: 'completed');
+      final allOrders = await _apiService.getOrders();
+      final filteredOrders = allOrders
+          .where((o) =>
+              o.paymentStatus == 'captured' &&
+              o.fulfillmentStatus == 'delivered')
+          .toList();
       // Sort by created date (latest first)
-      orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      filteredOrders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       setState(() {
-        _orders = orders;
+        _orders = filteredOrders;
         _isLoading = false;
       });
     } catch (e) {
@@ -97,7 +102,7 @@ class OrderCard extends StatelessWidget {
                   "Order #${order.displayId}",
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                _buildStatusBadge(context, order.status),
+                _buildStatusBadge(context, order.fulfillmentStatus),
               ],
             ),
             const SizedBox(height: defaultPadding / 2),
@@ -131,15 +136,25 @@ class OrderCard extends StatelessWidget {
     Color color;
     switch (status) {
       case 'pending':
+      case 'awaiting':
+      case 'not_fulfilled':
         color = Colors.orange;
         break;
       case 'completed':
+      case 'captured':
+      case 'delivered':
+      case 'fulfilled':
         color = Colors.green;
+        break;
+      case 'shipped':
+        color = Colors.blue;
         break;
       case 'archived':
         color = Colors.grey;
         break;
       case 'canceled':
+      case 'refunded':
+      case 'returned':
         color = Colors.red;
         break;
       case 'requires_action':
@@ -150,14 +165,14 @@ class OrderCard extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: color),
       ),
       child: Text(
-        status.toUpperCase(),
+        _getLabel(status).toUpperCase(),
         style: TextStyle(
           color: color,
           fontSize: 10,
@@ -165,5 +180,11 @@ class OrderCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getLabel(String status) {
+    if (status == 'not_fulfilled') return 'pending';
+    if (status == 'fulfilled') return 'ready to deliver';
+    return status;
   }
 }

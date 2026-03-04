@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shop/route/route_constants.dart';
 import 'package:shop/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,13 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shop/providers/wishlist_provider.dart';
 import 'package:shop/services/cart_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   Stripe.publishableKey =
       'pk_test_51SnE0nHVeaSTBf7hNyFNTAy1pPL12sXYAFbnBRp8VYdHPlzdIQqxMflRyefGQWCzVKp2BSPp6fXt87yGVSHtEcrt00tvxjkD03';
   runApp(
