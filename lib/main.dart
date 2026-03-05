@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/providers/auth_provider.dart';
+import 'package:pasar_now/route/route_constants.dart';
+import 'package:pasar_now/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/providers/product_provider.dart';
-import 'package:shop/route/router.dart' as router;
-import 'package:shop/theme/app_theme.dart';
+import 'package:pasar_now/providers/product_provider.dart';
+import 'package:pasar_now/route/router.dart' as router;
+import 'package:pasar_now/theme/app_theme.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
-import 'package:shop/providers/wishlist_provider.dart';
-import 'package:shop/services/cart_service.dart';
+import 'package:pasar_now/providers/wishlist_provider.dart';
+import 'package:pasar_now/services/cart_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

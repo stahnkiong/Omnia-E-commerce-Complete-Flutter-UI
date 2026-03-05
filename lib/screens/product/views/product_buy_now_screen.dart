@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/components/cart_button.dart';
-import 'package:shop/components/custom_modal_bottom_sheet.dart';
-// import 'package:shop/components/network_image_with_loader.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/screens/product/views/added_to_cart_message_screen.dart';
-import 'package:shop/screens/product/views/components/product_list_tile.dart';
-import 'package:shop/screens/product/views/contact_supplier.dart';
-import 'package:shop/services/product_service.dart';
-import 'package:shop/services/cart_service.dart';
+import 'package:pasar_now/components/cart_button.dart';
+import 'package:pasar_now/components/custom_modal_bottom_sheet.dart';
+// import 'package:pasar_now/components/network_image_with_loader.dart';
+import 'package:pasar_now/models/product_model.dart';
+import 'package:pasar_now/screens/product/views/added_to_cart_message_screen.dart';
+import 'package:pasar_now/screens/product/views/components/product_list_tile.dart';
+import 'package:pasar_now/screens/product/views/contact_supplier.dart';
+import 'package:pasar_now/services/product_service.dart';
+import 'package:pasar_now/services/cart_service.dart';
 
 import '../../../constants.dart';
 import 'components/product_quantity.dart';

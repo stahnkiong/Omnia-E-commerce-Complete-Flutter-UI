@@ -1,5 +1,5 @@
-import 'package:shop/config.dart';
-import 'package:shop/models/address_model.dart';
+import 'package:pasar_now/config.dart';
+import 'package:pasar_now/models/address_model.dart';
 
 class OrderModel {
   final String id;

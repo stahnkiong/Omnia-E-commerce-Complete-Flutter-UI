@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/order_model.dart';
-import 'package:shop/components/network_image_with_loader.dart';
+import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/models/order_model.dart';
+import 'package:pasar_now/components/network_image_with_loader.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final OrderModel order;

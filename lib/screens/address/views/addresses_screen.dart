@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/address_model.dart';
-import 'package:shop/screens/address/views/add_new_address_screen.dart';
-import 'package:shop/services/api_service.dart';
+import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/models/address_model.dart';
+import 'package:pasar_now/screens/address/views/add_new_address_screen.dart';
+import 'package:pasar_now/services/api_service.dart';
 
 class AddressesScreen extends StatefulWidget {
   const AddressesScreen({super.key});

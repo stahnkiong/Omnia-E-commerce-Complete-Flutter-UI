@@ -1,4 +1,4 @@
-import 'package:shop/constants.dart';
+import 'package:pasar_now/constants.dart';
 
 class ProductModel {
   final String id;

@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 
-import 'package:shop/models/payment_provider_model.dart';
-import 'package:shop/models/shipping_option_model.dart';
-import 'package:shop/models/payment_collection_model.dart';
-import 'package:shop/models/order_model.dart';
+import 'package:pasar_now/models/payment_provider_model.dart';
+import 'package:pasar_now/models/shipping_option_model.dart';
+import 'package:pasar_now/models/payment_collection_model.dart';
+import 'package:pasar_now/models/order_model.dart';
 
 class ApiService {
   final Dio client = Dio();

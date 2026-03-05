@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/product/product_card.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/product_service.dart';
-import 'package:shop/route/screen_export.dart';
+import 'package:pasar_now/components/product/product_card.dart';
+import 'package:pasar_now/models/product_model.dart';
+import 'package:pasar_now/route/route_constants.dart';
+import 'package:pasar_now/services/product_service.dart';
+import 'package:pasar_now/route/screen_export.dart';
 
-import 'package:shop/constants.dart';
+import 'package:pasar_now/constants.dart';
 
 class ProductCategoriesScreen extends StatefulWidget {
   const ProductCategoriesScreen(

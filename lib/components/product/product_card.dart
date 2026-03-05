@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/providers/wishlist_provider.dart';
+import 'package:pasar_now/providers/wishlist_provider.dart';
 
 import '../../constants.dart';
 import '../network_image_with_loader.dart';

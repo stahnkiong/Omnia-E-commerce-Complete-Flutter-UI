@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:shop/screens/auth/views/components/sign_up_form.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:pasar_now/screens/auth/views/components/sign_up_form.dart';
+import 'package:pasar_now/route/route_constants.dart';
 
 import '../../../constants.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shop/providers/auth_provider.dart';
+import 'package:pasar_now/providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

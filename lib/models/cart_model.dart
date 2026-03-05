@@ -1,4 +1,4 @@
-import 'package:shop/models/payment_collection_model.dart';
+import 'package:pasar_now/models/payment_collection_model.dart';
 
 class CartModel {
   final String id;

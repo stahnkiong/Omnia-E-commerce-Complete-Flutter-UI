@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/route/screen_export.dart';
+import 'package:pasar_now/route/screen_export.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/providers/product_provider.dart';
-import 'package:shop/screens/product/views/product_categories.dart';
+import 'package:pasar_now/providers/product_provider.dart';
+import 'package:pasar_now/screens/product/views/product_categories.dart';
 
 import '../../../../constants.dart';
 

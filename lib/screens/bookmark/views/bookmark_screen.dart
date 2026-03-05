@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/components/product/product_card.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/providers/wishlist_provider.dart';
-import 'package:shop/providers/product_provider.dart';
+import 'package:pasar_now/components/product/product_card.dart';
+import 'package:pasar_now/models/product_model.dart';
+import 'package:pasar_now/route/route_constants.dart';
+import 'package:pasar_now/providers/wishlist_provider.dart';
+import 'package:pasar_now/providers/product_provider.dart';
 
 import '../../../constants.dart';
 

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/address_model.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/api_service.dart';
-import 'package:shop/services/cart_service.dart';
-import 'package:shop/models/cart_model.dart';
+import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/models/address_model.dart';
+import 'package:pasar_now/route/route_constants.dart';
+import 'package:pasar_now/services/api_service.dart';
+import 'package:pasar_now/services/cart_service.dart';
+import 'package:pasar_now/models/cart_model.dart';
 
-import 'package:shop/models/payment_provider_model.dart';
-import 'package:shop/models/shipping_option_model.dart';
-import 'package:shop/models/payment_collection_model.dart';
-import 'package:shop/screens/address/views/add_new_address_screen.dart';
+import 'package:pasar_now/models/payment_provider_model.dart';
+import 'package:pasar_now/models/shipping_option_model.dart';
+import 'package:pasar_now/models/payment_collection_model.dart';
+import 'package:pasar_now/screens/address/views/add_new_address_screen.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' hide Address;
 import 'package:provider/provider.dart';
-import 'package:shop/providers/auth_provider.dart';
+import 'package:pasar_now/providers/auth_provider.dart';
 
 const String codPaymentProviderId = 'pp_system_default';
 

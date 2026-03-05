@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/components/product/product_card.dart';
-import 'package:shop/providers/product_provider.dart';
-import 'package:shop/route/screen_export.dart';
-import 'package:shop/components/skleton/product/products_skelton.dart';
+import 'package:pasar_now/components/product/product_card.dart';
+import 'package:pasar_now/providers/product_provider.dart';
+import 'package:pasar_now/route/screen_export.dart';
+import 'package:pasar_now/components/skleton/product/products_skelton.dart';
 
 import '../../../../constants.dart';
 

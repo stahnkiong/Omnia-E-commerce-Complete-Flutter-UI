@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
+import 'package:pasar_now/constants.dart';
 
 import 'package:provider/provider.dart';
 
-import 'package:shop/screens/search/views/components/search_form.dart';
-import 'package:shop/providers/product_provider.dart';
-import 'package:shop/screens/discover/views/components/expansion_category.dart';
+import 'package:pasar_now/screens/search/views/components/search_form.dart';
+import 'package:pasar_now/providers/product_provider.dart';
+import 'package:pasar_now/screens/discover/views/components/expansion_category.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});

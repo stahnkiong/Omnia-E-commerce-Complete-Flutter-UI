@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:pasar_now/route/route_constants.dart';
 // import 'package:flutter_svg/svg.dart';
-// import 'package:shop/components/dot_indicators.dart';
-// import 'package:shop/constants.dart';
-// import 'package:shop/route/route_constants.dart';
+// import 'package:pasar_now/components/dot_indicators.dart';
+// import 'package:pasar_now/constants.dart';
+// import 'package:pasar_now/route/route_constants.dart';
 // import 'components/onbording_content.dart';
 
 import 'package:video_player/video_player.dart';

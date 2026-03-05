@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:shop/components/Banner/L/banner_l.dart';
+import 'package:pasar_now/components/Banner/L/banner_l.dart';
 
 import '../../../constants.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
+import 'package:pasar_now/constants.dart';
 
 class TermsOfServicesScreen extends StatelessWidget {
   const TermsOfServicesScreen({super.key});

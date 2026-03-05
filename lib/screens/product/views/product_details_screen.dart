@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-// import 'package:shop/components/buy_full_ui_kit.dart';
+// import 'package:pasar_now/components/buy_full_ui_kit.dart';
 // import 'package:flutter_svg/svg.dart';
-import 'package:shop/components/cart_button.dart';
-import 'package:shop/components/custom_modal_bottom_sheet.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/route/screen_export.dart';
-import 'package:shop/screens/home/views/components/flash_sale.dart';
-import 'package:shop/screens/product/views/components/unavailable_card.dart';
-import 'package:shop/screens/product/views/product_returns_screen.dart';
-import 'package:shop/services/product_service.dart';
-import 'package:shop/models/product_model.dart';
+import 'package:pasar_now/components/cart_button.dart';
+import 'package:pasar_now/components/custom_modal_bottom_sheet.dart';
+import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/route/screen_export.dart';
+import 'package:pasar_now/screens/home/views/components/flash_sale.dart';
+import 'package:pasar_now/screens/product/views/components/unavailable_card.dart';
+import 'package:pasar_now/screens/product/views/product_returns_screen.dart';
+import 'package:pasar_now/services/product_service.dart';
+import 'package:pasar_now/models/product_model.dart';
 // import 'components/notify_me_card.dart';
 import 'components/product_images.dart';
 import 'components/product_info.dart';
 import 'components/product_list_tile.dart';
 
-import 'package:shop/components/product/product_card.dart';
-import 'package:shop/components/review_card.dart';
+import 'package:pasar_now/components/product/product_card.dart';
+import 'package:pasar_now/components/review_card.dart';
 import 'product_buy_now_screen.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
