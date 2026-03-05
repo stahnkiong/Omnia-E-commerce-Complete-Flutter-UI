@@ -63,11 +63,14 @@ class _OnBordingScreenState extends State<OnBordingScreen> {
     _videoController =
         VideoPlayerController.asset("assets/screens/onboarding.mp4")
           ..initialize().then((_) {
+            _videoController.setVolume(0.0); // Mute for web autoplay policy
+            _videoController.setLooping(true);
+            _videoController.play();
             setState(() {
               _isVideoInitialized = true;
             });
-            _videoController.play();
-            _videoController.setLooping(true);
+          }).catchError((error) {
+            debugPrint("Video initialization error: $error");
           });
     super.initState();
   }

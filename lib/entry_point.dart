@@ -51,7 +51,7 @@ class _EntryPointState extends State<EntryPoint> {
         leadingWidth: 0,
         centerTitle: false,
         title: Text(
-          "Omnia Foods",
+          "Pasar Now",
           style: Theme.of(context).textTheme.titleMedium,
         ),
         actions: [

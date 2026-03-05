@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pasar_now/route/route_constants.dart';
 import 'package:pasar_now/providers/auth_provider.dart';
@@ -64,9 +65,11 @@ class MyApp extends StatelessWidget {
 
         // Decide the entry route based on the token status
         if (authStatus.isAuthenticated) {
-          return _buildMaterialApp(context, entryPointScreenRoute);
+          return _buildMaterialApp(
+              context, kIsWeb ? webEntryPointScreenRoute : entryPointScreenRoute);
         } else {
-          return _buildMaterialApp(context, onbordingScreenRoute);
+          return _buildMaterialApp(
+              context, kIsWeb ? webEntryPointScreenRoute : onbordingScreenRoute);
         }
       },
     );

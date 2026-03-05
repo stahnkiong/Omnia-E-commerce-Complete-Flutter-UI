@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pasar_now/entry_point.dart';
+import 'package:pasar_now/web_entry_point.dart';
 import 'package:pasar_now/screens/product/views/product_collection.dart';
 
 import 'screen_export.dart';
@@ -248,6 +249,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case entryPointScreenRoute:
       return MaterialPageRoute(
         builder: (context) => const EntryPoint(),
+      );
+    case webEntryPointScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const WebEntryPoint(),
       );
     case profileScreenRoute:
       return MaterialPageRoute(
