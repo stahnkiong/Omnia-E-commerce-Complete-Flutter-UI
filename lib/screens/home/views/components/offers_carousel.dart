@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pasar_now/components/Banner/M/banner_m_style_1.dart';
 import 'package:pasar_now/components/Banner/M/banner_m_style_2.dart';
-// import 'package:pasar_now/components/Banner/M/banner_m_style_3.dart';
-// import 'package:pasar_now/components/Banner/M/banner_m_style_4.dart';
 import 'package:pasar_now/components/dot_indicators.dart';
 import 'package:pasar_now/route/screen_export.dart';
 
 import '../../../../constants.dart';
+import '../home_screen_images.dart';
 
 class OffersCarousel extends StatefulWidget {
   const OffersCarousel({
@@ -36,8 +35,7 @@ class _OffersCarouselState extends State<OffersCarousel> {
         subtitle: "Free Shipping",
         // image:
         //     "https://www.thewagyufactory.com.au/wp-content/uploads/2021/08/shutterstock_633879398-scaled.jpg",
-        image:
-            "https://www.shutterstock.com/image-photo/wagyu-beef-beautiful-red-pattern-600nw-2486090373.jpg",
+        image: HomeScreenImages.bannerMStyle2Image,
         discountParcent: 20,
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,
@@ -46,8 +44,7 @@ class _OffersCarouselState extends State<OffersCarousel> {
       ),
       BannerMStyle1(
         text: "NZ Premium \n Free shipping",
-        image:
-            "https://beeflambnz.com/sites/default/files/styles/width_1440/public/2023-06/1200x383-origin-brand.jpg", //use custom image
+        image: HomeScreenImages.bannerMStyle1Image, //use custom image
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,
               arguments: "pcol_01KBW9TVVXRJDDWBK7S4876DBB");

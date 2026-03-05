@@ -7,8 +7,10 @@ import 'package:pasar_now/route/screen_export.dart';
 import 'components/best_sellers.dart';
 import 'components/flash_sale.dart';
 import 'components/featured_products.dart';
-import 'components/offer_carousel_and_categories.dart';
+import 'components/categories.dart';
+import 'components/offers_carousel.dart';
 import 'components/popular_products.dart';
+import 'home_screen_images.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,7 +21,17 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverToBoxAdapter(child: OffersCarouselAndCategories()),
+            const SliverToBoxAdapter(child: OffersCarousel()),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(defaultPadding),
+                child: Text(
+                  "Categories",
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(child: Categories()),
             const SliverToBoxAdapter(child: PopularProducts()),
             const SliverPadding(
               padding: EdgeInsets.symmetric(vertical: defaultPadding * 1.5),
@@ -33,8 +45,7 @@ class HomeScreen extends StatelessWidget {
                   BannerSStyle1(
                     title: "New \narrival",
                     subtitle: "SPECIAL OFFER",
-                    image:
-                        "https://frenchly.us/wp-content/uploads/2022/06/Seafood-oysters-shutterstock-clean.jpg.webp",
+                    image: HomeScreenImages.bannerSStyle1Image,
                     discountParcent: 30,
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,
@@ -42,7 +53,6 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: defaultPadding / 4),
-                  // We have 4 banner styles, all in the pro version
                 ],
               ),
             ),
@@ -59,8 +69,7 @@ class HomeScreen extends StatelessWidget {
                   BannerSStyle5(
                     title: "TGI \nFriday",
                     subtitle: "50% Off",
-                    image:
-                        "https://johnsonsfoodservices.com.au/cdn/shop/products/website-710x532px-jpg.jpg",
+                    image: HomeScreenImages.bannerSStyle5Image,
                     bottomText: "Collection".toUpperCase(),
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,
