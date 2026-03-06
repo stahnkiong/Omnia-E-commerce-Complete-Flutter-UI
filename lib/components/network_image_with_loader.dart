@@ -19,22 +19,31 @@ class NetworkImageWithLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isNetworkImage = src.toLowerCase().startsWith('http');
+
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(radius)),
-      child: CachedNetworkImage(
-        fit: fit,
-        imageUrl: src,
-        imageBuilder: (context, imageProvider) => Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: imageProvider,
+      child: isNetworkImage
+          ? CachedNetworkImage(
               fit: fit,
+              imageUrl: src,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: fit,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => const Skeleton(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            )
+          : Image.asset(
+              src,
+              fit: fit,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.error),
             ),
-          ),
-        ),
-        placeholder: (context, url) => const Skeleton(),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
-      ),
     );
   }
 }

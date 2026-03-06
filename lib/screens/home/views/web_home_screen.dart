@@ -40,12 +40,12 @@ class WebHomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // While loading use 👇
-                  // const BannerMSkelton(),‚
-                  BannerSStyle1(
-                    title: "New \narrival",
-                    subtitle: "SPECIAL OFFER",
-                    image: HomeScreenImages.bannerSStyle1Image,
-                    discountParcent: 30,
+                  // const BannerSSkelton(),
+                  BannerSStyle5(
+                    title: "TGI \nFriday",
+                    subtitle: "50% Off",
+                    image: HomeScreenImages.bannerSStyle5Image,
+                    bottomText: "Collection".toUpperCase(),
                     press: () {},
                   ),
                 ],
@@ -55,12 +55,12 @@ class WebHomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // While loading use 👇
-                  // const BannerSSkelton(),
-                  BannerSStyle5(
-                    title: "TGI \nFriday",
-                    subtitle: "50% Off",
-                    image: HomeScreenImages.bannerSStyle5Image,
-                    bottomText: "Collection".toUpperCase(),
+                  // const BannerMSkelton(),‚
+                  BannerSStyle1(
+                    title: "New \narrival",
+                    subtitle: "SPECIAL OFFER",
+                    image: HomeScreenImages.bannerSStyle1Image,
+                    discountParcent: 30,
                     press: () {},
                   ),
                 ],
