@@ -35,7 +35,7 @@ class _OffersCarouselState extends State<OffersCarousel> {
         subtitle: "Free Shipping",
         // image:
         //     "https://www.thewagyufactory.com.au/wp-content/uploads/2021/08/shutterstock_633879398-scaled.jpg",
-        image: HomeScreenImages.bannerMStyle2Image,
+        image: HomeScreenImages.banner1,
         discountParcent: 20,
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,
@@ -44,7 +44,7 @@ class _OffersCarouselState extends State<OffersCarousel> {
       ),
       BannerMStyle1(
         text: "NZ Premium \n Free shipping",
-        image: HomeScreenImages.bannerMStyle1Image, //use custom image
+        image: HomeScreenImages.banner2, //use custom image
         press: () {
           Navigator.pushNamed(context, productCollectionScreenRoute,
               arguments: "pcol_01KBW9TVVXRJDDWBK7S4876DBB");

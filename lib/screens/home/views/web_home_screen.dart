@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pasar_now/components/Banner/S/banner_s_style_1.dart';
-import 'package:pasar_now/components/Banner/M/banner_m_style_1.dart';
-import 'package:pasar_now/components/Banner/M/banner_m_style_2.dart';
 import 'package:pasar_now/components/Banner/S/banner_s_style_5.dart';
 
 import 'home_screen_images.dart';
@@ -18,52 +16,51 @@ class WebHomeScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  // While loading use 👇
-                  // const BannerMSkelton(),‚
-                  BannerMStyle2(
-                    title: "Year End \n Promo",
-                    subtitle: "Free Shipping",
-                    image: HomeScreenImages.bannerMStyle2Image,
-                    discountParcent: 20,
-                    press: () {},
+                  Image.asset(
+                    HomeScreenImages.banner1,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
-                  BannerMStyle1(
-                    text: "NZ Premium \n Free shipping",
-                    image:
-                        HomeScreenImages.bannerMStyle1Image, //use custom image
-                    press: () {},
+                  Image.asset(
+                    HomeScreenImages.banner2,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
                 ],
               ),
             ),
             SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // While loading use 👇
-                  // const BannerSSkelton(),
-                  BannerSStyle5(
-                    title: "TGI \nFriday",
-                    subtitle: "50% Off",
-                    image: HomeScreenImages.bannerSStyle5Image,
-                    bottomText: "Collection".toUpperCase(),
-                    press: () {},
-                  ),
-                ],
+              child: Center(
+                child: Column(
+                  children: [
+                    // While loading use 👇
+                    // const BannerSSkelton(),
+                    BannerSStyle5(
+                      title: "TGI \nFriday",
+                      subtitle: "50% Off",
+                      image: HomeScreenImages.banner3,
+                      bottomText: "Collection".toUpperCase(),
+                      press: () {},
+                    ),
+                  ],
+                ),
               ),
             ),
             SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // While loading use 👇
-                  // const BannerMSkelton(),‚
-                  BannerSStyle1(
-                    title: "New \narrival",
-                    subtitle: "SPECIAL OFFER",
-                    image: HomeScreenImages.bannerSStyle1Image,
-                    discountParcent: 30,
-                    press: () {},
-                  ),
-                ],
+              child: Center(
+                child: Column(
+                  children: [
+                    // While loading use 👇
+                    // const BannerMSkelton(),‚
+                    BannerSStyle1(
+                      title: "New \narrival",
+                      subtitle: "SPECIAL OFFER",
+                      image: HomeScreenImages.banner4,
+                      discountParcent: 30,
+                      press: () {},
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

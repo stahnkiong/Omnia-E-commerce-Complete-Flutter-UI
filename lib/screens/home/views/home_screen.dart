@@ -21,7 +21,22 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            const SliverToBoxAdapter(child: OffersCarousel()),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  Image.asset(
+                    HomeScreenImages.banner1,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  Image.asset(
+                    HomeScreenImages.banner2,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(defaultPadding),
@@ -45,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                   BannerSStyle1(
                     title: "New \narrival",
                     subtitle: "SPECIAL OFFER",
-                    image: HomeScreenImages.bannerSStyle1Image,
+                    image: HomeScreenImages.banner3,
                     discountParcent: 30,
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,
@@ -69,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                   BannerSStyle5(
                     title: "TGI \nFriday",
                     subtitle: "50% Off",
-                    image: HomeScreenImages.bannerSStyle5Image,
+                    image: HomeScreenImages.banner4,
                     bottomText: "Collection".toUpperCase(),
                     press: () {
                       Navigator.pushNamed(context, productCollectionScreenRoute,

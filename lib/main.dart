@@ -65,11 +65,11 @@ class MyApp extends StatelessWidget {
 
         // Decide the entry route based on the token status
         if (authStatus.isAuthenticated) {
-          return _buildMaterialApp(
-              context, kIsWeb ? webEntryPointScreenRoute : entryPointScreenRoute);
+          return _buildMaterialApp(context,
+              kIsWeb ? webEntryPointScreenRoute : entryPointScreenRoute);
         } else {
-          return _buildMaterialApp(
-              context, kIsWeb ? webEntryPointScreenRoute : onbordingScreenRoute);
+          return _buildMaterialApp(context,
+              kIsWeb ? webEntryPointScreenRoute : onbordingScreenRoute);
         }
       },
     );
