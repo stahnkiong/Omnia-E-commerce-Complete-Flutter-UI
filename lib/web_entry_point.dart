@@ -6,8 +6,21 @@ class WebEntryPoint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: WebHomeScreen(),
+    return Scaffold(
+      appBar: AppBar(
+        // pinned: true,
+        // floating: true,
+        // snap: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: const SizedBox(),
+        leadingWidth: 0,
+        centerTitle: false,
+        title: Text(
+          "Pasar Now",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ),
+      body: const WebHomeScreen(),
     );
   }
 }

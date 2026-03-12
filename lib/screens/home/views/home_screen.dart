@@ -8,7 +8,6 @@ import 'components/best_sellers.dart';
 import 'components/flash_sale.dart';
 import 'components/featured_products.dart';
 import 'components/categories.dart';
-import 'components/offers_carousel.dart';
 import 'components/popular_products.dart';
 import 'home_screen_images.dart';
 
