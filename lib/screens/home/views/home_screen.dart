@@ -28,11 +28,6 @@ class HomeScreen extends StatelessWidget {
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
-                  Image.asset(
-                    HomeScreenImages.banner2,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
                 ],
               ),
             ),
@@ -47,6 +42,17 @@ class HomeScreen extends StatelessWidget {
             ),
             const SliverToBoxAdapter(child: Categories()),
             const SliverToBoxAdapter(child: PopularProducts()),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  Image.asset(
+                    HomeScreenImages.banner2,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+            ),
             const SliverPadding(
               padding: EdgeInsets.symmetric(vertical: defaultPadding * 1.5),
               sliver: SliverToBoxAdapter(child: FlashSale()),
