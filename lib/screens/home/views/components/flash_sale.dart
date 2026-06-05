@@ -31,7 +31,6 @@ class _FlashSaleState extends State<FlashSale> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: defaultPadding / 2),
             Padding(
               padding: const EdgeInsets.all(defaultPadding),
               child: Text(

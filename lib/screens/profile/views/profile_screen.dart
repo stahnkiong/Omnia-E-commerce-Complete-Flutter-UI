@@ -31,9 +31,9 @@ class ProfileScreen extends StatelessWidget {
                 email: customer?['email'] ?? "No Email",
                 imageSrc:
                     "https://images.unsplash.com/vector-1740296178042-868e47a99833?q=80&w=240&auto=format&fit=crop",
-                press: () {
-                  Navigator.pushNamed(context, userInfoScreenRoute);
-                },
+                // press: () {
+                //   Navigator.pushNamed(context, userInfoScreenRoute);
+                // },
               );
             },
           ),

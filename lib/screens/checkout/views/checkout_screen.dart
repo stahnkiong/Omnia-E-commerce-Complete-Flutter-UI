@@ -299,8 +299,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Order placed successfully!")),
           );
-          // Navigate to order history
-          Navigator.popAndPushNamed(context, ordersScreenRoute);
+          // Clear navigation stack, set EntryPoint to Profile tab, and push current orders
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            entryPointScreenRoute,
+            (route) => false,
+            arguments: 4,
+          );
+          Navigator.pushNamed(context, currentOrdersScreenRoute);
         }
       } else {
         throw Exception("Failed to complete order");

@@ -45,6 +45,7 @@ class HomeScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Column(
                 children: [
+                  const SizedBox(height: defaultPadding),
                   Image.asset(
                     HomeScreenImages.banner2,
                     width: double.infinity,
@@ -54,14 +55,13 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SliverPadding(
-              padding: EdgeInsets.symmetric(vertical: defaultPadding * 1.5),
+              padding: EdgeInsets.symmetric(vertical: defaultPadding * 0.5),
               sliver: SliverToBoxAdapter(child: FlashSale()),
             ),
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  // While loading use 👇
-                  // const BannerMSkelton(),‚
+                  const SizedBox(height: defaultPadding),
                   BannerSStyle1(
                     title: "New \narrival",
                     subtitle: "SPECIAL OFFER",

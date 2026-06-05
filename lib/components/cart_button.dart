@@ -9,11 +9,13 @@ class CartButton extends StatelessWidget {
     this.title = "Add to cart",
     this.subTitle = "Unit price",
     required this.press,
+    this.isLoading = false,
   });
 
   final double price;
   final String title, subTitle;
   final VoidCallback press;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class CartButton extends StatelessWidget {
         child: SizedBox(
           height: 64,
           child: Material(
-            color: primaryColor,
+            color: isLoading ? primaryColor.withAlpha(153) : primaryColor,
             clipBehavior: Clip.hardEdge,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -32,7 +34,7 @@ class CartButton extends StatelessWidget {
               ),
             ),
             child: InkWell(
-              onTap: press,
+              onTap: isLoading ? null : press,
               child: Row(
                 children: [
                   Expanded(
@@ -67,13 +69,22 @@ class CartButton extends StatelessWidget {
                       alignment: Alignment.center,
                       height: double.infinity,
                       color: Colors.black.withAlpha(35),
-                      child: Text(
-                        title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(color: Colors.white),
-                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(color: Colors.white),
+                            ),
                     ),
                   ),
                 ],

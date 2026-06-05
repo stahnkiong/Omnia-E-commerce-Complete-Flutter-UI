@@ -5,7 +5,8 @@ import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/route/screen_export.dart';
 
 class EntryPoint extends StatefulWidget {
-  const EntryPoint({super.key});
+  final int initialIndex;
+  const EntryPoint({super.key, this.initialIndex = 0});
 
   @override
   State<EntryPoint> createState() => _EntryPointState();
@@ -21,7 +22,13 @@ class _EntryPointState extends State<EntryPoint> {
     CartScreen(),
     ProfileScreen(),
   ];
-  int _currentIndex = 0;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {

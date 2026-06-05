@@ -28,6 +28,7 @@ class ProductBuyNowScreen extends StatefulWidget {
 class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   late Future<ProductModel?> _productFuture;
   int _quantity = 1;
+  bool _isAddingToCart = false;
 
   @override
   void initState() {
@@ -61,7 +62,11 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
             price: product.price * _quantity,
             title: "Add to cart",
             subTitle: "Total price",
+            isLoading: _isAddingToCart,
             press: () async {
+              setState(() {
+                _isAddingToCart = true;
+              });
               try {
                 await CartService().addToCart(product.variant, _quantity);
                 if (context.mounted) {
@@ -76,6 +81,12 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Failed to add to cart: $e")),
                   );
+                }
+              } finally {
+                if (mounted) {
+                  setState(() {
+                    _isAddingToCart = false;
+                  });
                 }
               }
             },
