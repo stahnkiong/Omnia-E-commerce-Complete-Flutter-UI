@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
+import '../services/biometric_auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
+  final BiometricAuthService _biometricAuth = BiometricAuthService();
+  
   bool _isLoading = false;
   String? _token;
   Map<String, dynamic>? _customer;
@@ -20,12 +22,12 @@ class AuthProvider with ChangeNotifier {
       final responseData = await _authService.login(email, password);
       _token = responseData['token'] as String?;
 
-      // Save token to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', _token ?? '');
+      // Save token securely and update runtime memory cache
+      if (_token != null && _token!.isNotEmpty) {
+        await _biometricAuth.saveSessionToken(_token!);
+      }
 
       await fetchCustomer();
-
       return true;
     } catch (e) {
       return false;
@@ -43,9 +45,10 @@ class AuthProvider with ChangeNotifier {
       final responseData = await _authService.register(email, password);
       _token = responseData['token'] as String?;
 
-      // Save token to shared preferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', _token ?? '');
+      // Save token securely and update runtime memory cache
+      if (_token != null && _token!.isNotEmpty) {
+        await _biometricAuth.saveSessionToken(_token!);
+      }
 
       // Create customer in store backend
       if (_token != null) {
@@ -61,16 +64,32 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Runs the pre-flight check exactly once at app startup or resume.
+  /// 
+  /// Triggers the native biometric scan prompt to decrypt/unlock the session
+  /// and populate the memory cache in [BiometricAuthService].
   Future<void> initialize() async {
     _isLoading = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      _token = prefs.getString('auth_token');
-      if (_token != null) {
-        await fetchCustomer();
+      // Check if biometrics are supported/configured first.
+      final bool biometricAvailable = await _biometricAuth.isBiometricAvailable();
+      
+      if (biometricAvailable) {
+        // Trigger native biometric lock prompt exactly once on app entry.
+        final bool unlocked = await _biometricAuth.unlockSessionWithBiometrics();
+        if (unlocked) {
+          _token = _biometricAuth.unlockedToken;
+          if (_token != null) {
+            await fetchCustomer();
+          }
+        } else {
+          _token = null;
+        }
+      } else {
+        // Fallback: If biometrics are not setup/supported, default to unauthenticated.
+        _token = null;
       }
     } catch (e) {
-      // Handle potential errors like PlatformException during getInstance
       _token = null;
     } finally {
       _isLoading = false;
@@ -79,8 +98,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    await _biometricAuth.clearSession();
     _token = null;
     _customer = null;
     notifyListeners();

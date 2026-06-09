@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
+import 'biometric_auth_service.dart';
+import 'medusa_auth_interceptor.dart';
 
 import 'package:pasar_now/models/payment_provider_model.dart';
 import 'package:pasar_now/models/shipping_option_model.dart';
@@ -12,52 +13,40 @@ class ApiService {
 
   ApiService() {
     client.options.baseUrl = AppConfig.apiBaseUrl;
+    
+    // Register the biometric authentication interceptor
+    client.interceptors.add(MedusaAuthInterceptor());
+    
     client.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('auth_token');
-
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
+        onRequest: (options, handler) {
           options.headers['x-publishable-api-key'] = AppConfig.publishableKey;
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
-          if (e.response?.statusCode == 401) {
-            // Clear token and redirect to login if session expires
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.remove('auth_token');
+          if (e.response?.statusCode == 401 || e.error is BiometricAuthException) {
+            // Clear secure session if token is invalid or session is locked
+            await BiometricAuthService().clearSession();
           }
           return handler.next(e);
         },
       ),
     );
   }
+
   Future<List<dynamic>> getAddresses() async {
     try {
       final response = await client.get('/store/customers/me/addresses');
       return response.data['addresses'] ?? [];
     } catch (e) {
-      // Handle error or return empty list
       return [];
     }
   }
 
   Future<List<PaymentProvider>> getPaymentProviders() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-
-      final options = Options(headers: {});
-      if (token != null) {
-        options.headers!['Authorization'] = 'Bearer $token';
-      }
-
       final response = await client.get(
         '/store/payment-providers?region_id=reg_01KB5C4AEGCZPG55XAWFJBCFCH',
-        options: options,
       );
       final List<dynamic> providersData =
           response.data['payment_providers'] ?? [];

@@ -50,6 +50,7 @@
 	<string>http</string>
 	<string>https</string>
 	</array>
-
+	<key>NSFaceIDUsageDescription</key>
+	<string>Scan your Face ID to unlock your secure customer session</string>
 </dict>
 </plist>

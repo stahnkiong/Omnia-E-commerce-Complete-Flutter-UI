@@ -27,7 +27,7 @@ dependencies:
   flutter_stripe: ^12.3.0
   flutter_stripe_web: ^7.3.0
   flutter_secure_storage: ^10.3.1
-  local_auth: 2.3.0
+  local_auth: 3.0.1
 
 dev_dependencies:
   flutter_test:

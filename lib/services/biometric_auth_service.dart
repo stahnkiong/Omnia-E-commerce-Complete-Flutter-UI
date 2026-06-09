@@ -23,6 +23,12 @@ class BiometricAuthService {
   // Instance of LocalAuthentication for verifying biometrics.
   final LocalAuthentication _auth = LocalAuthentication();
 
+  // The runtime token cache - keeps your API screaming fast by avoiding redundant prompts.
+  String? _unlockedAccessToken;
+
+  /// Exposes the runtime memory token if the session is currently unlocked.
+  String? get unlockedToken => _unlockedAccessToken;
+
   /// Checks if biometric authentication is available on the device.
   /// Checks both the hardware capability and support status.
   Future<bool> isBiometricAvailable() async {
@@ -30,10 +36,10 @@ class BiometricAuthService {
       final bool canCheckBiometrics = await _auth.canCheckBiometrics;
       final bool isDeviceSupported = await _auth.isDeviceSupported();
       return canCheckBiometrics && isDeviceSupported;
-    } on PlatformException catch (e, stackTrace) {
-      _logPlatformException(e, 'isBiometricAvailable');
+    } on LocalAuthException catch (e, stackTrace) {
+      _logLocalAuthException(e, 'isBiometricAvailable');
       developer.log(
-        'PlatformException in isBiometricAvailable: ${e.code} - ${e.message}',
+        'LocalAuthException in isBiometricAvailable: ${e.code} - ${e.description}',
         name: 'BiometricAuthService',
         error: e,
         stackTrace: stackTrace,
@@ -50,10 +56,50 @@ class BiometricAuthService {
     }
   }
 
-  /// Writes the Medusa JWT token string to secure storage under a unique key constant.
+  /// Triggers biometric prompt to unlock the session and load the token into memory.
+  /// Call this during app startup or when resuming from the background.
+  Future<bool> unlockSessionWithBiometrics() async {
+    try {
+      // 1. Check if token actually exists in secure storage.
+      final hasToken = await _secureStorage.containsKey(key: _sessionTokenKey);
+      if (!hasToken) return false;
+
+      // 2. Trigger biometric authentication.
+      final bool authenticated = await _auth.authenticate(
+        localizedReason: 'Unlock your store profile',
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
+      );
+
+      if (authenticated) {
+        // 3. Decrypt into runtime memory.
+        _unlockedAccessToken = await _secureStorage.read(key: _sessionTokenKey);
+        return true;
+      }
+    } on LocalAuthException catch (e, stackTrace) {
+      _logLocalAuthException(e, 'unlockSessionWithBiometrics');
+      developer.log(
+        'LocalAuthException in unlockSessionWithBiometrics: ${e.code} - ${e.description}',
+        name: 'BiometricAuthService',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    } catch (e, stackTrace) {
+      developer.log(
+        'Unexpected error in unlockSessionWithBiometrics',
+        name: 'BiometricAuthService',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+    return false;
+  }
+
+  /// Writes the Medusa JWT token string to secure storage and updates memory cache.
   Future<void> saveSessionToken(String token) async {
     try {
       await _secureStorage.write(key: _sessionTokenKey, value: token);
+      _unlockedAccessToken = token; // Decrypt into runtime memory
     } on PlatformException catch (e, stackTrace) {
       developer.log(
         'PlatformException in saveSessionToken: ${e.code} - ${e.message}',
@@ -77,25 +123,30 @@ class BiometricAuthService {
   /// 
   /// Returns the token string if successful, or null if the token is not present,
   /// authentication fails, is canceled by the user, or throws a PlatformException.
+  /// Uses memory cache to avoid prompting the user multiple times during active session.
   Future<String?> getSessionTokenWithBiometrics() async {
+    // 1. If we already have the token cached in runtime memory, return it immediately.
+    if (_unlockedAccessToken != null && _unlockedAccessToken!.isNotEmpty) {
+      return _unlockedAccessToken;
+    }
+
     try {
-      // 1. Check if token exists in secure storage.
+      // 2. Check if token exists in secure storage.
       final String? token = await _secureStorage.read(key: _sessionTokenKey);
       if (token == null || token.isEmpty) {
         return null;
       }
 
-      // 2. Trigger native local_auth prompt using modern AuthenticationOptions.
+      // 3. Trigger native local_auth prompt using modern 3.0.x direct parameters.
       final bool authenticated = await _auth.authenticate(
         localizedReason: 'Scan your face or fingerprint to unlock your session',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
       );
 
-      // 3. If authentication succeeds, return the token string.
+      // 4. If authentication succeeds, update memory cache and return the token string.
       if (authenticated) {
+        _unlockedAccessToken = token;
         return token;
       }
       
@@ -104,10 +155,10 @@ class BiometricAuthService {
         name: 'BiometricAuthService',
       );
       return null;
-    } on PlatformException catch (e, stackTrace) {
-      _logPlatformException(e, 'getSessionTokenWithBiometrics');
+    } on LocalAuthException catch (e, stackTrace) {
+      _logLocalAuthException(e, 'getSessionTokenWithBiometrics');
       developer.log(
-        'PlatformException in getSessionTokenWithBiometrics: ${e.code} - ${e.message}',
+        'LocalAuthException in getSessionTokenWithBiometrics: ${e.code} - ${e.description}',
         name: 'BiometricAuthService',
         error: e,
         stackTrace: stackTrace,
@@ -124,9 +175,10 @@ class BiometricAuthService {
     }
   }
 
-  /// Removes the token key from secure storage, typically during user logout.
+  /// Removes the token key from secure storage and clears runtime memory cache.
   Future<void> clearSession() async {
     try {
+      _unlockedAccessToken = null; // Clear runtime memory cache
       await _secureStorage.delete(key: _sessionTokenKey);
     } on PlatformException catch (e, stackTrace) {
       developer.log(
@@ -147,57 +199,79 @@ class BiometricAuthService {
     }
   }
 
-  /// Inspects and logs common biometric platform exception error codes.
-  void _logPlatformException(PlatformException e, String methodName) {
-    final String errorPrefix = 'PlatformException in $methodName:';
+  /// Inspects and logs common biometric exception error codes from LocalAuthException.
+  void _logLocalAuthException(LocalAuthException e, String methodName) {
+    final String errorPrefix = 'LocalAuthException in $methodName:';
     switch (e.code) {
-      case 'passcodeNotSet':
-      case 'PasscodeNotSet':
+      case LocalAuthExceptionCode.noBiometricHardware:
         developer.log(
-          '$errorPrefix Device passcode or PIN is not configured by the user.',
+          '$errorPrefix Biometric hardware is not available on this device.',
           name: 'BiometricAuthService',
           error: e,
         );
         break;
-      case 'lockedOut':
-      case 'LockedOut':
+      case LocalAuthExceptionCode.noBiometricsEnrolled:
         developer.log(
-          '$errorPrefix Biometric authentication is temporarily locked due to too many failed attempts.',
+          '$errorPrefix No biometrics are enrolled on this device.',
           name: 'BiometricAuthService',
           error: e,
         );
         break;
-      case 'permanentlyLockedOut':
-      case 'PermanentlyLockedOut':
+      case LocalAuthExceptionCode.noCredentialsSet:
         developer.log(
-          '$errorPrefix Biometrics are permanently locked out. Passcode verification is required to re-enable.',
+          '$errorPrefix Device credentials (PIN/pattern/passcode) are not set on the device.',
           name: 'BiometricAuthService',
           error: e,
         );
         break;
-      case 'notAvailable':
-      case 'NotAvailable':
+      case LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable:
         developer.log(
-          '$errorPrefix Biometric hardware capability is not available or supported on this device.',
+          '$errorPrefix Biometric hardware is temporarily unavailable.',
           name: 'BiometricAuthService',
           error: e,
         );
         break;
-      case 'notEnrolled':
-      case 'NotEnrolled':
+      case LocalAuthExceptionCode.userCanceled:
         developer.log(
-          '$errorPrefix User has not registered any fingerprint or facial data on the device.',
+          '$errorPrefix Authentication was canceled by the user.',
+          name: 'BiometricAuthService',
+          error: e,
+        );
+        break;
+      case LocalAuthExceptionCode.authInProgress:
+        developer.log(
+          '$errorPrefix An authentication attempt is already in progress.',
+          name: 'BiometricAuthService',
+          error: e,
+        );
+        break;
+      case LocalAuthExceptionCode.uiUnavailable:
+        developer.log(
+          '$errorPrefix The authentication UI could not be displayed.',
+          name: 'BiometricAuthService',
+          error: e,
+        );
+        break;
+      case LocalAuthExceptionCode.timeout:
+        developer.log(
+          '$errorPrefix The authentication attempt timed out.',
+          name: 'BiometricAuthService',
+          error: e,
+        );
+        break;
+      case LocalAuthExceptionCode.systemCanceled:
+        developer.log(
+          '$errorPrefix The authentication process was canceled by the system.',
           name: 'BiometricAuthService',
           error: e,
         );
         break;
       default:
         developer.log(
-          '$errorPrefix Generic platform error: code=${e.code}, message=${e.message}',
+          '$errorPrefix Unknown local auth exception code: ${e.code}',
           name: 'BiometricAuthService',
           error: e,
         );
-        break;
     }
   }
 }
