@@ -79,15 +79,16 @@ class AuthProvider with ChangeNotifier {
         final bool unlocked = await _biometricAuth.unlockSessionWithBiometrics();
         if (unlocked) {
           _token = _biometricAuth.unlockedToken;
-          if (_token != null) {
-            await fetchCustomer();
-          }
         } else {
           _token = null;
         }
       } else {
-        // Fallback: If biometrics are not setup/supported, default to unauthenticated.
-        _token = null;
+        // Fallback: If biometrics are not setup/supported, bypass gating and read the token directly.
+        _token = await _biometricAuth.getSessionTokenWithoutBiometrics();
+      }
+
+      if (_token != null) {
+        await fetchCustomer();
       }
     } catch (e) {
       _token = null;

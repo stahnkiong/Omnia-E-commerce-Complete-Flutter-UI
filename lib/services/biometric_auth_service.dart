@@ -175,6 +175,34 @@ class BiometricAuthService {
     }
   }
 
+  /// Retrieves the stored session token directly from secure storage without biometrics,
+  /// and caches it in memory. Used as a fallback for devices without biometric hardware.
+  Future<String?> getSessionTokenWithoutBiometrics() async {
+    try {
+      final String? token = await _secureStorage.read(key: _sessionTokenKey);
+      if (token != null && token.isNotEmpty) {
+        _unlockedAccessToken = token;
+      }
+      return token;
+    } on PlatformException catch (e, stackTrace) {
+      developer.log(
+        'PlatformException in getSessionTokenWithoutBiometrics: ${e.code} - ${e.message}',
+        name: 'BiometricAuthService',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return null;
+    } catch (e, stackTrace) {
+      developer.log(
+        'Unexpected error in getSessionTokenWithoutBiometrics',
+        name: 'BiometricAuthService',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
   /// Removes the token key from secure storage and clears runtime memory cache.
   Future<void> clearSession() async {
     try {
