@@ -50,6 +50,20 @@
 	<string>http</string>
 	<string>https</string>
 	</array>
+	<!-- Custom URL scheme for Google OAuth deep link callback -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>auth-callback</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>omniafoods</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Scan your Face ID to unlock your secure customer session</string>
 </dict>

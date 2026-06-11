@@ -6,6 +6,14 @@ import 'package:local_auth/local_auth.dart';
 /// A secure service handling client-side biometric locking and key storage
 /// for a MedusaJS storefront session token.
 class BiometricAuthService {
+  static final BiometricAuthService _instance = BiometricAuthService._internal();
+
+  factory BiometricAuthService() {
+    return _instance;
+  }
+
+  BiometricAuthService._internal();
+
   // Constant configuration key for storing the Medusa session token securely.
   static const String _sessionTokenKey = 'medusa_session_token';
 

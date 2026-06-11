@@ -82,6 +82,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const SignUpScreen(),
       );
+    case googleAuthCallbackScreenRoute:
+      final String code = settings.arguments as String? ?? '';
+      return MaterialPageRoute(
+        builder: (context) => GoogleAuthCallbackScreen(code: code),
+      );
     // case profileSetupScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const ProfileSetupScreen(),

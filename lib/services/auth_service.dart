@@ -3,6 +3,43 @@ import 'api_service.dart';
 class AuthService {
   final ApiService _api = ApiService();
 
+  // Login with Google (OAuth)
+  Future<Map<String, dynamic>> loginWithGoogle() async {
+    try {
+      final response = await _api.client.post(
+        '/auth/customer/google',
+        data: {},
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        return response.data as Map<String, dynamic>;
+      } else if (response.data is String) {
+        return {'token': response.data as String};
+      }
+      throw Exception('Unexpected response format');
+    } catch (e) {
+      throw Exception('Google login initiation failed: $e');
+    }
+  }
+
+  /// Exchanges the OAuth authorization code returned by the Medusa callback
+  /// for a final JWT bearer token. Called after the app catches the deep link.
+  Future<String> exchangeCodeForToken(String code) async {
+    try {
+      final response = await _api.client.post(
+        '/auth/customer/google/callback',
+        queryParameters: {'code': code},
+      );
+      final String? token = response.data['token'] as String?;
+      if (token == null || token.isEmpty) {
+        throw Exception('No token in callback response');
+      }
+      return token;
+    } catch (e) {
+      throw Exception('Google OAuth code exchange failed: $e');
+    }
+  }
+
   // Login with email and password
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {

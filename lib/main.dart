@@ -8,6 +8,7 @@ import 'package:pasar_now/providers/product_provider.dart';
 import 'package:pasar_now/route/router.dart' as router;
 import 'package:pasar_now/theme/app_theme.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:app_links/app_links.dart';
 
 import 'package:pasar_now/providers/wishlist_provider.dart';
 import 'package:pasar_now/services/cart_service.dart';
@@ -33,12 +34,45 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _appLinks = AppLinks();
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeepLinkListener();
+  }
+
+  /// Listens for incoming `omniafoods://auth-callback?code=...` URIs and
+  /// navigates to [GoogleAuthCallbackScreen] with the extracted code.
+  void _initDeepLinkListener() {
+    _appLinks.uriLinkStream.listen((Uri uri) {
+      if (uri.scheme == 'omniafoods' && uri.host == 'auth-callback') {
+        final String? code = uri.queryParameters['code'];
+        if (code != null && code.isNotEmpty) {
+          _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            googleAuthCallbackScreenRoute,
+            (route) => false,
+            arguments: code,
+          );
+        }
+      }
+    });
+  }
+
   Widget _buildMaterialApp(BuildContext context, String initialRoute) {
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: 'Pasar Now',
+      title: 'PasarNow',
       theme: AppTheme.lightTheme(context),
       themeMode: ThemeMode.light,
       onGenerateRoute: router.generateRoute,
@@ -46,7 +80,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final authProvider = context.read<AuthProvider>();
@@ -55,15 +88,13 @@ class MyApp extends StatelessWidget {
       future: Future.wait([
         authProvider.initialize(),
         CartService().validateCart(),
-      ]), // Run the check here
+      ]),
       builder: (context, snapshot) {
         final authStatus = Provider.of<AuthProvider>(context);
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a splash screen while checking the token
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Decide the entry route based on the token status
         if (authStatus.isAuthenticated) {
           return _buildMaterialApp(context,
               kIsWeb ? webEntryPointScreenRoute : entryPointScreenRoute);

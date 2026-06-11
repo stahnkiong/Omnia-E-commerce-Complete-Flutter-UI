@@ -37,6 +37,54 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Initiates Google login.
+  /// Returns a redirect URL string if the user needs to be redirected to Google for authentication,
+  /// or null if the user was authenticated immediately.
+  Future<String?> loginWithGoogle() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final responseData = await _authService.loginWithGoogle();
+      
+      if (responseData.containsKey('location') && responseData['location'] != null) {
+        return responseData['location'] as String;
+      }
+
+      _token = (responseData['token'] ?? responseData['access_token']) as String?;
+
+      if (_token != null && _token!.isNotEmpty) {
+        await _biometricAuth.saveSessionToken(_token!);
+        await fetchCustomer();
+      }
+      return null;
+    } catch (e) {
+      return null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Called from the deep link callback screen with the `code` query param.
+  /// Exchanges the code for a JWT, persists it, and loads the customer profile.
+  Future<bool> handleGoogleCallback(String code) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _token = await _authService.exchangeCodeForToken(code);
+      await _biometricAuth.saveSessionToken(_token!);
+      await fetchCustomer();
+      return true;
+    } catch (e) {
+      _token = null;
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<bool> register(String email, String password) async {
     _isLoading = true;
     notifyListeners();
