@@ -22,7 +22,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   final TextEditingController _address2Controller = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _postalCodeController = TextEditingController();
-  final TextEditingController _addressNameController = TextEditingController();
   final TextEditingController _provinceController =
       TextEditingController(text: "Sarawak");
 
@@ -31,12 +30,12 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
     super.initState();
     if (widget.address != null) {
       _phoneController.text = widget.address!.phone ?? '';
-      _companyController.text = widget.address!.company ?? '';
+      _companyController.text =
+          widget.address!.company ?? widget.address!.addressName;
       _address1Controller.text = widget.address!.address1 ?? '';
       _address2Controller.text = widget.address!.address2 ?? '';
       _cityController.text = widget.address!.city ?? '';
       _postalCodeController.text = widget.address!.postalCode ?? '';
-      _addressNameController.text = widget.address!.addressName;
       _provinceController.text = widget.address!.province ?? 'Sarawak';
     }
   }
@@ -49,7 +48,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
     _address2Controller.dispose();
     _cityController.dispose();
     _postalCodeController.dispose();
-    _addressNameController.dispose();
     _provinceController.dispose();
     super.dispose();
   }
@@ -69,10 +67,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
         "country_code": "my", // Hardcoded as requested
         "province": _provinceController.text,
         "postal_code": _postalCodeController.text,
-        "metadata": {
-          if (widget.address == null)
-            "address_name": _addressNameController.text,
-        }
       };
 
       bool success;
@@ -93,7 +87,7 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to add address")),
+            const SnackBar(content: Text("Failed to save address")),
           );
         }
       }
@@ -113,22 +107,20 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
           key: _formKey,
           child: Column(
             children: [
-              if (widget.address == null)
-                TextFormField(
-                  controller: _addressNameController,
-                  decoration: const InputDecoration(
-                    labelText: "Address Name (e.g. Home, Office)",
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter address name';
-                    }
-                    return null;
-                  },
+              TextFormField(
+                controller: _companyController,
+                decoration: const InputDecoration(
+                  labelText: "Name (e.g. Home, Office)",
+                  border: OutlineInputBorder(),
                 ),
-              if (widget.address == null)
-                const SizedBox(height: defaultPadding),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter address name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: defaultPadding),
               TextFormField(
                 controller: _phoneController,
                 decoration: const InputDecoration(
@@ -142,14 +134,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
                   }
                   return null;
                 },
-              ),
-              const SizedBox(height: defaultPadding),
-              TextFormField(
-                controller: _companyController,
-                decoration: const InputDecoration(
-                  labelText: "Company (Optional)",
-                  border: OutlineInputBorder(),
-                ),
               ),
               const SizedBox(height: defaultPadding),
               TextFormField(

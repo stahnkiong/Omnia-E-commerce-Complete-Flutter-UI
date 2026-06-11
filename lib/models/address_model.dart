@@ -30,8 +30,7 @@ class Address {
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
       id: json['id'] ?? '',
-      addressName:
-          json['metadata']?['address_name'] ?? json['address_name'] ?? '',
+      addressName: json['company'] ?? '',
       company: json['company'],
       firstName: json['first_name'],
       lastName: json['last_name'],
