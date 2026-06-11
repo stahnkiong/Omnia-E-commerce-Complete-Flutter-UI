@@ -20,7 +20,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final responseData = await _authService.login(email, password);
-      _token = responseData['token'] as String?;
+      _token = (responseData['token'] ?? responseData['access_token']) as String?;
 
       // Save token securely and update runtime memory cache
       if (_token != null && _token!.isNotEmpty) {
@@ -43,7 +43,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final responseData = await _authService.register(email, password);
-      _token = responseData['token'] as String?;
+      _token = (responseData['token'] ?? responseData['access_token']) as String?;
 
       // Save token securely and update runtime memory cache
       if (_token != null && _token!.isNotEmpty) {
