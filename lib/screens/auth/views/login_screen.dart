@@ -25,19 +25,21 @@ class _LoginScreenState extends State<LoginScreen> {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image.asset(
-              "assets/images/food_20and_20drink.webp",
-              fit: BoxFit.cover,
-            ),
-            Padding(
+      body: Column(
+        children: [
+          Image.asset(
+            "assets/images/food_20and_20drink.webp",
+            height: size.height * 0.45,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          Expanded(
+            child: Padding(
               padding: const EdgeInsets.all(defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: defaultPadding),
                   Text(
                     "PasarNow",
                     style: Theme.of(context).textTheme.titleLarge,
@@ -47,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Members enjoy lower Cash on Delivery rates\nLog in now!",
                   ),
                   const SizedBox(height: defaultPadding),
+                  /*
                   LogInForm(
                     formKey: _formKey,
                     onEmailSaved: (v) => _email = v,
@@ -118,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: defaultPadding),
+                  */
                   OutlinedButton(
                     onPressed: () async {
                       final auth =
@@ -141,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                  content: Text('Google Authentication failed.')),
+                                  content:
+                                      Text('Google Authentication failed.')),
                             );
                           }
                         }
@@ -183,6 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
 
+                  /*
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -195,12 +201,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     ],
                   ),
+                  */
                   const SizedBox(height: defaultPadding * 2),
+                  SizedBox(height: size.height * 0.15),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -54,6 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     "Please enter your valid data in order to create an account.",
                   ),
                   const SizedBox(height: defaultPadding),
+                  /*
                   SignUpForm(
                     formKey: _formKey,
                     emailController: _emailController,
@@ -135,6 +136,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
                     },
                   ),
+                  */
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
