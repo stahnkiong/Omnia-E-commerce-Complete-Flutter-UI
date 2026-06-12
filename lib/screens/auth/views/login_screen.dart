@@ -6,7 +6,7 @@ import 'package:pasar_now/route/route_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'components/login_form.dart';
+// import 'components/login_form.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,9 +16,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _email = "";
-  String _password = "";
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // String _email = "";
+  // String _password = "";
 
   @override
   Widget build(BuildContext context) {
