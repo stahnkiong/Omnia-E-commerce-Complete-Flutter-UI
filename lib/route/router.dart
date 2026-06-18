@@ -249,7 +249,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   );
     case bookmarkScreenRoute:
       return MaterialPageRoute(
-        builder: (context) => const BookmarkScreen(),
+        builder: (context) => const InventoryScreen(),
       );
     case entryPointScreenRoute:
       final int initialIndex = settings.arguments is int ? settings.arguments as int : 0;

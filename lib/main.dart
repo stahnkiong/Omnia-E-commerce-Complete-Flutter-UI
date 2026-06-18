@@ -11,6 +11,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:app_links/app_links.dart';
 
 import 'package:pasar_now/providers/wishlist_provider.dart';
+import 'package:pasar_now/providers/inventory_provider.dart';
 import 'package:pasar_now/services/cart_service.dart';
 
 void main() async {
@@ -28,6 +29,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
+        ChangeNotifierProvider(create: (_) => InventoryProvider()),
       ],
       child: const MyApp(),
     ),
