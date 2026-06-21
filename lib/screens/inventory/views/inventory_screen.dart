@@ -6,25 +6,7 @@ import 'package:pasar_now/providers/product_provider.dart';
 import 'package:pasar_now/providers/wishlist_provider.dart';
 import 'package:pasar_now/providers/inventory_provider.dart';
 
-// Mock products to guarantee representation of the exact user prompt examples
-final List<ProductModel> mockInventoryProducts = [
-  ProductModel(
-    id: "mock_beef_broth",
-    title: "BEEF BROTH 1KG",
-    brandName: "Pasar Kitchen",
-    image:
-        "https://www.oetker.com.my/assets/hygraph/AVtdz8Pl3QxerK0kYX32fz/compress=metadata:true/quality=value:75/output=format:webp/resize=fit:clip,height:350,width:350/cmdr9ub8p7lrl07vx76mrmmq3?opt",
-    price: 15.0,
-  ),
-  ProductModel(
-    id: "mock_ayamfiesta_nuggets",
-    title: "AYAMFIESTA CHICKEN NUGGET 850G x 12",
-    brandName: "Fiesta",
-    image:
-        "https://img2.cdn.91app.com.my/webapi/imagesV3/Original/SalePage/272236/0/638684701249330000",
-    price: 85.0,
-  ),
-];
+// Mock inventory products removed; now dynamically resolved from backend stock data and catalog.
 
 // Product Title Parsing Logic
 class ProductParsedInfo {
@@ -218,12 +200,13 @@ String getWeightFormula({
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});
 
-  ProductModel? _findProductById(String id, ProductProvider productProvider) {
-    // 1. Search mock list
-    for (var p in mockInventoryProducts) {
+  ProductModel? _findProductById(
+      String id, ProductProvider productProvider, List<ProductModel> fetchedProducts) {
+    // 1. Search products loaded from backend stock database
+    for (var p in fetchedProducts) {
       if (p.id == id) return p;
     }
-    // 2. Search ProductProvider
+    // 2. Search ProductProvider catalog products
     final allProducts = [
       ...demoPopularProducts,
       ...productProvider.popularProducts,
@@ -277,7 +260,8 @@ class InventoryScreen extends StatelessWidget {
           final List<Map<String, dynamic>> resolvedList = [];
 
           for (var item in displayItems) {
-            final prod = _findProductById(item.productId, productProvider);
+            final prod = _findProductById(
+                item.productId, productProvider, inventoryProvider.fetchedProducts);
             if (prod != null) {
               final parsed =
                   parseProductTitle(prod.title, productWeight: prod.weight);
@@ -301,7 +285,9 @@ class InventoryScreen extends StatelessWidget {
           }
 
           return SafeArea(
-            child: CustomScrollView(
+            child: RefreshIndicator(
+              onRefresh: () => inventoryProvider.fetchInventory(),
+              child: CustomScrollView(
               slivers: [
                 // Top Header / Dashboard Metrics Card
                 SliverToBoxAdapter(
@@ -731,7 +717,8 @@ class InventoryScreen extends StatelessWidget {
                 ),
               ],
             ),
-          );
+          ),
+        );
         },
       ),
     );

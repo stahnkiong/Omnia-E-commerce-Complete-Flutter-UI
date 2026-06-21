@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/product_model.dart';
+import '../services/inventory_service.dart';
 
 class InventoryItem {
+  final String? id; // Database stock item ID
   final String productId;
   final int quantity; // Full Count
   final double loose; // Loose/Open Count (fraction like 0.25 or number of packs like 3)
@@ -10,6 +13,7 @@ class InventoryItem {
   final int maxLoosePacks; // e.g. 12 or 24, used if looseType is 'packs'
 
   InventoryItem({
+    this.id,
     required this.productId,
     this.quantity = 0,
     this.loose = 0.0,
@@ -18,6 +22,7 @@ class InventoryItem {
   });
 
   InventoryItem copyWith({
+    String? id,
     String? productId,
     int? quantity,
     double? loose,
@@ -25,6 +30,7 @@ class InventoryItem {
     int? maxLoosePacks,
   }) {
     return InventoryItem(
+      id: id ?? this.id,
       productId: productId ?? this.productId,
       quantity: quantity ?? this.quantity,
       loose: loose ?? this.loose,
@@ -35,6 +41,7 @@ class InventoryItem {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'productId': productId,
       'quantity': quantity,
       'loose': loose,
@@ -45,6 +52,7 @@ class InventoryItem {
 
   factory InventoryItem.fromJson(Map<String, dynamic> json) {
     return InventoryItem(
+      id: json['id'] as String?,
       productId: json['productId'] as String? ?? '',
       quantity: json['quantity'] as int? ?? 0,
       loose: (json['loose'] as num? ?? 0.0).toDouble(),
@@ -52,13 +60,30 @@ class InventoryItem {
       maxLoosePacks: json['maxLoosePacks'] as int? ?? 12,
     );
   }
+
+  factory InventoryItem.fromBackendJson(Map<String, dynamic> json) {
+    return InventoryItem(
+      id: json['id'] as String?,
+      productId: json['product_id'] as String? ?? '',
+      quantity: json['quantity'] as int? ?? 0,
+      loose: (json['loose'] as num? ?? 0.0).toDouble(),
+      looseType: json['loose_type'] as String? ?? 'decimal',
+      maxLoosePacks: json['max_loose_packs'] as int? ?? 12,
+    );
+  }
 }
 
 class InventoryProvider with ChangeNotifier {
   final String _prefKey = 'stock_inventory_items';
+  final InventoryService _inventoryService = InventoryService();
+  
   List<InventoryItem> _items = [];
+  List<ProductModel> _fetchedProducts = [];
+  bool _isLoading = false;
 
   List<InventoryItem> get items => _items;
+  List<ProductModel> get fetchedProducts => _fetchedProducts;
+  bool get isLoading => _isLoading;
 
   InventoryProvider() {
     _loadInventory();
@@ -71,30 +96,13 @@ class InventoryProvider with ChangeNotifier {
       if (itemsJson != null) {
         final List<dynamic> decoded = json.decode(itemsJson);
         _items = decoded.map((item) => InventoryItem.fromJson(item)).toList();
-      } else {
-        // Prepopulate with user's examples
-        _items = [
-          InventoryItem(
-            productId: "mock_beef_broth",
-            quantity: 2,
-            loose: 0.25,
-            looseType: 'decimal',
-            maxLoosePacks: 12,
-          ),
-          InventoryItem(
-            productId: "mock_ayamfiesta_nuggets",
-            quantity: 1,
-            loose: 3.0,
-            looseType: 'packs',
-            maxLoosePacks: 12,
-          ),
-        ];
-        await _saveInventory();
       }
     } catch (e) {
-      debugPrint("Error loading inventory: $e");
+      debugPrint("Error loading local inventory cache: $e");
     }
     notifyListeners();
+    // Try to sync with backend on provider start
+    fetchInventory();
   }
 
   Future<void> _saveInventory() async {
@@ -103,7 +111,23 @@ class InventoryProvider with ChangeNotifier {
       final String encoded = json.encode(_items.map((item) => item.toJson()).toList());
       await prefs.setString(_prefKey, encoded);
     } catch (e) {
-      debugPrint("Error saving inventory: $e");
+      debugPrint("Error saving local inventory cache: $e");
+    }
+  }
+
+  Future<void> fetchInventory() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await _inventoryService.fetchStockAndProducts();
+      _items = response.stockItems;
+      _fetchedProducts = response.products;
+      await _saveInventory();
+    } catch (e) {
+      debugPrint("Error fetching inventory from backend: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -116,13 +140,39 @@ class InventoryProvider with ChangeNotifier {
 
   Future<void> updateItem(InventoryItem updatedItem) async {
     final index = _items.indexWhere((item) => item.productId == updatedItem.productId);
+    InventoryItem? oldItem;
     if (index != -1) {
+      oldItem = _items[index];
       _items[index] = updatedItem;
     } else {
       _items.add(updatedItem);
     }
     notifyListeners();
-    await _saveInventory();
+
+    try {
+      final savedItem = await _inventoryService.upsertStockItem(
+        productId: updatedItem.productId,
+        quantity: updatedItem.quantity,
+        loose: updatedItem.loose,
+        looseType: updatedItem.looseType,
+        maxLoosePacks: updatedItem.maxLoosePacks,
+      );
+      final newIndex = _items.indexWhere((item) => item.productId == savedItem.productId);
+      if (newIndex != -1) {
+        _items[newIndex] = savedItem;
+      }
+      await _saveInventory();
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error saving stock item to backend: $e");
+      // Rollback on error
+      if (oldItem != null && index != -1) {
+        _items[index] = oldItem;
+      } else {
+        _items.removeWhere((item) => item.productId == updatedItem.productId);
+      }
+      notifyListeners();
+    }
   }
 
   Future<void> updateQuantity(String productId, int quantity) async {
@@ -146,8 +196,29 @@ class InventoryProvider with ChangeNotifier {
   }
 
   Future<void> deleteItem(String productId) async {
-    _items.removeWhere((item) => item.productId == productId);
+    final item = getItemForProduct(productId);
+    final stockItemId = item.id;
+    if (stockItemId == null || stockItemId.isEmpty) {
+      _items.removeWhere((i) => i.productId == productId);
+      notifyListeners();
+      await _saveInventory();
+      return;
+    }
+
+    final index = _items.indexWhere((i) => i.productId == productId);
+    final oldItem = item;
+    _items.removeWhere((i) => i.productId == productId);
     notifyListeners();
-    await _saveInventory();
+
+    try {
+      await _inventoryService.deleteStockItem(stockItemId);
+      await _saveInventory();
+    } catch (e) {
+      debugPrint("Error deleting stock item from backend: $e");
+      if (index != -1) {
+        _items.insert(index, oldItem);
+      }
+      notifyListeners();
+    }
   }
 }
