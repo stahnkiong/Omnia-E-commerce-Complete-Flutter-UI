@@ -200,8 +200,8 @@ String getWeightFormula({
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});
 
-  ProductModel? _findProductById(
-      String id, ProductProvider productProvider, List<ProductModel> fetchedProducts) {
+  ProductModel? _findProductById(String id, ProductProvider productProvider,
+      List<ProductModel> fetchedProducts) {
     // 1. Search products loaded from backend stock database
     for (var p in fetchedProducts) {
       if (p.id == id) return p;
@@ -260,8 +260,8 @@ class InventoryScreen extends StatelessWidget {
           final List<Map<String, dynamic>> resolvedList = [];
 
           for (var item in displayItems) {
-            final prod = _findProductById(
-                item.productId, productProvider, inventoryProvider.fetchedProducts);
+            final prod = _findProductById(item.productId, productProvider,
+                inventoryProvider.fetchedProducts);
             if (prod != null) {
               final parsed =
                   parseProductTitle(prod.title, productWeight: prod.weight);
@@ -288,437 +288,445 @@ class InventoryScreen extends StatelessWidget {
             child: RefreshIndicator(
               onRefresh: () => inventoryProvider.fetchInventory(),
               child: CustomScrollView(
-              slivers: [
-                // Top Header / Dashboard Metrics Card
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(defaultPadding),
-                    child: Container(
+                slivers: [
+                  // Top Header / Dashboard Metrics Card
+                  SliverToBoxAdapter(
+                    child: Padding(
                       padding: const EdgeInsets.all(defaultPadding),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF2C2456),
-                                  const Color(0xFF1B1638)
-                                ]
-                              : [
-                                  primaryColor.withOpacity(0.08),
-                                  primaryColor.withOpacity(0.02)
-                                ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(defaultBorderRadious),
-                        border: Border.all(
-                          color: primaryColor.withOpacity(0.15),
-                          width: 1,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Stock Dashboard",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: isDark
-                                              ? Colors.white
-                                              : blackColor,
-                                        ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "Physical stock count and backend weights",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                          color: isDark
-                                              ? Colors.white70
-                                              : blackColor60,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              Icon(
-                                Icons.inventory_2_outlined,
-                                color: primaryColor,
-                                size: 28,
-                              ),
-                            ],
+                      child: Container(
+                        padding: const EdgeInsets.all(defaultPadding),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? [
+                                    const Color(0xFF2C2456),
+                                    const Color(0xFF1B1638)
+                                  ]
+                                : [
+                                    primaryColor.withOpacity(0.08),
+                                    primaryColor.withOpacity(0.02)
+                                  ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          const SizedBox(height: 16),
-                          const Divider(height: 1, color: Colors.black12),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildMetric(
-                                context,
-                                "${totalWeight.toStringAsFixed(2)} KG",
-                                "Total Weight",
-                                Icons.scale,
-                              ),
-                              _buildMetric(
-                                context,
-                                "$totalInStockItems / $totalUniqueItems",
-                                "In Stock Items",
-                                Icons.done_all,
-                              ),
-                            ],
+                          borderRadius:
+                              BorderRadius.circular(defaultBorderRadious),
+                          border: Border.all(
+                            color: primaryColor.withOpacity(0.15),
+                            width: 1,
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Stock Dashboard",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: isDark
+                                                ? Colors.white
+                                                : blackColor,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "Physical stock count and backend weights",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : blackColor60,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.inventory_2_outlined,
+                                  color: primaryColor,
+                                  size: 28,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            const Divider(height: 1, color: Colors.black12),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildMetric(
+                                  context,
+                                  "${totalWeight.toStringAsFixed(2)} KG",
+                                  "Total Weight",
+                                  Icons.scale,
+                                ),
+                                _buildMetric(
+                                  context,
+                                  "$totalInStockItems / $totalUniqueItems",
+                                  "In Stock Items",
+                                  Icons.done_all,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // Table Header Row
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: defaultPadding),
-                    child: Container(
+                  // Table Header Row
+                  SliverToBoxAdapter(
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1F1F2C) : blackColor5,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            flex: 4,
-                            child: Text(
-                              "Inventory Item",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
+                          horizontal: defaultPadding),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF1F1F2C) : blackColor5,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: const [
+                            Expanded(
+                              flex: 4,
                               child: Text(
-                                "Full",
+                                "Inventory Item",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                  "Full",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(
+                                  "Loose",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
                               child: Text(
-                                "Loose",
+                                "Qty",
+                                textAlign: TextAlign.end,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 12),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "Qty",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // Inventory Items List
-                SliverPadding(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  sliver: resolvedList.isEmpty
-                      ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 40),
-                              child: Text(
-                                "No items in inventory.\nWishlist items to automatically add them here.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey),
+                  // Inventory Items List
+                  SliverPadding(
+                    padding: const EdgeInsets.all(defaultPadding),
+                    sliver: resolvedList.isEmpty
+                        ? const SliverToBoxAdapter(
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 40),
+                                child: Text(
+                                  "No items in inventory.\nWishlist items to automatically add them here.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey),
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final itemData = resolvedList[index];
-                              final InventoryItem item = itemData['item'];
-                              final ProductModel product = itemData['product'];
-                              final ProductParsedInfo parsed =
-                                  itemData['parsed'];
-                              final double weight = itemData['weight'];
-                              final double totalUnits = calculateTotalUnits(
-                                parsedInfo: parsed,
-                                quantity: item.quantity,
-                                loose: item.loose,
-                                looseType: item.looseType,
-                              );
-                              final String totalUnitsStr = totalUnits ==
-                                      totalUnits.toInt()
-                                  ? "${totalUnits.toInt()} ${parsed.packagingType}${totalUnits.toInt() == 1 ? '' : 's'}"
-                                  : "${totalUnits.toStringAsFixed(2)} ${parsed.packagingType}s";
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final itemData = resolvedList[index];
+                                final InventoryItem item = itemData['item'];
+                                final ProductModel product =
+                                    itemData['product'];
+                                final ProductParsedInfo parsed =
+                                    itemData['parsed'];
+                                final double weight = itemData['weight'];
+                                final double totalUnits = calculateTotalUnits(
+                                  parsedInfo: parsed,
+                                  quantity: item.quantity,
+                                  loose: item.loose,
+                                  looseType: item.looseType,
+                                );
+                                final String totalUnitsStr = totalUnits ==
+                                        totalUnits.toInt()
+                                    ? "${totalUnits.toInt()} ${parsed.packagingType}${totalUnits.toInt() == 1 ? '' : 's'}"
+                                    : "${totalUnits.toStringAsFixed(2)} ${parsed.packagingType}s";
 
-                              final isWishlisted =
-                                  wishlistedIds.contains(product.id);
+                                final isWishlisted =
+                                    wishlistedIds.contains(product.id);
 
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12.0),
-                                child: InkWell(
-                                  onTap: () {
-                                    _showEditBottomSheet(context, item, product,
-                                        parsed, inventoryProvider);
-                                  },
-                                  borderRadius: BorderRadius.circular(
-                                      defaultBorderRadious),
-                                  child: Ink(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: item.quantity <= 1
-                                          ? (isDark
-                                              ? const Color(0xFF332211)
-                                              : const Color(0xFFFFF9E6))
-                                          : (isDark
-                                              ? const Color(0xFF1C1C25)
-                                              : Colors.white),
-                                      borderRadius: BorderRadius.circular(
-                                          defaultBorderRadious),
-                                      border: Border.all(
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      _showEditBottomSheet(context, item,
+                                          product, parsed, inventoryProvider);
+                                    },
+                                    borderRadius: BorderRadius.circular(
+                                        defaultBorderRadious),
+                                    child: Ink(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
                                         color: item.quantity <= 1
                                             ? (isDark
-                                                ? const Color(0xFF553311)
-                                                : const Color(0xFFFFD580))
+                                                ? const Color(0xFF332211)
+                                                : const Color(0xFFFFF9E6))
                                             : (isDark
-                                                ? const Color(0xFF2C2C35)
-                                                : Colors.black12),
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.02),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 2),
+                                                ? const Color(0xFF1C1C25)
+                                                : Colors.white),
+                                        borderRadius: BorderRadius.circular(
+                                            defaultBorderRadious),
+                                        border: Border.all(
+                                          color: item.quantity <= 1
+                                              ? (isDark
+                                                  ? const Color(0xFF553311)
+                                                  : const Color(0xFFFFD580))
+                                              : (isDark
+                                                  ? const Color(0xFF2C2C35)
+                                                  : Colors.black12),
                                         ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        // Product Image and Title Details
-                                        Expanded(
-                                          flex: 4,
-                                          child: Row(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                child: Image.network(
-                                                  product.image,
-                                                  width: 40,
-                                                  height: 40,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder: (context, error,
-                                                          stackTrace) =>
-                                                      Container(
-                                                    color: Colors.grey[300],
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.02),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          // Product Image and Title Details
+                                          Expanded(
+                                            flex: 4,
+                                            child: Row(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  child: Image.network(
+                                                    product.image,
                                                     width: 40,
                                                     height: 40,
-                                                    child: const Icon(
-                                                        Icons.broken_image,
-                                                        size: 20,
-                                                        color: Colors.grey),
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        Container(
+                                                      color: Colors.grey[300],
+                                                      width: 40,
+                                                      height: 40,
+                                                      child: const Icon(
+                                                          Icons.broken_image,
+                                                          size: 20,
+                                                          color: Colors.grey),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      parsed.cleanTitle,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyMedium
-                                                          ?.copyWith(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                    ),
-                                                    const SizedBox(height: 2),
-                                                    Row(
-                                                      children: [
-                                                        Flexible(
-                                                          child: Text(
-                                                            parsed.hasWeight
-                                                                ? (parsed.isCase
-                                                                    ? "${parsed.caseSize} × ${parsed.unitWeightKg.toStringAsFixed(parsed.unitWeightKg == parsed.unitWeightKg.toInt() ? 0 : 2)}KG Case"
-                                                                    : "${parsed.unitWeightKg.toStringAsFixed(parsed.unitWeightKg == parsed.unitWeightKg.toInt() ? 0 : 2)}KG ${parsed.packagingType}")
-                                                                : (parsed.isCase
-                                                                    ? "${parsed.caseSize} × Case"
-                                                                    : parsed
-                                                                        .packagingType),
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        10,
-                                                                    color: Colors
-                                                                        .grey),
-                                                          ),
-                                                        ),
-                                                        if (isWishlisted &&
-                                                            item.quantity ==
-                                                                0 &&
-                                                            item.loose ==
-                                                                0.0) ...[
-                                                          const SizedBox(
-                                                              width: 4),
-                                                          Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        4,
-                                                                    vertical:
-                                                                        1),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: primaryColor
-                                                                  .withOpacity(
-                                                                      0.1),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          4),
+                                                const SizedBox(width: 10),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        parsed.cleanTitle,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyMedium
+                                                            ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                             ),
+                                                      ),
+                                                      const SizedBox(height: 2),
+                                                      Row(
+                                                        children: [
+                                                          Flexible(
                                                             child: Text(
-                                                              "Wishlist",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    primaryColor,
-                                                                fontSize: 8,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                              parsed.hasWeight
+                                                                  ? (parsed
+                                                                          .isCase
+                                                                      ? "${parsed.caseSize} × ${parsed.unitWeightKg.toStringAsFixed(parsed.unitWeightKg == parsed.unitWeightKg.toInt() ? 0 : 2)}KG Case"
+                                                                      : "${parsed.unitWeightKg.toStringAsFixed(parsed.unitWeightKg == parsed.unitWeightKg.toInt() ? 0 : 2)}KG ${parsed.packagingType}")
+                                                                  : (parsed
+                                                                          .isCase
+                                                                      ? "${parsed.caseSize} × Case"
+                                                                      : parsed
+                                                                          .packagingType),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: const TextStyle(
+                                                                  fontSize: 10,
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                          ),
+                                                          if (isWishlisted &&
+                                                              item.quantity ==
+                                                                  0 &&
+                                                              item.loose ==
+                                                                  0.0) ...[
+                                                            const SizedBox(
+                                                                width: 4),
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          4,
+                                                                      vertical:
+                                                                          1),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: primaryColor
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4),
+                                                              ),
+                                                              child: Text(
+                                                                "Wishlist",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      primaryColor,
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
+                                                          ],
                                                         ],
-                                                      ],
-                                                    ),
-                                                  ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        // Full Count
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 16.0),
-                                            child: Text(
-                                              item.quantity.toString(),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 13),
+                                              ],
                                             ),
                                           ),
-                                        ),
 
-                                        // Open / Loose Count
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 16.0),
-                                            child: Text(
-                                              _formatLooseDisplay(
-                                                  item.loose, item.looseType),
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                                        ),
-
-                                        // Backend Weight
-                                        Expanded(
-                                          flex: 2,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                parsed.hasWeight
-                                                    ? "${weight.toStringAsFixed(2)} KG"
-                                                    : totalUnitsStr,
+                                          // Full Count
+                                          Expanded(
+                                            flex: 2,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0),
+                                              child: Text(
+                                                item.quantity.toString(),
                                                 style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                ),
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13),
                                               ),
-                                              const SizedBox(height: 2),
-                                              // Text(
-                                              //   getWeightFormula(
-                                              //     parsedInfo: parsed,
-                                              //     quantity: item.quantity,
-                                              //     loose: item.loose,
-                                              //     looseType: item.looseType,
-                                              //   ),
-                                              //   style: const TextStyle(
-                                              //     color: Colors.grey,
-                                              //     fontSize: 8,
-                                              //   ),
-                                              //   textAlign: TextAlign.end,
-                                              // ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
+
+                                          // Open / Loose Count
+                                          Expanded(
+                                            flex: 2,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0),
+                                              child: Text(
+                                                _formatLooseDisplay(
+                                                    item.loose, item.looseType),
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Backend Weight
+                                          Expanded(
+                                            flex: 2,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  parsed.hasWeight
+                                                      ? "${weight.toStringAsFixed(2)} KG"
+                                                      : "",
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                // Text(
+                                                //   getWeightFormula(
+                                                //     parsedInfo: parsed,
+                                                //     quantity: item.quantity,
+                                                //     loose: item.loose,
+                                                //     looseType: item.looseType,
+                                                //   ),
+                                                //   style: const TextStyle(
+                                                //     color: Colors.grey,
+                                                //     fontSize: 8,
+                                                //   ),
+                                                //   textAlign: TextAlign.end,
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            childCount: resolvedList.length,
+                                );
+                              },
+                              childCount: resolvedList.length,
+                            ),
                           ),
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
         },
       ),
     );
@@ -1159,58 +1167,46 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
           const SizedBox(height: 16),
 
           // 4. Live Backend Weight / Quantity preview
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF23232F) : lightGreyColor,
-              borderRadius: BorderRadius.circular(defaultBorderRadious),
-              border: Border.all(color: primaryColor.withOpacity(0.1)),
-            ),
-            child: Column(
-              children: [
-                Text(
-                  widget.parsed.hasWeight
-                      ? "PREVIEW BACKEND WEIGHT"
-                      : "PREVIEW TOTAL QUANTITY",
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                      color: Colors.grey),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.parsed.hasWeight
-                      ? "${calculatedWeight.toStringAsFixed(2)} KG"
-                      : (() {
-                          final double totalUnits = calculateTotalUnits(
-                            parsedInfo: widget.parsed,
-                            quantity: _quantity,
-                            loose: _loose,
-                            looseType: _looseType,
-                          );
-                          return totalUnits == totalUnits.toInt()
-                              ? "${totalUnits.toInt()} ${widget.parsed.packagingType}${totalUnits.toInt() == 1 ? '' : 's'}"
-                              : "${totalUnits.toStringAsFixed(2)} ${widget.parsed.packagingType}s";
-                        })(),
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: primaryColor,
+          if (widget.parsed.hasWeight) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF23232F) : lightGreyColor,
+                borderRadius: BorderRadius.circular(defaultBorderRadious),
+                border: Border.all(color: primaryColor.withOpacity(0.1)),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    "PREVIEW BACKEND WEIGHT",
+                    style: TextStyle(
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  formulaString,
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 11,
-                      fontStyle: FontStyle.italic),
-                ),
-              ],
+                        letterSpacing: 0.5,
+                        color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${calculatedWeight.toStringAsFixed(2)} KG",
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    formulaString,
+                    style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
+          ],
 
           // 5. Actions
           Row(
@@ -1253,6 +1249,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
                   child: const Text("Save Stock"),
                 ),
               ),
+              const SizedBox(height: defaultPadding)
             ],
           ),
         ],

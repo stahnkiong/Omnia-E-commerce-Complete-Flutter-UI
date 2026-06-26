@@ -99,6 +99,13 @@ class OrderDetailScreen extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (item.variantTitle != null && item.variantTitle!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    item.variantTitle!,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   "Qty: ${item.quantity} x ${order.currencyCode} ${item.unitPrice.toStringAsFixed(2)}",

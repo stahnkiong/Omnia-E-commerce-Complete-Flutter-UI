@@ -15,11 +15,13 @@ import 'components/product_quantity.dart';
 // import 'components/selected_colors.dart';
 // import 'components/selected_size.dart';
 import 'components/unit_price.dart';
+import 'components/product_option_selector.dart';
 
 class ProductBuyNowScreen extends StatefulWidget {
   final String productId;
+  final String? selectedVariantId;
 
-  const ProductBuyNowScreen({super.key, required this.productId});
+  const ProductBuyNowScreen({super.key, required this.productId, this.selectedVariantId});
 
   @override
   ProductBuyNowScreenState createState() => ProductBuyNowScreenState();
@@ -29,11 +31,76 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   late Future<ProductModel?> _productFuture;
   int _quantity = 1;
   bool _isAddingToCart = false;
+  final Map<String, String> _selectedOptions = {};
+  ProductVariantModel? _selectedVariant;
 
   @override
   void initState() {
     super.initState();
-    _productFuture = ProductService().fetchProduct(widget.productId);
+    _productFuture = ProductService().fetchProduct(widget.productId).then((product) {
+      if (product != null) {
+        _initializeSelectedOptions(product);
+      }
+      return product;
+    });
+  }
+
+  void _initializeSelectedOptions(ProductModel product) {
+    if (_selectedOptions.isNotEmpty) return;
+
+    ProductVariantModel? initialVariant;
+    if (widget.selectedVariantId != null) {
+      for (var v in product.variants) {
+        if (v.id == widget.selectedVariantId) {
+          initialVariant = v;
+          break;
+        }
+      }
+    }
+
+    if (initialVariant == null) {
+      for (var v in product.variants) {
+        if (v.id == product.variant) {
+          initialVariant = v;
+          break;
+        }
+      }
+    }
+
+    if (initialVariant == null && product.variants.isNotEmpty) {
+      initialVariant = product.variants.first;
+    }
+
+    if (initialVariant != null) {
+      for (var opt in initialVariant.options) {
+        _selectedOptions[opt.optionId] = opt.value;
+      }
+    } else {
+      for (var opt in product.options) {
+        if (opt.values.isNotEmpty) {
+          _selectedOptions[opt.id] = opt.values.first.value;
+        }
+      }
+    }
+    _updateSelectedVariant(product);
+  }
+
+  void _updateSelectedVariant(ProductModel product) {
+    ProductVariantModel? matchedVariant;
+    for (var variant in product.variants) {
+      bool allMatch = true;
+      for (var optAssociation in variant.options) {
+        if (_selectedOptions[optAssociation.optionId] != optAssociation.value) {
+          allMatch = false;
+          break;
+        }
+      }
+      if (allMatch && variant.options.length == product.options.length) {
+        matchedVariant = variant;
+        break;
+      }
+    }
+    _selectedVariant = matchedVariant;
   }
 
   @override
@@ -56,10 +123,13 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         }
 
         final product = snapshot.data!;
+        
+        // Safety initialization in case builder runs before or during async initialization completion
+        _initializeSelectedOptions(product);
 
         return Scaffold(
           bottomNavigationBar: CartButton(
-            price: product.price * _quantity,
+            price: (_selectedVariant?.price ?? product.price) * _quantity,
             title: "Add to cart",
             subTitle: "Total price",
             isLoading: _isAddingToCart,
@@ -68,7 +138,8 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                 _isAddingToCart = true;
               });
               try {
-                await CartService().addToCart(product.variant, _quantity);
+                final targetVariantId = _selectedVariant?.id ?? product.variant;
+                await CartService().addToCart(targetVariantId, _quantity);
                 if (context.mounted) {
                   customModalBottomSheet(
                     context,
@@ -107,29 +178,12 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    // IconButton(
-                    //   onPressed: () {},
-                    //   icon: SvgPicture.asset("assets/icons/Bookmark.svg",
-                    //       colorFilter: const ColorFilter.mode(
-                    //           Color.fromARGB(255, 188, 18, 5),
-                    //           BlendMode.srcIn)),
-                    // ),
                   ],
                 ),
               ),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
-                    // SliverToBoxAdapter(
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         horizontal: defaultPadding),
-                    //     child: AspectRatio(
-                    //       aspectRatio: 1.05,
-                    //       child: NetworkImageWithLoader(product.image),
-                    //     ),
-                    //   ),
-                    // ),
                     SliverPadding(
                       padding: const EdgeInsets.all(defaultPadding),
                       sliver: SliverToBoxAdapter(
@@ -138,8 +192,8 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                           children: [
                             Expanded(
                               child: UnitPrice(
-                                price: product.price,
-                                priceAfterDiscount: product.priceAfetDiscount,
+                                price: _selectedVariant?.price ?? product.price,
+                                priceAfterDiscount: _selectedVariant?.priceAfterDiscount ?? product.priceAfetDiscount,
                               ),
                             ),
                             ProductQuantity(
@@ -161,27 +215,24 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                         ),
                       ),
                     ),
-                    // const SliverToBoxAdapter(child: Divider()),
-                    // SliverToBoxAdapter(
-                    //   child: SelectedColors(
-                    //     colors: const [
-                    //       Color(0xFFEA6262),
-                    //       Color(0xFFB1CC63),
-                    //       Color(0xFFFFBF5F),
-                    //       Color(0xFF9FE1DD),
-                    //       Color(0xFFC482DB),
-                    //     ],
-                    //     selectedColorIndex: 2,
-                    //     press: (value) {},
-                    //   ),
-                    // ),
-                    // SliverToBoxAdapter(
-                    //   child: SelectedSize(
-                    //     sizes: const ["S", "M", "L", "XL", "XXL"],
-                    //     selectedIndex: 1,
-                    //     press: (value) {},
-                    //   ),
-                    // ),
+                    if (product.options.isNotEmpty)
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: product.options.map((opt) {
+                            return ProductOptionSelector(
+                              title: opt.title,
+                              values: opt.values.map((v) => v.value).toList(),
+                              selectedValue: _selectedOptions[opt.id] ?? '',
+                              onSelected: (val) {
+                                setState(() {
+                                  _selectedOptions[opt.id] = val;
+                                  _updateSelectedVariant(product);
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     SliverPadding(
                       padding:
                           const EdgeInsets.symmetric(vertical: defaultPadding),

@@ -105,11 +105,13 @@ class _CartScreenState extends State<CartScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(height: 4),
-                                        // Text(
-                                        //   item.variantTitle,
-                                        //   style: Theme.of(context).textTheme.bodySmall,
-                                        // ),
+                                        if (item.variantTitle.isNotEmpty) ...[
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            item.variantTitle,
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ],
                                         const SizedBox(height: 8),
                                         Row(
                                           mainAxisAlignment:

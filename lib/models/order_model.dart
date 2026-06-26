@@ -56,6 +56,7 @@ class OrderModel {
 class LineItemModel {
   final String id;
   final String title;
+  final String? variantTitle;
   final String thumbnail;
   final int quantity;
   final double unitPrice;
@@ -63,6 +64,7 @@ class LineItemModel {
   LineItemModel({
     required this.id,
     required this.title,
+    this.variantTitle,
     required this.thumbnail,
     required this.quantity,
     required this.unitPrice,
@@ -77,6 +79,7 @@ class LineItemModel {
     return LineItemModel(
       id: json['id'],
       title: json['title'],
+      variantTitle: json['variant_title'] ?? '',
       thumbnail: thumb,
       quantity: json['quantity'],
       unitPrice: (json['unit_price'] as num).toDouble(),

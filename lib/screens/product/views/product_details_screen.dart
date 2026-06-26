@@ -14,12 +14,13 @@ import 'package:pasar_now/models/product_model.dart';
 import 'components/product_images.dart';
 import 'components/product_info.dart';
 import 'components/product_list_tile.dart';
+import 'components/product_option_selector.dart';
 
 import 'package:pasar_now/components/product/product_card.dart';
 import 'package:pasar_now/components/review_card.dart';
 import 'product_buy_now_screen.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen(
       {super.key, required this.productId, this.isProductAvailable = true});
 
@@ -27,9 +28,77 @@ class ProductDetailsScreen extends StatelessWidget {
   final bool isProductAvailable;
 
   @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  late Future<ProductModel?> _productFuture;
+  final Map<String, String> _selectedOptions = {};
+  ProductVariantModel? _selectedVariant;
+
+  @override
+  void initState() {
+    super.initState();
+    _productFuture = ProductService().fetchProduct(widget.productId).then((product) {
+      if (product != null) {
+        _initializeSelectedOptions(product);
+      }
+      return product;
+    });
+  }
+
+  void _initializeSelectedOptions(ProductModel product) {
+    if (_selectedOptions.isNotEmpty) return;
+    
+    // Find the default variant
+    ProductVariantModel? defaultVar;
+    for (var v in product.variants) {
+      if (v.id == product.variant) {
+        defaultVar = v;
+        break;
+      }
+    }
+    
+    if (defaultVar == null && product.variants.isNotEmpty) {
+      defaultVar = product.variants.first;
+    }
+    
+    if (defaultVar != null) {
+      for (var opt in defaultVar.options) {
+        _selectedOptions[opt.optionId] = opt.value;
+      }
+    } else {
+      for (var opt in product.options) {
+        if (opt.values.isNotEmpty) {
+          _selectedOptions[opt.id] = opt.values.first.value;
+        }
+      }
+    }
+    _updateSelectedVariant(product);
+  }
+
+  void _updateSelectedVariant(ProductModel product) {
+    ProductVariantModel? matchedVariant;
+    for (var variant in product.variants) {
+      bool allMatch = true;
+      for (var optAssociation in variant.options) {
+        if (_selectedOptions[optAssociation.optionId] != optAssociation.value) {
+          allMatch = false;
+          break;
+        }
+      }
+      if (allMatch && variant.options.length == product.options.length) {
+        matchedVariant = variant;
+        break;
+      }
+    }
+    _selectedVariant = matchedVariant;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<ProductModel?>(
-      future: ProductService().fetchProduct(productId),
+      future: _productFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -44,16 +113,22 @@ class ProductDetailsScreen extends StatelessWidget {
         }
 
         final product = snapshot.data!;
+        
+        // Safety initialization in case builder runs before or during async initialization completion
+        _initializeSelectedOptions(product);
 
         return Scaffold(
-          bottomNavigationBar: isProductAvailable
+          bottomNavigationBar: widget.isProductAvailable
               ? CartButton(
-                  price: product.price,
+                  price: _selectedVariant?.price ?? product.price,
                   press: () {
                     customModalBottomSheet(
                       context,
                       height: MediaQuery.of(context).size.height * 0.8,
-                      child: ProductBuyNowScreen(productId: product.id),
+                      child: ProductBuyNowScreen(
+                        productId: product.id,
+                        selectedVariantId: _selectedVariant?.id,
+                      ),
                     );
                   },
                 )
@@ -65,16 +140,6 @@ class ProductDetailsScreen extends StatelessWidget {
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   floating: true,
                   title: Text(product.categories),
-                  // bookmark button
-                  // actions: [
-                  //   IconButton(
-                  //     onPressed: () {},
-                  //     icon: SvgPicture.asset("assets/icons/Bookmark.svg",
-                  //         colorFilter: ColorFilter.mode(
-                  //             Theme.of(context).textTheme.bodyLarge!.color!,
-                  //             BlendMode.srcIn)),
-                  //   ),
-                  // ],
                 ),
                 ProductImages(
                   images: product.images.isNotEmpty
@@ -85,10 +150,28 @@ class ProductDetailsScreen extends StatelessWidget {
                   productId: product.id,
                   brand: product.brandName,
                   title: product.title,
-                  isAvailable: isProductAvailable,
+                  isAvailable: widget.isProductAvailable,
                   description:
                       product.description.isNotEmpty ? product.description : "",
                 ),
+                if (product.options.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: product.options.map((opt) {
+                        return ProductOptionSelector(
+                          title: opt.title,
+                          values: opt.values.map((v) => v.value).toList(),
+                          selectedValue: _selectedOptions[opt.id] ?? '',
+                          onSelected: (val) {
+                            setState(() {
+                              _selectedOptions[opt.id] = val;
+                              _updateSelectedVariant(product);
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ProductListTile(
                   svgSrc: "assets/icons/Product.svg",
                   title: "Product Details",
@@ -100,19 +183,6 @@ class ProductDetailsScreen extends StatelessWidget {
                     );
                   },
                 ),
-                // ProductListTile(
-                //   svgSrc: "assets/icons/Delivery.svg",
-                //   title: "Shipping Information",
-                //   press: () {
-                //     customModalBottomSheet(
-                //       context,
-                //       height: MediaQuery.of(context).size.height * 0.92,
-                //       child: const BuyFullKit(
-                //         images: ["assets/screens/Shipping information.png"],
-                //       ),
-                //     );
-                //   },
-                // ),
                 ProductListTile(
                   svgSrc: "assets/icons/Return.svg",
                   title: "Returns",
@@ -139,14 +209,6 @@ class ProductDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // ProductListTile(
-                //   svgSrc: "assets/icons/Chat.svg",
-                //   title: "Reviews Under Development",
-                //   isShowBottomBorder: true,
-                //   press: () {
-                //     Navigator.pushNamed(context, productReviewsScreenRoute);
-                //   },
-                // ),
                 const SliverToBoxAdapter(child: FlashSale()),
                 SliverPadding(
                   padding: const EdgeInsets.all(defaultPadding),

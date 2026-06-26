@@ -12,6 +12,8 @@ class ProductModel {
   final int? dicountpercent;
   final String? subtitle;
   final String? weight;
+  final List<ProductOptionModel> options;
+  final List<ProductVariantModel> variants;
 
   ProductModel({
     this.id = "demo_id",
@@ -27,6 +29,8 @@ class ProductModel {
     this.dicountpercent,
     this.subtitle,
     this.weight,
+    this.options = const [],
+    this.variants = const [],
   });
 
   // Helper method to replace localhost URLs with network IP
@@ -41,11 +45,15 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     double price = 0.0;
     String variantId = "";
+    List<ProductVariantModel> parsedVariants = [];
     if (json['variants'] != null && (json['variants'] as List).isNotEmpty) {
-      final variants = json['variants'] as List;
+      final variantsJson = json['variants'] as List;
       double minPrice = double.infinity;
 
-      for (var v in variants) {
+      for (var v in variantsJson) {
+        final parsedVar = ProductVariantModel.fromJson(v);
+        parsedVariants.add(parsedVar);
+        
         if (v['calculated_price'] != null &&
             v['calculated_price']['calculated_amount'] != null) {
           double currentPrice =
@@ -59,6 +67,13 @@ class ProductModel {
       if (minPrice != double.infinity) {
         price = minPrice;
       }
+    }
+
+    // Process options
+    List<ProductOptionModel> parsedOptions = [];
+    if (json['options'] != null) {
+      final opts = json['options'] as List;
+      parsedOptions = opts.map((o) => ProductOptionModel.fromJson(o)).toList();
     }
 
     // Process thumbnail URL
@@ -91,6 +106,105 @@ class ProductModel {
       title: json['title'] ?? '',
       price: price,
       weight: json['weight'] ?? '',
+      options: parsedOptions,
+      variants: parsedVariants,
+    );
+  }
+}
+
+class ProductOptionModel {
+  final String id;
+  final String title;
+  final List<ProductOptionValueModel> values;
+
+  ProductOptionModel({
+    required this.id,
+    required this.title,
+    required this.values,
+  });
+
+  factory ProductOptionModel.fromJson(Map<String, dynamic> json) {
+    var vals = json['values'] as List? ?? [];
+    return ProductOptionModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      values: vals.map((v) => ProductOptionValueModel.fromJson(v)).toList(),
+    );
+  }
+}
+
+class ProductOptionValueModel {
+  final String id;
+  final String value;
+  final String optionId;
+
+  ProductOptionValueModel({
+    required this.id,
+    required this.value,
+    required this.optionId,
+  });
+
+  factory ProductOptionValueModel.fromJson(Map<String, dynamic> json) {
+    return ProductOptionValueModel(
+      id: json['id'] ?? '',
+      value: json['value'] ?? '',
+      optionId: json['option_id'] ?? '',
+    );
+  }
+}
+
+class VariantOptionAssociationModel {
+  final String id;
+  final String value;
+  final String optionId;
+
+  VariantOptionAssociationModel({
+    required this.id,
+    required this.value,
+    required this.optionId,
+  });
+
+  factory VariantOptionAssociationModel.fromJson(Map<String, dynamic> json) {
+    return VariantOptionAssociationModel(
+      id: json['id'] ?? '',
+      value: json['value'] ?? '',
+      optionId: json['option_id'] ?? '',
+    );
+  }
+}
+
+class ProductVariantModel {
+  final String id;
+  final String title;
+  final double price;
+  final double? priceAfterDiscount;
+  final List<VariantOptionAssociationModel> options;
+
+  ProductVariantModel({
+    required this.id,
+    required this.title,
+    required this.price,
+    this.priceAfterDiscount,
+    required this.options,
+  });
+
+  factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
+    double calculatedPrice = 0.0;
+    double? originalPrice;
+    
+    if (json['calculated_price'] != null) {
+      calculatedPrice = (json['calculated_price']['calculated_amount'] as num?)?.toDouble() ?? 0.0;
+      originalPrice = (json['calculated_price']['original_amount'] as num?)?.toDouble();
+    }
+    
+    var opts = json['options'] as List? ?? [];
+    
+    return ProductVariantModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      price: calculatedPrice,
+      priceAfterDiscount: originalPrice != null && originalPrice > calculatedPrice ? originalPrice : null,
+      options: opts.map((o) => VariantOptionAssociationModel.fromJson(o)).toList(),
     );
   }
 }
