@@ -1,7 +1,7 @@
 class AppConfig {
   static const String appName = "PasarNow";
 
-  static const bool isDev = true; // Toggle this for Dev/Prod
+  static const bool isDev = false; // Toggle this for Dev/Prod
 
   static String get apiBaseUrl {
     return isDev
