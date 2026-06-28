@@ -1,4 +1,5 @@
 import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/config.dart';
 
 class ProductModel {
   final String id;
@@ -37,7 +38,7 @@ class ProductModel {
   static String _replaceLocalhostUrl(String url) {
     if (url.startsWith('http://localhost:9000')) {
       return url.replaceFirst(
-          'http://localhost:9000', 'http://192.168.50.50:9000');
+          'http://localhost:9000', AppConfig.apiBaseUrl);
     }
     return url;
   }

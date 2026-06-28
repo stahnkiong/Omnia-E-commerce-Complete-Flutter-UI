@@ -80,7 +80,8 @@ class _BestSellersState extends State<BestSellers> {
                     );
                   },
                 ),
-              )
+              ),
+            const SizedBox(height: defaultPadding / 2),
           ],
         );
       },

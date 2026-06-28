@@ -1,6 +1,7 @@
 import 'api_service.dart';
 import '../models/product_model.dart';
 import '../models/category_model.dart';
+import '../models/product_type_model.dart';
 
 class ProductService {
   final ApiService _api = ApiService();
@@ -128,6 +129,27 @@ class ProductService {
     }
   }
 
+  Future<List<ProductModel>> fetchProductsByType(String typeId) async {
+    try {
+      final response = await _api.client.get(
+        '/store/products',
+        queryParameters: {
+          'type_id': typeId,
+          'limit': 50,
+          'fields': '*variants.calculated_price'
+        },
+      );
+
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch products by type: $e');
+    }
+  }
+
   Future<List<ProductModel>> fetchProductsByCategory(String categoryId) async {
     try {
       final response = await _api.client.get(
@@ -164,6 +186,22 @@ class ProductService {
       return [];
     } catch (e) {
       throw Exception('Failed to fetch categories: $e');
+    }
+  }
+
+  Future<List<ProductTypeModel>> fetchProductTypes() async {
+    try {
+      final response = await _api.client.get('/store/product-types');
+
+      if (response.data != null && response.data['product_types'] != null) {
+        final List<dynamic> typesJson = response.data['product_types'];
+        return typesJson
+            .map((json) => ProductTypeModel.fromJson(json))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      throw Exception('Failed to fetch product types: $e');
     }
   }
 }

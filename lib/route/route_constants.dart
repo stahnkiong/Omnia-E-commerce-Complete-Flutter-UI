@@ -31,6 +31,7 @@ const String searchHistoryScreenRoute = "search_history";
 const String bookmarkScreenRoute = "bookmark";
 const String productCollectionScreenRoute = "product_collection";
 const String productCategoriesScreenRoute = "product_categories";
+const String productTypesScreenRoute = "product_types";
 const String entryPointScreenRoute = "entry_point";
 const String webEntryPointScreenRoute = "web_entry_point";
 const String profileScreenRoute = "profile";

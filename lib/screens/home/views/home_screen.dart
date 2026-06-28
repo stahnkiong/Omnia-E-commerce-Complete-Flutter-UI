@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pasar_now/components/Banner/S/banner_s_style_1.dart';
-import 'package:pasar_now/components/Banner/S/banner_s_style_5.dart';
+import 'package:pasar_now/components/Banner/S/banner_g.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/route/screen_export.dart';
+import 'package:pasar_now/models/product_type_model.dart';
+import 'package:pasar_now/services/product_service.dart';
 
 import 'components/best_sellers.dart';
 import 'components/flash_sale.dart';
@@ -11,8 +12,71 @@ import 'components/categories.dart';
 import 'components/popular_products.dart';
 import 'home_screen_images.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final ProductService _productService = ProductService();
+  List<ProductTypeModel>? _productTypes;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProductTypes();
+  }
+
+  Future<void> _fetchProductTypes() async {
+    try {
+      final types = await _productService.fetchProductTypes();
+      if (mounted) {
+        setState(() {
+          _productTypes = types;
+          if (types.isNotEmpty && types[0].image != null) {
+            HomeScreenImages.banner1 = types[0].image!;
+          }
+          if (types.length > 1 && types[1].image != null) {
+            HomeScreenImages.banner2 = types[1].image!;
+          }
+          if (types.length > 2 && types[2].image != null) {
+            HomeScreenImages.banner3 = types[2].image!;
+          }
+          if (types.length > 3 && types[3].image != null) {
+            HomeScreenImages.banner4 = types[3].image!;
+          }
+          if (types.length > 4 && types[4].image != null) {
+            HomeScreenImages.banner5 = types[4].image!;
+          }
+        });
+      }
+    } catch (e) {
+      // Failed to load product types, defaults will remain
+    }
+  }
+
+  String _getBannerImage(int index, String defaultAsset) {
+    if (_productTypes != null && _productTypes!.length > index) {
+      return _productTypes![index].image ?? defaultAsset;
+    }
+    return defaultAsset;
+  }
+
+  void _onBannerTap(int index) {
+    if (_productTypes != null && _productTypes!.length > index) {
+      final type = _productTypes![index];
+      Navigator.pushNamed(
+        context,
+        productTypesScreenRoute,
+        arguments: {
+          'typeId': type.id,
+          'typeName': type.value,
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +87,9 @@ class HomeScreen extends StatelessWidget {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  Image.asset(
-                    HomeScreenImages.banner1,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                  BannerG(
+                    image: _getBannerImage(0, HomeScreenImages.banner1),
+                    press: () => _onBannerTap(0),
                   ),
                 ],
               ),
@@ -46,10 +109,9 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: defaultPadding),
-                  Image.asset(
-                    HomeScreenImages.banner2,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                  BannerG(
+                    image: _getBannerImage(1, HomeScreenImages.banner2),
+                    press: () => _onBannerTap(1),
                   ),
                 ],
               ),
@@ -62,15 +124,9 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: defaultPadding),
-                  BannerSStyle1(
-                    title: "New \narrival",
-                    subtitle: "SPECIAL OFFER",
-                    image: HomeScreenImages.banner3,
-                    discountParcent: 30,
-                    press: () {
-                      Navigator.pushNamed(context, productCollectionScreenRoute,
-                          arguments: "pcol_01KBW9VHQ59C8BF6HHJYJYYWJG");
-                    },
+                  BannerG(
+                    image: _getBannerImage(2, HomeScreenImages.banner3),
+                    press: () => _onBannerTap(2),
                   ),
                   const SizedBox(height: defaultPadding / 4),
                 ],
@@ -82,25 +138,27 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: defaultPadding * 1.5),
-
                   const SizedBox(height: defaultPadding / 4),
-                  // While loading use 👇
-                  // const BannerSSkelton(),
-                  BannerSStyle5(
-                    title: "TGI \nFriday",
-                    subtitle: "50% Off",
-                    image: HomeScreenImages.banner4,
-                    bottomText: "Collection".toUpperCase(),
-                    press: () {
-                      Navigator.pushNamed(context, productCollectionScreenRoute,
-                          arguments: "pcol_01KBW9VHQ59C8BF6HHJYJYYWJG");
-                    },
+                  BannerG(
+                    image: _getBannerImage(3, HomeScreenImages.banner4),
+                    press: () => _onBannerTap(3),
                   ),
                   const SizedBox(height: defaultPadding / 4),
                 ],
               ),
             ),
             const SliverToBoxAdapter(child: BestSellers()),
+            if (_productTypes == null || _productTypes!.length >= 5)
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    BannerG(
+                      image: _getBannerImage(4, HomeScreenImages.banner5),
+                      press: () => _onBannerTap(4),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
