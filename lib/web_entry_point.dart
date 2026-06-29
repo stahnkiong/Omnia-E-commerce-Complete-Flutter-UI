@@ -16,7 +16,7 @@ class WebEntryPoint extends StatelessWidget {
         leadingWidth: 0,
         centerTitle: false,
         title: Text(
-          "Pasar Now",
+          "Omnia",
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),

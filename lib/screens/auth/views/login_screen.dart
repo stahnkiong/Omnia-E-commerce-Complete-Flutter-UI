@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Omnia",
+                    "Omnia Foods",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: defaultPadding / 2),
