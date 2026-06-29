@@ -24,7 +24,7 @@ class TermsOfServicesScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              "Welcome to PasarNow. By using our app, you agree to the following terms:",
+              "Welcome to Omnia. By using our app, you agree to the following terms:",
               style: TextStyle(fontSize: 16),
             ),
             // add standard terms of service here

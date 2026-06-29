@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "PasarNow",
+                    "Omnia",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: defaultPadding / 2),

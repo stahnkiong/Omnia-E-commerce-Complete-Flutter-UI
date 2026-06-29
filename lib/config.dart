@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String appName = "PasarNow";
+  static const String appName = "Omnia";
 
   static const bool isDev = true; // Toggle this for Dev/Prod
 
