@@ -261,8 +261,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         builder: (context) => const KidsScreen(),
       );
     case searchScreenRoute:
+      final String? initialQuery = settings.arguments as String?;
       return MaterialPageRoute(
-        builder: (context) => const SearchScreen(),
+        builder: (context) => SearchScreen(initialQuery: initialQuery),
       );
     // case searchHistoryScreenRoute:
     //   return MaterialPageRoute(

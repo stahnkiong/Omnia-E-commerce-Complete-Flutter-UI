@@ -16,21 +16,24 @@ class ProductCard extends StatelessWidget {
     this.priceAfetDiscount,
     this.dicountpercent,
     required this.press,
+    this.style,
   });
   final String productId, image, brandName, title;
   final double price;
   final double? priceAfetDiscount;
   final int? dicountpercent;
   final VoidCallback press;
+  final ButtonStyle? style;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
       onPressed: press,
-      style: OutlinedButton.styleFrom(
-          minimumSize: const Size(140, 220),
-          maximumSize: const Size(140, 220),
-          padding: const EdgeInsets.all(8)),
+      style: style ??
+          OutlinedButton.styleFrom(
+              minimumSize: const Size(140, 220),
+              maximumSize: const Size(140, 220),
+              padding: const EdgeInsets.all(8)),
       child: Column(
         children: [
           AspectRatio(

@@ -4,6 +4,8 @@ import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/route/screen_export.dart';
 import 'package:pasar_now/models/product_type_model.dart';
 import 'package:pasar_now/services/product_service.dart';
+import 'package:pasar_now/components/product/product_card.dart';
+import 'package:pasar_now/models/product_model.dart';
 
 import 'components/best_sellers.dart';
 import 'components/flash_sale.dart';
@@ -23,10 +25,63 @@ class _HomeScreenState extends State<HomeScreen> {
   final ProductService _productService = ProductService();
   List<ProductTypeModel>? _productTypes;
 
+  // Pagination State for Infinite Scroll
+  final ScrollController _scrollController = ScrollController();
+  final List<ProductModel> _paginatedProducts = [];
+  int _offset = 0;
+  final int _limit = 20;
+  bool _isMoreLoading = false;
+  bool _hasMore = true;
+
   @override
   void initState() {
     super.initState();
     _fetchProductTypes();
+    _fetchNextProductsPage();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _fetchNextProductsPage();
+    }
+  }
+
+  Future<void> _fetchNextProductsPage() async {
+    if (_isMoreLoading || !_hasMore) return;
+    setState(() {
+      _isMoreLoading = true;
+    });
+
+    try {
+      final result = await _productService.fetchProductsPaginated(_offset, _limit);
+      final List<ProductModel> newProducts = result['products'];
+      final int totalCount = result['count'];
+
+      if (mounted) {
+        setState(() {
+          _paginatedProducts.addAll(newProducts);
+          _offset += _limit;
+          _isMoreLoading = false;
+          if (_paginatedProducts.length >= totalCount || newProducts.isEmpty) {
+            _hasMore = false;
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isMoreLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _fetchProductTypes() async {
@@ -83,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
+          controller: _scrollController,
           slivers: [
             SliverToBoxAdapter(
               child: Column(
@@ -157,6 +213,108 @@ class _HomeScreenState extends State<HomeScreen> {
                       press: () => _onBannerTap(4),
                     ),
                   ],
+                ),
+              ),
+            if (_paginatedProducts.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(defaultPadding),
+                  child: Text(
+                    "More Products",
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+              ),
+            if (_paginatedProducts.isNotEmpty)
+              SliverToBoxAdapter(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: (_paginatedProducts.length / 2).ceil(),
+                  itemBuilder: (context, index) {
+                    final int firstIndex = index * 2;
+                    final int secondIndex = firstIndex + 1;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: defaultPadding,
+                        vertical: defaultPadding / 2,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ProductCard(
+                              productId: _paginatedProducts[firstIndex].id,
+                              image: _paginatedProducts[firstIndex].image,
+                              brandName: _paginatedProducts[firstIndex].brandName,
+                              title: _paginatedProducts[firstIndex].title,
+                              price: _paginatedProducts[firstIndex].price,
+                              priceAfetDiscount:
+                                  _paginatedProducts[firstIndex].priceAfetDiscount,
+                              dicountpercent:
+                                  _paginatedProducts[firstIndex].dicountpercent,
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(double.infinity, 240),
+                                maximumSize: const Size(double.infinity, 240),
+                                padding: const EdgeInsets.all(8),
+                              ),
+                              press: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  productDetailsScreenRoute,
+                                  arguments: {
+                                    'productId': _paginatedProducts[firstIndex].id,
+                                    'isProductAvailable': true,
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: defaultPadding),
+                          Expanded(
+                            child: secondIndex < _paginatedProducts.length
+                                ? ProductCard(
+                                    productId: _paginatedProducts[secondIndex].id,
+                                    image: _paginatedProducts[secondIndex].image,
+                                    brandName: _paginatedProducts[secondIndex].brandName,
+                                    title: _paginatedProducts[secondIndex].title,
+                                    price: _paginatedProducts[secondIndex].price,
+                                    priceAfetDiscount:
+                                        _paginatedProducts[secondIndex]
+                                            .priceAfetDiscount,
+                                    dicountpercent:
+                                        _paginatedProducts[secondIndex]
+                                            .dicountpercent,
+                                    style: OutlinedButton.styleFrom(
+                                      minimumSize: const Size(double.infinity, 240),
+                                      maximumSize: const Size(double.infinity, 240),
+                                      padding: const EdgeInsets.all(8),
+                                    ),
+                                    press: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        productDetailsScreenRoute,
+                                        arguments: {
+                                          'productId': _paginatedProducts[secondIndex].id,
+                                          'isProductAvailable': true,
+                                        },
+                                      );
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            if (_isMoreLoading)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: defaultPadding),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
           ],

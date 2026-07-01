@@ -90,13 +90,21 @@ class LineItemModel {
 class FulfillmentModel {
   final String id;
   final String providerId;
+  final DateTime? deliveredAt;
 
-  FulfillmentModel({required this.id, required this.providerId});
+  FulfillmentModel({
+    required this.id,
+    required this.providerId,
+    this.deliveredAt,
+  });
 
   factory FulfillmentModel.fromJson(Map<String, dynamic> json) {
     return FulfillmentModel(
       id: json['id'],
-      providerId: json['provider_id'],
+      providerId: json['provider_id'] ?? '',
+      deliveredAt: json['delivered_at'] != null
+          ? DateTime.parse(json['delivered_at'])
+          : null,
     );
   }
 }

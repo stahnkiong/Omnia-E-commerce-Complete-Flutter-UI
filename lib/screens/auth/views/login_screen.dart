@@ -6,7 +6,7 @@ import 'package:pasar_now/route/route_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'components/login_form.dart';
+import 'components/login_form.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,112 +16,40 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // String _email = "";
-  // String _password = "";
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _email = "";
+  String _password = "";
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Image.asset(
-            "assets/images/food_20and_20drink.webp",
-            height: size.height * 0.45,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          Expanded(
-            child: Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Image.asset(
+              "assets/images/food_20and_20drink.webp",
+              height: size.height * 0.3,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(height: defaultPadding / 2),
+            Padding(
               padding: const EdgeInsets.all(defaultPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     "Omnia Foods",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: defaultPadding / 2),
                   const Text(
                     "Members enjoy lower Cash on Delivery rates\nLog in now!",
                   ),
                   const SizedBox(height: defaultPadding),
-                  /*
-                  LogInForm(
-                    formKey: _formKey,
-                    onEmailSaved: (v) => _email = v,
-                    onPasswordSaved: (v) => _password = v,
-                  ),
-                  // Align(
-                  //   child: TextButton(
-                  //     child: const Text("Forgot password"),
-                  //     onPressed: () {
-                  //       Navigator.pushNamed(
-                  //           context, passwordRecoveryScreenRoute);
-                  //     },
-                  //   ),
-                  // ),
-                  SizedBox(
-                    height:
-                        size.height > 700 ? size.height * 0.04 : defaultPadding,
-                  ),
-                  ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
 
-                          final auth =
-                              Provider.of<AuthProvider>(context, listen: false);
-
-                          final success = await auth.login(_email, _password);
-                          if (!context.mounted) return;
-                          if (success) {
-                            // Logged in successfully
-                            Navigator.pushNamedAndRemoveUntil(context,
-                                entryPointScreenRoute, (route) => false);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Login failed. Check email/password.')),
-                            );
-                          }
-                        }
-                      },
-                      child: const Text("Log in")),
-                  const SizedBox(height: defaultPadding),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: Theme.of(context).dividerColor,
-                          thickness: 1,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: defaultPadding),
-                        child: Text(
-                          "OR",
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: greyColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Theme.of(context).dividerColor,
-                          thickness: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: defaultPadding),
-                  */
                   OutlinedButton(
                     onPressed: () async {
                       final auth =
@@ -186,6 +114,86 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: defaultPadding * 3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Theme.of(context).dividerColor,
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: defaultPadding),
+                        child: Text(
+                          "OR",
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: greyColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Theme.of(context).dividerColor,
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: defaultPadding),
+                  Text(
+                    "Email / Password login method is for existing user only",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).hintColor,
+                        ),
+                  ),
+                  const SizedBox(height: defaultPadding),
+                  LogInForm(
+                    formKey: _formKey,
+                    onEmailSaved: (v) => _email = v,
+                    onPasswordSaved: (v) => _password = v,
+                  ),
+                  // Align(
+                  //   child: TextButton(
+                  //     child: const Text("Forgot password"),
+                  //     onPressed: () {
+                  //       Navigator.pushNamed(
+                  //           context, passwordRecoveryScreenRoute);
+                  //     },
+                  //   ),
+                  // ),
+                  SizedBox(
+                    height:
+                        size.height > 700 ? size.height * 0.04 : defaultPadding,
+                  ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+
+                          final auth =
+                              Provider.of<AuthProvider>(context, listen: false);
+
+                          final success = await auth.login(_email, _password);
+                          if (!context.mounted) return;
+                          if (success) {
+                            // Logged in successfully
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                entryPointScreenRoute, (route) => false);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Login failed. Check email/password.')),
+                            );
+                          }
+                        }
+                      },
+                      child: const Text("Log in")),
+
                   const SizedBox(height: defaultPadding),
 
                   /*
@@ -202,13 +210,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   */
-                  const SizedBox(height: defaultPadding * 2),
-                  SizedBox(height: size.height * 0.15),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

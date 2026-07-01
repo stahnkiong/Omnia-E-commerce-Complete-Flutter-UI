@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pasar_now/constants.dart';
+import 'package:pasar_now/route/route_constants.dart';
 
 import 'package:provider/provider.dart';
 
@@ -30,9 +31,16 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(defaultPadding),
-              child: SearchForm(),
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, searchScreenRoute);
+                },
+                child: const AbsorbPointer(
+                  child: SearchForm(),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(

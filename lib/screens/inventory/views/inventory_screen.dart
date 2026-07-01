@@ -454,7 +454,7 @@ class InventoryScreen extends StatelessWidget {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 40),
                                 child: Text(
-                                  "No items in inventory.\nWishlist items to automatically add them here.",
+                                  "No items in inventory.\nWishlist items to automatically add them here. \nStock you ordered will appear here when you receive it.",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey),
                                 ),

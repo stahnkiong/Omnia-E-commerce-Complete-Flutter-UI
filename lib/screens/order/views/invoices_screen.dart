@@ -56,55 +56,79 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _orders.isEmpty
-              ? const Center(child: Text("No upcoming invoices"))
-              : Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(defaultPadding),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        border: Border(
-                          bottom:
-                              BorderSide(color: Theme.of(context).dividerColor),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: defaultPadding,
+                    vertical: defaultPadding / 2,
+                  ),
+                  child: Text(
+                    "You have pending invoices here",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).hintColor,
                         ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Total Pending:",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          Text(
-                            _orders.isNotEmpty
-                                ? "${_orders.first.currencyCode} ${_totalAmount.toStringAsFixed(2)}"
-                                : "RM ${_totalAmount.toStringAsFixed(2)}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        padding: const EdgeInsets.all(defaultPadding),
-                        itemCount: _orders.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: defaultPadding),
-                        itemBuilder: (context, index) {
-                          final order = _orders[index];
-                          return InvoiceOrderCard(order: order);
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+                Expanded(
+                  child: _orders.isEmpty
+                      ? const Center(child: Text("No upcoming invoices"))
+                      : Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(defaultPadding),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context).dividerColor),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Total Pending:",
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  Text(
+                                    _orders.isNotEmpty
+                                        ? "${_orders.first.currencyCode} ${_totalAmount.toStringAsFixed(2)}"
+                                        : "RM ${_totalAmount.toStringAsFixed(2)}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView.separated(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: defaultPadding,
+                                  vertical: defaultPadding / 2,
+                                ),
+                                itemCount: _orders.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: defaultPadding),
+                                itemBuilder: (context, index) {
+                                  final order = _orders[index];
+                                  return InvoiceOrderCard(order: order);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

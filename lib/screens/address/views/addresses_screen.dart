@@ -82,52 +82,74 @@ class _AddressesScreenState extends State<AddressesScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _addresses.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        "assets/icons/Address.svg",
-                        height: 100,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.grey,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      const SizedBox(height: defaultPadding),
-                      const Text("No addresses found"),
-                    ],
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: defaultPadding,
+                    vertical: defaultPadding / 2,
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _fetchAddresses,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(defaultPadding),
-                    itemCount: _addresses.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: defaultPadding),
-                    itemBuilder: (context, index) {
-                      final address = _addresses[index];
-                      return AddressCard(
-                        address: address,
-                        onEdit: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddNewAddressScreen(address: address),
-                            ),
-                          );
-                          if (result == true) {
-                            _fetchAddresses();
-                          }
-                        },
-                        onDelete: () => _deleteAddress(address.id),
-                      );
-                    },
+                  child: Text(
+                    "You can check and manage your shipping addresses here",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).hintColor,
+                        ),
                   ),
                 ),
+                Expanded(
+                  child: _addresses.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/Address.svg",
+                                height: 100,
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.grey,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              const SizedBox(height: defaultPadding),
+                              const Text("No addresses found"),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _fetchAddresses,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: defaultPadding,
+                              vertical: defaultPadding / 2,
+                            ),
+                            itemCount: _addresses.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: defaultPadding),
+                            itemBuilder: (context, index) {
+                              final address = _addresses[index];
+                              return AddressCard(
+                                address: address,
+                                onEdit: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddNewAddressScreen(address: address),
+                                    ),
+                                  );
+                                  if (result == true) {
+                                    _fetchAddresses();
+                                  }
+                                },
+                                onDelete: () => _deleteAddress(address.id),
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

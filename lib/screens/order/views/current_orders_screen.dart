@@ -49,18 +49,40 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _orders.isEmpty
-              ? const Center(child: Text("No current orders found"))
-              : ListView.separated(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  itemCount: _orders.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: defaultPadding),
-                  itemBuilder: (context, index) {
-                    final order = _orders[index];
-                    return CurrentOrderCard(order: order);
-                  },
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: defaultPadding,
+                    vertical: defaultPadding / 2,
+                  ),
+                  child: Text(
+                    "You can check your current orders and status here",
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).hintColor,
+                        ),
+                  ),
                 ),
+                Expanded(
+                  child: _orders.isEmpty
+                      ? const Center(child: Text("No current orders found"))
+                      : ListView.separated(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: defaultPadding,
+                            vertical: defaultPadding / 2,
+                          ),
+                          itemCount: _orders.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: defaultPadding),
+                          itemBuilder: (context, index) {
+                            final order = _orders[index];
+                            return CurrentOrderCard(order: order);
+                          },
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

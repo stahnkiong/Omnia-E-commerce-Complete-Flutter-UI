@@ -178,6 +178,19 @@ class ApiService {
     }
   }
 
+  Future<OrderModel?> getOrder(String id) async {
+    try {
+      final response = await client.get('/store/orders/$id');
+      final orderData = response.data['order'];
+      if (orderData != null) {
+        return OrderModel.fromJson(orderData);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<Map<String, dynamic>?> addPromotion(
       String cartId, List<String> promoCodes) async {
     try {

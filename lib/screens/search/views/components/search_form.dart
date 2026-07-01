@@ -15,6 +15,7 @@ class SearchForm extends StatelessWidget {
     this.onFieldSubmitted,
     this.focusNode,
     this.autofocus = false,
+    this.controller,
   });
 
   final GlobalKey<FormState>? formKey;
@@ -24,11 +25,13 @@ class SearchForm extends StatelessWidget {
   final VoidCallback? onTabFilter;
   final FocusNode? focusNode;
   final bool autofocus;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return Form(
       child: TextFormField(
+        controller: controller,
         autofocus: autofocus,
         focusNode: focusNode,
         enabled: isEnabled,
@@ -53,30 +56,30 @@ class SearchForm extends StatelessWidget {
               ),
             ),
           ),
-          suffixIcon: SizedBox(
-            width: 40,
-            child: Row(
-              children: [
-                const SizedBox(
-                  height: 24,
-                  child: VerticalDivider(width: 1),
-                ),
-                Expanded(
-                  child: IconButton(
-                    onPressed: onTabFilter,
-                    icon: SvgPicture.asset(
-                      "assets/icons/Filter.svg",
-                      height: 24,
-                      colorFilter: ColorFilter.mode(
-                        Theme.of(context).iconTheme.color!,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // suffixIcon: SizedBox(
+          //   width: 40,
+          //   child: Row(
+          //     children: [
+          //       const SizedBox(
+          //         height: 24,
+          //         child: VerticalDivider(width: 1),
+          //       ),
+          //       Expanded(
+          //         child: IconButton(
+          //           onPressed: onTabFilter,
+          //           icon: SvgPicture.asset(
+          //             "assets/icons/Filter.svg",
+          //             height: 24,
+          //             colorFilter: ColorFilter.mode(
+          //               Theme.of(context).iconTheme.color!,
+          //               BlendMode.srcIn,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ),
       ),
     );
