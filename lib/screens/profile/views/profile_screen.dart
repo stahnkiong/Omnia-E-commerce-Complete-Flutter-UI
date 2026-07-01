@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pasar_now/components/list_tile/divider_list_tile.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/route/screen_export.dart';
 
@@ -8,6 +7,7 @@ import 'components/profile_card.dart';
 import 'components/profile_menu_item_list_tile.dart';
 import 'package:pasar_now/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -29,8 +29,7 @@ class ProfileScreen extends StatelessWidget {
                         : "${customer['first_name'] ?? ''} ${customer['last_name'] ?? ''}"
                     : "Guest",
                 email: customer?['email'] ?? "No Email",
-                imageSrc:
-                    "https://images.unsplash.com/vector-1740296178042-868e47a99833?q=80&w=240&auto=format&fit=crop",
+                imageSrc: "assets/Illustration/profile_icon.png",
                 // press: () {
                 //   Navigator.pushNamed(context, userInfoScreenRoute);
                 // },
@@ -103,23 +102,23 @@ class ProfileScreen extends StatelessWidget {
           //     Navigator.pushNamed(context, walletScreenRoute);
           //   },
           // ),
-          const SizedBox(height: defaultPadding),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding, vertical: defaultPadding / 2),
-            child: Text(
-              "Personalization",
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-          ),
-          DividerListTileWithTrilingText(
-            svgSrc: "assets/icons/Notification.svg",
-            title: "Notification",
-            trilingText: "Off",
-            press: () {
-              Navigator.pushNamed(context, enableNotificationScreenRoute);
-            },
-          ),
+          // const SizedBox(height: defaultPadding),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
+          //   child: Text(
+          //     "Personalization",
+          //     style: Theme.of(context).textTheme.titleSmall,
+          //   ),
+          // ),
+          // DividerListTileWithTrilingText(
+          //   svgSrc: "assets/icons/Notification.svg",
+          //   title: "Notification",
+          //   trilingText: "Off",
+          //   press: () {
+          //     Navigator.pushNamed(context, enableNotificationScreenRoute);
+          //   },
+          // ),
           // ProfileMenuListTile(
           //   text: "Preferences",
           //   svgSrc: "assets/icons/Preferences.svg",
@@ -160,12 +159,24 @@ class ProfileScreen extends StatelessWidget {
           ProfileMenuListTile(
             text: "Get Help",
             svgSrc: "assets/icons/Help.svg",
-            press: () {},
+            press: () async {
+              final Uri url =
+                  Uri.parse("https://www.omniafoodsupply.com.my/contact/");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
           ),
           ProfileMenuListTile(
             text: "FAQ",
             svgSrc: "assets/icons/FAQ.svg",
-            press: () {},
+            press: () async {
+              final Uri url = Uri.parse(
+                  "https://www.omniafoodsupply.com.my/delivery-return-policy/");
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
             isShowDivider: false,
           ),
           const SizedBox(height: defaultPadding),
