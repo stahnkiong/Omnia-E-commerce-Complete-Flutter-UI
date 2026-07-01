@@ -10,6 +10,7 @@ import 'package:pasar_now/theme/app_theme.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:app_links/app_links.dart';
 
+import 'package:pasar_now/config.dart';
 import 'package:pasar_now/providers/wishlist_provider.dart';
 import 'package:pasar_now/providers/inventory_provider.dart';
 import 'package:pasar_now/services/cart_service.dart';
@@ -21,8 +22,7 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  Stripe.publishableKey =
-      'pk_test_51SnE0nHVeaSTBf7hNyFNTAy1pPL12sXYAFbnBRp8VYdHPlzdIQqxMflRyefGQWCzVKp2BSPp6fXt87yGVSHtEcrt00tvxjkD03';
+  Stripe.publishableKey = AppConfig.stripePublishableKey;
   runApp(
     MultiProvider(
       providers: [

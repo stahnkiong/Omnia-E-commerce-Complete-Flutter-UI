@@ -19,6 +19,14 @@ class AppConfig {
   }
 
   static const int timeoutDuration = 8; // in seconds
+  // Medusa Publishable API Key (used for sales channel context in headers)
   static const String publishableKey =
       "pk_6fe416ddb475a7907d0b8a04fc3685428d7e8bec90dbe5d7c9da8b644750da65";
+
+  // Stripe Publishable Key (used for payment sheet processing)
+  static String get stripePublishableKey {
+    return isDev
+        ? 'pk_test_51SnE0nHVeaSTBf7hNyFNTAy1pPL12sXYAFbnBRp8VYdHPlzdIQqxMflRyefGQWCzVKp2BSPp6fXt87yGVSHtEcrt00tvxjkD03'
+        : 'pk_live_YOUR_LIVE_STRIPE_KEY_HERE'; // TODO: Replace with your actual Stripe live key
+  }
 }
