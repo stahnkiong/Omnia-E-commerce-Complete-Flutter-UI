@@ -27,6 +27,6 @@ class AppConfig {
   static String get stripePublishableKey {
     return isDev
         ? 'pk_test_51SnE0nHVeaSTBf7hNyFNTAy1pPL12sXYAFbnBRp8VYdHPlzdIQqxMflRyefGQWCzVKp2BSPp6fXt87yGVSHtEcrt00tvxjkD03'
-        : 'pk_live_YOUR_LIVE_STRIPE_KEY_HERE'; // TODO: Replace with your actual Stripe live key
+        : 'pk_live_51SnE0WQYIpepWISFwPyaKt1kR4SnZgB1jtan4mHPocsvfI4qRgFBgk7V2LaS8sDbcWPKrnsN0HF8k7TLU9hk321000OzYILjj8';
   }
 }

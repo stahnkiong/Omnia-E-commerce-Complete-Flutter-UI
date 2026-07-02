@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "387550989790",
+    "project_id": "pasarnow-e7642",
+    "storage_bucket": "pasarnow-e7642.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387550989790:android:b7e8c1c2b28ab5fedee14f",
+        "android_client_info": {
+          "package_name": "my.com.omniafoodsupply.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "387550989790-m175tk9icodp42noich43jeojclpiisq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1BxCx5RtCYyKVY-ShdczBE4PjOakDa2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387550989790-m175tk9icodp42noich43jeojclpiisq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387550989790-kofhi66t9hk1mavtqir0aerbvg7gqq77.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "my.com.omniafoodsupply.shop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
