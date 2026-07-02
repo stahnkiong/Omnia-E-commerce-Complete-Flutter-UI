@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/route/screen_export.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 class EntryPoint extends StatefulWidget {
   final int initialIndex;
@@ -17,8 +18,6 @@ class _EntryPointState extends State<EntryPoint> {
     HomeScreen(),
     DiscoverScreen(),
     InventoryScreen(),
-    // EmptyCartScreen(), // if Cart is empty
-    // ItemsUsageScreen(),
     CartScreen(),
     ProfileScreen(),
   ];
@@ -64,7 +63,9 @@ class _EntryPointState extends State<EntryPoint> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, discoverScreenRoute);
+              setState(() {
+                _currentIndex = 1;
+              });
             },
             icon: SvgPicture.asset(
               "assets/icons/Search.svg",
@@ -74,17 +75,47 @@ class _EntryPointState extends State<EntryPoint> {
                   BlendMode.srcIn),
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, notificationsScreenRoute);
+          ValueListenableBuilder<Box>(
+            valueListenable: Hive.box('notifications').listenable(),
+            builder: (context, box, _) {
+              final hasUnread = box.values.any((notification) {
+                if (notification is Map) {
+                  return notification['is_read'] == false;
+                }
+                return false;
+              });
+
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, notificationsScreenRoute);
+                    },
+                    icon: SvgPicture.asset(
+                      "assets/icons/Notification.svg",
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                          Theme.of(context).textTheme.bodyLarge!.color!,
+                          BlendMode.srcIn),
+                    ),
+                  ),
+                  if (hasUnread)
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              );
             },
-            icon: SvgPicture.asset(
-              "assets/icons/Notification.svg",
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                  Theme.of(context).textTheme.bodyLarge!.color!,
-                  BlendMode.srcIn),
-            ),
           ),
         ],
       ),

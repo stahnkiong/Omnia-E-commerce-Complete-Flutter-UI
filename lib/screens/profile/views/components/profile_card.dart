@@ -66,15 +66,15 @@ class ProfileCard extends StatelessWidget {
         ],
       ),
       subtitle: Text(email),
-      trailing: isShowArrow
-          ? SvgPicture.asset(
-              "assets/icons/miniRight.svg",
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).iconTheme.color!.withAlpha(128),
-                BlendMode.srcIn,
-              ),
-            )
-          : null,
+      // trailing: isShowArrow
+      //     ? SvgPicture.asset(
+      //         "assets/icons/miniRight.svg",
+      //         colorFilter: ColorFilter.mode(
+      //           Theme.of(context).iconTheme.color!.withAlpha(128),
+      //           BlendMode.srcIn,
+      //         ),
+      //       )
+      //     : null,
     );
   }
 }

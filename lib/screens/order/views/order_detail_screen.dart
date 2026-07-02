@@ -76,11 +76,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   String _formatAddress(Address address) {
-    final name = "${address.firstName ?? ''} ${address.lastName ?? ''}".trim();
+    // final name = "${address.firstName ?? ''} ${address.lastName ?? ''}".trim();
     final parts = <String>[];
-    if (name.isNotEmpty) {
-      parts.add(name);
-    }
+    // if (name.isNotEmpty) {
+    //   parts.add(name);
+    // }
     if (address.address1 != null && address.address1!.trim().isNotEmpty) {
       parts.add(address.address1!.trim());
     }

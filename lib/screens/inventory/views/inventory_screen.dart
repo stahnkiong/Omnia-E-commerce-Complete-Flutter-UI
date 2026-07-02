@@ -396,8 +396,8 @@ class InventoryScreen extends StatelessWidget {
                           color: isDark ? const Color(0xFF1F1F2C) : blackColor5,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Expanded(
                               flex: 4,
                               child: Text(
@@ -409,7 +409,7 @@ class InventoryScreen extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 16.0),
+                                padding: EdgeInsets.only(left: 16.0),
                                 child: Text(
                                   "Full",
                                   style: TextStyle(
@@ -421,7 +421,7 @@ class InventoryScreen extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 16.0),
+                                padding: EdgeInsets.only(left: 16.0),
                                 child: Text(
                                   "Loose",
                                   style: TextStyle(
@@ -868,12 +868,16 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
       looseType: _looseType,
     );
 
+    final systemPadding = MediaQuery.of(context).viewPadding.bottom;
+
     return Container(
       padding: EdgeInsets.only(
         top: 20,
         left: defaultPadding,
         right: defaultPadding,
-        bottom: defaultPadding + keyboardPadding,
+        bottom: defaultPadding +
+            keyboardPadding +
+            (keyboardPadding > 0 ? 0 : systemPadding),
       ),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF191923) : Colors.white,
@@ -940,7 +944,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
                     const SizedBox(height: 4),
                     Text(
                       widget.product.brandName,
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: primaryColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w500),
@@ -1099,7 +1103,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
                         TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 Text(
                   "${_loose.toInt()} Packs",
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: primaryColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14),

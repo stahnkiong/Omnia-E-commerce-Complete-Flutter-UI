@@ -44,22 +44,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _fetchData() async {
     await _fetchCart();
+    if (!mounted) return;
 
     // Remove COD promotion if exists to reset state
     if (_cart != null) {
       await ApiService().removePromotion(_cart!.id, ['COD_OFFER_8996']);
+      if (!mounted) return;
       // Refresh cart to reflect changes
       await _fetchCart();
+      if (!mounted) return;
     }
 
     // Update email if available
-    if (mounted) {
-      final authProvider = context.read<AuthProvider>();
-      if (authProvider.customer != null && _cart != null) {
-        final email = authProvider.customer!['email'];
-        if (email != null) {
-          await ApiService().updateCart(_cart!.id, {'email': email});
-        }
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.customer != null && _cart != null) {
+      final email = authProvider.customer!['email'];
+      if (email != null) {
+        await ApiService().updateCart(_cart!.id, {'email': email});
+        if (!mounted) return;
       }
     }
 
@@ -76,6 +78,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // Sort by amount (smaller first)
       options.sort((a, b) => a.amount.compareTo(b.amount));
 
+      if (!mounted) return;
       setState(() {
         _shippingOptions = options;
         if (_shippingOptions.isNotEmpty) {
@@ -91,6 +94,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         await _fetchCart();
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoadingShippingOptions = false;
       });
@@ -100,12 +104,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _fetchPaymentProviders() async {
     try {
       final providersData = await ApiService().getPaymentProviders();
+      if (!mounted) return;
       setState(() {
         _paymentProviders = providersData;
         _selectedPaymentProvider = null; // Ensure unselected
         _isLoadingPaymentProviders = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoadingPaymentProviders = false;
       });
@@ -115,6 +121,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _fetchAddresses() async {
     try {
       final addressesData = await ApiService().getAddresses();
+      if (!mounted) return;
       setState(() {
         _addresses =
             addressesData.map((json) => Address.fromJson(json)).toList();
@@ -128,6 +135,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         await _updateCartAddress(_selectedAddress!);
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoadingAddresses = false;
       });
@@ -137,6 +145,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _updateCartAddress(Address address) async {
     if (_cart == null) return;
 
+    if (!mounted) return;
     setState(() {
       _isLoadingCart = true;
     });
@@ -164,6 +173,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       await _fetchShippingOptions(_cart!.id);
     } catch (e) {
       debugPrint("Error updating cart address: $e");
+      if (!mounted) return;
       setState(() {
         _isLoadingCart = false;
       });
@@ -173,11 +183,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _fetchCart() async {
     try {
       final cart = await CartService().fetchCart();
+      if (!mounted) return;
       setState(() {
         _cart = cart;
         _isLoadingCart = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoadingCart = false;
       });
@@ -194,6 +206,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _handlePaymentProviderChange(PaymentProvider? value) async {
     if (value == null || _cart == null) return;
 
+    if (!mounted) return;
     setState(() {
       _selectedPaymentProvider = value;
       _isLoadingCart = true;
@@ -210,6 +223,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       }
 
       if (updatedCartData != null) {
+        if (!mounted) return;
         setState(() {
           _cart = CartModel.fromJson(updatedCartData!);
         });
@@ -217,6 +231,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } catch (e) {
       debugPrint("Error updating promotion: $e");
     } finally {
+      if (!mounted) return;
       setState(() {
         _isLoadingCart = false;
       });
@@ -226,6 +241,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _handlePayment() async {
     if (_cart == null || _selectedPaymentProvider == null) return;
 
+    if (!mounted) return;
     setState(() {
       _isProcessing = true;
     });
@@ -239,6 +255,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         // Refresh cart to ensure totals are 100% accurate before payment
         final updatedCart = await CartService().fetchCart();
         if (updatedCart != null) {
+          if (!mounted) return;
           setState(() {
             _cart = updatedCart;
           });
@@ -346,7 +363,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               _isLoadingShippingOptions
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+              padding: const EdgeInsets.only(
+                left: defaultPadding,
+                right: defaultPadding,
+                top: defaultPadding,
+                bottom: 120, // Extra bottom padding to clear the fixed pay button
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

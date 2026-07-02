@@ -240,10 +240,10 @@ class AddressCard extends StatelessWidget {
           ),
           const Divider(),
           const SizedBox(height: defaultPadding / 2),
-          Text(
-            "${address.firstName ?? ''} ${address.lastName ?? ''}".trim(),
-            style: const TextStyle(fontWeight: FontWeight.w500),
-          ),
+          // Text(
+          //   "${address.firstName ?? ''} ${address.lastName ?? ''}".trim(),
+          //   style: const TextStyle(fontWeight: FontWeight.w500),
+          // ),
           const SizedBox(height: 4),
           Text(address.phone ?? ''),
           const SizedBox(height: 8),

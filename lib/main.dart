@@ -17,9 +17,12 @@ import 'package:pasar_now/providers/wishlist_provider.dart';
 import 'package:pasar_now/providers/inventory_provider.dart';
 import 'package:pasar_now/services/cart_service.dart';
 import 'package:pasar_now/services/notification_service.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('notifications');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
