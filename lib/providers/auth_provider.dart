@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../services/biometric_auth_service.dart';
 
@@ -119,10 +120,13 @@ class AuthProvider with ChangeNotifier {
   Future<void> initialize() async {
     _isLoading = true;
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final bool biometricEnabled = prefs.getBool('biometric_login_enabled') ?? false;
+
       // Check if biometrics are supported/configured first.
       final bool biometricAvailable = await _biometricAuth.isBiometricAvailable();
       
-      if (biometricAvailable) {
+      if (biometricAvailable && biometricEnabled) {
         // Trigger native biometric lock prompt exactly once on app entry.
         final bool unlocked = await _biometricAuth.unlockSessionWithBiometrics();
         if (unlocked) {
@@ -131,7 +135,7 @@ class AuthProvider with ChangeNotifier {
           _token = null;
         }
       } else {
-        // Fallback: If biometrics are not setup/supported, bypass gating and read the token directly.
+        // Fallback: If biometrics are not enabled or supported, bypass gating and read the token directly.
         _token = await _biometricAuth.getSessionTokenWithoutBiometrics();
       }
 

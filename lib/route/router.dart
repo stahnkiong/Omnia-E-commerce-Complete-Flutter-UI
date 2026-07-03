@@ -286,6 +286,10 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const ProfileScreen(),
       );
+    case enableBiometricLoginScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const EnableBiometricLoginScreen(),
+      );
     // case getHelpScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const GetHelpScreen(),

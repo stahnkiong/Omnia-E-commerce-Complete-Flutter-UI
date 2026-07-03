@@ -95,6 +95,13 @@ class ProfileScreen extends StatelessWidget {
               Navigator.pushNamed(context, invoicesScreenRoute);
             },
           ),
+          ProfileMenuListTile(
+            text: "Biometric Login",
+            svgSrc: "assets/icons/Fingerprint.svg",
+            press: () {
+              Navigator.pushNamed(context, enableBiometricLoginScreenRoute);
+            },
+          ),
           // ProfileMenuListTile(
           //   text: "Wallet",
           //   svgSrc: "assets/icons/Wallet.svg",

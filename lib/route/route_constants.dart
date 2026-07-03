@@ -66,3 +66,4 @@ const String paymentMethodScreenRoute = "payment_method";
 const String addNewCardScreenRoute = "add_new_card";
 const String thanksForOrderScreenRoute = "thanks_order";
 const String googleAuthCallbackScreenRoute = "google_auth_callback";
+const String enableBiometricLoginScreenRoute = "enable_biometric_login";
