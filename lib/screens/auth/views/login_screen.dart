@@ -3,10 +3,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/providers/auth_provider.dart';
 import 'package:pasar_now/route/route_constants.dart';
+import 'package:pasar_now/services/apple_auth_service.dart';
+import 'package:pasar_now/services/biometric_auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'components/login_form.dart';
+import 'components/social_login_buttons.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,8 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
 
-                  OutlinedButton(
-                    onPressed: () async {
+                  SocialLoginButtons(
+                    onGoogleTap: () async {
                       final auth =
                           Provider.of<AuthProvider>(context, listen: false);
                       try {
@@ -86,33 +89,37 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       }
                     },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: blackColor20),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: defaultPadding * 0.75),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(defaultBorderRadious),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          "assets/icons/google.svg",
-                          height: 24,
-                          width: 24,
-                        ),
-                        const SizedBox(width: defaultPadding),
-                        Text(
-                          "Login with Google",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                    onAppleTap: () async {
+                      try {
+                        final appleToken = await AppleAuthService().signInWithApple();
+                        if (appleToken != null) {
+                          await BiometricAuthService().saveSessionToken(appleToken);
+                          
+                          if (!context.mounted) return;
+                          final auth = Provider.of<AuthProvider>(context, listen: false);
+                          await auth.initialize();
+                          
+                          if (auth.isAuthenticated) {
+                            if (!context.mounted) return;
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                entryPointScreenRoute, (route) => false);
+                          } else {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Apple Authentication failed.')),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Failed to sign in with Apple: $e')),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: defaultPadding * 3),
                   Row(
