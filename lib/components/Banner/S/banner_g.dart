@@ -9,12 +9,19 @@ class BannerG extends StatelessWidget {
     super.key,
     this.image = "https://i.imgur.com/K41Mj7C.png",
     required this.press,
+    this.title,
+    this.subtitle,
   });
   final String? image;
   final VoidCallback press;
+  final String? title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
+    final bool hasOverlay = (title != null && title!.isNotEmpty) ||
+        (subtitle != null && subtitle!.isNotEmpty);
+
     return BannerS(
       image: image!,
       press: press,
@@ -24,12 +31,58 @@ class BannerG extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Expanded(
+              Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: defaultPadding / 4),
+                    if (hasOverlay)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (title != null && title!.isNotEmpty)
+                              Text(
+                                title!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            if (title != null &&
+                                title!.isNotEmpty &&
+                                subtitle != null &&
+                                subtitle!.isNotEmpty)
+                              const SizedBox(height: 4),
+                            if (subtitle != null && subtitle!.isNotEmpty)
+                              Text(
+                                subtitle!,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    else
+                      const SizedBox(height: defaultPadding / 4),
                   ],
                 ),
               ),

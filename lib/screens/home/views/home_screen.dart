@@ -119,6 +119,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return defaultAsset;
   }
 
+  String? _getBannerTitle(int index) {
+    if (_productTypes != null && _productTypes!.length > index) {
+      return _productTypes![index].title;
+    }
+    return null;
+  }
+
+  String? _getBannerSubtitle(int index) {
+    if (_productTypes != null && _productTypes!.length > index) {
+      return _productTypes![index].subtitle;
+    }
+    return null;
+  }
+
   void _onBannerTap(int index) {
     if (_productTypes != null && _productTypes!.length > index) {
       final type = _productTypes![index];
@@ -145,6 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   BannerG(
                     image: _getBannerImage(0, HomeScreenImages.banner1),
+                    title: _getBannerTitle(0),
+                    subtitle: _getBannerSubtitle(0),
                     press: () => _onBannerTap(0),
                   ),
                 ],
@@ -167,6 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: defaultPadding),
                   BannerG(
                     image: _getBannerImage(1, HomeScreenImages.banner2),
+                    title: _getBannerTitle(1),
+                    subtitle: _getBannerSubtitle(1),
                     press: () => _onBannerTap(1),
                   ),
                 ],
@@ -182,6 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: defaultPadding),
                   BannerG(
                     image: _getBannerImage(2, HomeScreenImages.banner3),
+                    title: _getBannerTitle(2),
+                    subtitle: _getBannerSubtitle(2),
                     press: () => _onBannerTap(2),
                   ),
                   const SizedBox(height: defaultPadding / 4),
@@ -197,6 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: defaultPadding / 4),
                   BannerG(
                     image: _getBannerImage(3, HomeScreenImages.banner4),
+                    title: _getBannerTitle(3),
+                    subtitle: _getBannerSubtitle(3),
                     press: () => _onBannerTap(3),
                   ),
                   const SizedBox(height: defaultPadding / 4),
@@ -210,6 +232,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     BannerG(
                       image: _getBannerImage(4, HomeScreenImages.banner5),
+                      title: _getBannerTitle(4),
+                      subtitle: _getBannerSubtitle(4),
                       press: () => _onBannerTap(4),
                     ),
                   ],
