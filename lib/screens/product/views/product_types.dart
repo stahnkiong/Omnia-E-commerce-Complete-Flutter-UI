@@ -96,6 +96,9 @@ class _ProductTypesScreenState extends State<ProductTypesScreen> {
                         ),
                       ),
                     ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: defaultPadding * 2),
+                    ),
                   ],
                 );
               },

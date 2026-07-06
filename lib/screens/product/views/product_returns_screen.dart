@@ -75,8 +75,10 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                       padding: const EdgeInsets.all(defaultPadding),
                       decoration: BoxDecoration(
                         color: successColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(defaultBorderRadious),
-                        border: Border.all(color: successColor.withValues(alpha: 0.2)),
+                        borderRadius:
+                            BorderRadius.circular(defaultBorderRadious),
+                        border: Border.all(
+                            color: successColor.withValues(alpha: 0.2)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +106,10 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                           const SizedBox(height: defaultPadding / 2),
                           Text(
                             "We pride ourselves on quality. Our 100% Quality Guarantee means if any produce is not fresh or up to standard, we replace it instantly, no questions asked.",
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
                                   height: 1.5,
                                 ),
                           ),
@@ -122,7 +127,8 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                     _buildConditionRow(
                       context,
                       title: "Perishable Goods",
-                      description: "Issues should be reported within 24 hours of delivery for instant replacement.",
+                      description:
+                          "Issues should be reported upon receiving the delivery for immediate replacement.",
                       icon: Icons.timer_outlined,
                       iconColor: warningColor,
                     ),
@@ -130,7 +136,8 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                     _buildConditionRow(
                       context,
                       title: "Non-Perishable Items",
-                      description: "Standard 7-day return policy applies for defective or incorrect items.",
+                      description:
+                          "Standard 7-day return policy applies for defective or incorrect items.",
                       icon: Icons.calendar_today_outlined,
                       iconColor: primaryColor,
                     ),
@@ -138,7 +145,8 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                     _buildConditionRow(
                       context,
                       title: "Original Packaging",
-                      description: "Items should be in their original packaging where possible to facilitate the exchange.",
+                      description:
+                          "Items should be in their original packaging where possible to facilitate the exchange.",
                       icon: Icons.inventory_2_outlined,
                       iconColor: Colors.blueGrey,
                     ),
@@ -148,9 +156,14 @@ class _ProductReturnsScreenState extends State<ProductReturnsScreen> {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: "For more details, please read our ",
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: Theme.of(context).textTheme.bodyMedium!.color?.withValues(alpha: 0.7),
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .color
+                                        ?.withValues(alpha: 0.7),
+                                  ),
                           children: [
                             TextSpan(
                               text: "Delivery & Return Policy",

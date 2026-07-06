@@ -183,46 +183,82 @@ class ProfileScreen extends StatelessWidget {
                 builder: (BuildContext dialogContext) {
                   return AlertDialog(
                     title: const Text("Delete Account"),
-                    content: const Text(
-                      "Account deletion is permanent and cannot be undone. We may still be required to retain transaction records for statutory legal compliance as mentioned above.",
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Account deletion is permanent and cannot be undone. You can review our policy or request deletion below.",
+                          ),
+                          const SizedBox(height: defaultPadding),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.description_outlined, color: primaryColor),
+                            title: const Text(
+                              "Data Retention & Deletion Policy",
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: const Text(
+                              "View policy in your browser",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            trailing: const Icon(Icons.open_in_new, size: 18),
+                            onTap: () async {
+                              final Uri url = Uri.parse("https://www.omniafoodsupply.com.my/data-retention-deletion/");
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                              }
+                            },
+                          ),
+                          const Divider(),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.mail_outline, color: errorColor),
+                            title: const Text(
+                              "Request Account Deletion",
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: errorColor),
+                            ),
+                            subtitle: const Text(
+                              "Send deletion request email",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            trailing: const Icon(Icons.chevron_right, size: 18),
+                            onTap: () async {
+                              Navigator.pop(dialogContext); // Close dialog
+                              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                              final customerEmail = authProvider.customer?['email'] ?? '';
+                              const String email = 'feedback@omniafoodsupply.com.my';
+                              final String subject = Uri.encodeComponent('Requesting Data Deletion');
+                              final String body = Uri.encodeComponent(
+                                'Dear Omnia Support Team,\n\n'
+                                'I am writing to request the permanent deletion of my account and all associated personal data from your systems.\n\n'
+                                'Account Details:\n'
+                                '- Email Address: $customerEmail\n\n'
+                                'Please process this request and confirm once the deletion is complete.\n\n'
+                                'Thank you.',
+                              );
+                              final Uri url = Uri.parse('mailto:$email?subject=$subject&body=$body');
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Could not launch mail application."),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
                         child: const Text("Cancel"),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(dialogContext); // Close dialog
-                          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                          final customerEmail = authProvider.customer?['email'] ?? '';
-                          const String email = 'feedback@omniafoodsupply.com.my';
-                          final String subject = Uri.encodeComponent('Requesting Data Deletion');
-                          final String body = Uri.encodeComponent(
-                            'Dear Omnia Support Team,\n\n'
-                            'I am writing to request the permanent deletion of my account and all associated personal data from your systems.\n\n'
-                            'Account Details:\n'
-                            '- Email Address: $customerEmail\n\n'
-                            'Please process this request and confirm once the deletion is complete.\n\n'
-                            'Thank you.',
-                          );
-                          final Uri url = Uri.parse('mailto:$email?subject=$subject&body=$body');
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(url);
-                          } else {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Could not launch mail application."),
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        child: const Text(
-                          "Delete",
-                          style: TextStyle(color: errorColor),
-                        ),
                       ),
                     ],
                   );

@@ -7,7 +7,8 @@ import 'banner_s.dart';
 class BannerG extends StatelessWidget {
   const BannerG({
     super.key,
-    this.image = "https://i.imgur.com/K41Mj7C.png",
+    this.image =
+        "https://images.unsplash.com/photo-1633073547946-92ff810b1cca?q=80&w=1170&auto=format&fit=crop",
     required this.press,
     this.title,
     this.subtitle,
