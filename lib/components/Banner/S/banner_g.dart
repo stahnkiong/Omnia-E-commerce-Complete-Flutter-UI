@@ -12,6 +12,7 @@ class BannerG extends StatelessWidget {
     this.title,
     this.subtitle,
     this.aspectRatio,
+    this.isActive = true,
   });
 
   final String? image;
@@ -19,6 +20,7 @@ class BannerG extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final double? aspectRatio;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class BannerG extends StatelessWidget {
 
     return BannerS(
       image: image!,
-      press: press,
+      press: isActive ? press : null,
       aspectRatio: aspectRatio,
       children: [
         Positioned.fill(
@@ -91,23 +93,25 @@ class BannerG extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: defaultPadding),
-                SizedBox(
-                  height: 48,
-                  width: 48,
-                  child: ElevatedButton(
-                    onPressed: press,
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      backgroundColor: Colors.white,
-                    ),
-                    child: SvgPicture.asset(
-                      "assets/icons/Arrow - Right.svg",
-                      colorFilter:
-                          const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                if (isActive) ...[
+                  const SizedBox(width: defaultPadding),
+                  SizedBox(
+                    height: 48,
+                    width: 48,
+                    child: ElevatedButton(
+                      onPressed: press,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        backgroundColor: Colors.white,
+                      ),
+                      child: SvgPicture.asset(
+                        "assets/icons/Arrow - Right.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Colors.black, BlendMode.srcIn),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

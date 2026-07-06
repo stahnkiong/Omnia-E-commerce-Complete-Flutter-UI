@@ -51,23 +51,33 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       }
       return product;
     });
-    _relatedProductsFuture = _fetchRelatedProducts();
+    _relatedProductsFuture = _productFuture.then((product) {
+      if (product != null) {
+        return _fetchRelatedProducts(product.categoryId);
+      }
+      return <ProductModel>[];
+    });
   }
 
-  Future<List<ProductModel>> _fetchRelatedProducts() async {
+  Future<List<ProductModel>> _fetchRelatedProducts(String? categoryId) async {
     try {
+      final Map<String, dynamic> queryParams = {
+        'limit': 50,
+        'fields': '*variants.calculated_price',
+      };
+      if (categoryId != null) {
+        queryParams['category_id'] = categoryId;
+      }
       final response = await ApiService().client.get(
         '/store/products',
-        queryParameters: {
-          'category_id': 'pcat_01KB5C4AQA8SHM330PCA224ZJD',
-          'limit': 50,
-          'fields': '*variants.calculated_price',
-        },
+        queryParameters: queryParams,
       );
       if (response.data != null && response.data['products'] != null) {
         final List<dynamic> productsJson = response.data['products'];
-        final List<ProductModel> products =
-            productsJson.map((json) => ProductModel.fromJson(json)).toList();
+        final List<ProductModel> products = productsJson
+            .map((json) => ProductModel.fromJson(json))
+            .where((p) => p.id != widget.productId)
+            .toList();
         products.shuffle(Random());
         return products.take(18).toList();
       }

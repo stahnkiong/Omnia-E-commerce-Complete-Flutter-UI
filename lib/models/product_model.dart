@@ -8,6 +8,7 @@ class ProductModel {
   final List<String> images;
   final String description;
   final String categories;
+  final String? categoryId;
   final double price;
   final double? priceAfetDiscount;
   final int? dicountpercent;
@@ -25,6 +26,7 @@ class ProductModel {
     required this.brandName,
     required this.title,
     this.categories = "",
+    this.categoryId,
     required this.price,
     this.priceAfetDiscount,
     this.dicountpercent,
@@ -91,6 +93,11 @@ class ProductModel {
       imagesList = [productDemoImg1, productDemoImg2, productDemoImg3];
     }
 
+    String? categoryId;
+    if (json['categories'] != null && (json['categories'] as List).isNotEmpty) {
+      categoryId = json['categories'][0]['id'];
+    }
+
     return ProductModel(
       id: json['id'] ?? '',
       variant: variantId,
@@ -104,6 +111,7 @@ class ProductModel {
       categories: (json['collection'] != null)
           ? (json['collection']['title'] ?? '')
           : '',
+      categoryId: categoryId,
       title: json['title'] ?? '',
       price: price,
       weight: json['weight'] ?? '',

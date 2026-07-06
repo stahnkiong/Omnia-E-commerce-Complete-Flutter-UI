@@ -24,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ProductService _productService = ProductService();
   List<ProductTypeModel>? _productTypes;
+  final Map<String, bool> _productTypeHasProducts = {};
 
   // Pagination State for Infinite Scroll
   final ScrollController _scrollController = ScrollController();
@@ -87,9 +88,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchProductTypes() async {
     try {
       final types = await _productService.fetchProductTypes();
+      final Map<String, bool> hasProductsMap = {};
+      await Future.wait(
+        types.map((type) async {
+          try {
+            final products = await _productService.fetchProductsByType(type.id);
+            hasProductsMap[type.id] = products.isNotEmpty;
+          } catch (e) {
+            hasProductsMap[type.id] = false;
+          }
+        }),
+      );
+
       if (mounted) {
         setState(() {
           _productTypes = types;
+          _productTypeHasProducts.clear();
+          _productTypeHasProducts.addAll(hasProductsMap);
           if (types.isNotEmpty && types[0].image != null) {
             HomeScreenImages.banner1 = types[0].image!;
           }
@@ -110,6 +125,14 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       // Failed to load product types, defaults will remain
     }
+  }
+
+  bool _bannerHasProducts(int index) {
+    if (_productTypes != null && _productTypes!.length > index) {
+      final typeId = _productTypes![index].id;
+      return _productTypeHasProducts[typeId] ?? false;
+    }
+    return false;
   }
 
   String _getBannerImage(int index, String defaultAsset) {
@@ -134,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onBannerTap(int index) {
+    if (!_bannerHasProducts(index)) return;
     if (_productTypes != null && _productTypes!.length > index) {
       final type = _productTypes![index];
       Navigator.pushNamed(
@@ -162,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: _getBannerTitle(0),
                     subtitle: _getBannerSubtitle(0),
                     press: () => _onBannerTap(0),
+                    isActive: _bannerHasProducts(0),
                   ),
                 ],
               ),
@@ -186,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: _getBannerTitle(1),
                     subtitle: _getBannerSubtitle(1),
                     press: () => _onBannerTap(1),
+                    isActive: _bannerHasProducts(1),
                   ),
                 ],
               ),
@@ -203,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: _getBannerTitle(2),
                     subtitle: _getBannerSubtitle(2),
                     press: () => _onBannerTap(2),
+                    isActive: _bannerHasProducts(2),
                   ),
                   const SizedBox(height: defaultPadding / 4),
                 ],
@@ -220,6 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: _getBannerTitle(3),
                     subtitle: _getBannerSubtitle(3),
                     press: () => _onBannerTap(3),
+                    isActive: _bannerHasProducts(3),
                   ),
                   const SizedBox(height: defaultPadding / 4),
                 ],
@@ -235,6 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: _getBannerTitle(4),
                       subtitle: _getBannerSubtitle(4),
                       press: () => _onBannerTap(4),
+                      isActive: _bannerHasProducts(4),
                     ),
                   ],
                 ),

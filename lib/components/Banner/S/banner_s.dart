@@ -7,14 +7,14 @@ class BannerS extends StatelessWidget {
   const BannerS({
     super.key,
     required this.image,
-    required this.press,
+    this.press,
     required this.children,
     this.aspectRatio = 1.6,
     this.radius = 0,
   });
 
   final String image;
-  final VoidCallback press;
+  final VoidCallback? press;
   final List<Widget> children;
   final double? aspectRatio;
   final double radius;
