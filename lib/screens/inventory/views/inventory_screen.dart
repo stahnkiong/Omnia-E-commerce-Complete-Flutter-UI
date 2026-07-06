@@ -351,7 +351,7 @@ class InventoryScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.inventory_2_outlined,
                                   color: primaryColor,
                                   size: 28,
@@ -626,7 +626,7 @@ class InventoryScreen extends StatelessWidget {
                                                                         .circular(
                                                                             4),
                                                               ),
-                                                              child: Text(
+                                                              child: const Text(
                                                                 "Wishlist",
                                                                 style:
                                                                     TextStyle(
@@ -1074,7 +1074,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
                         TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                 Text(
                   _formatLooseDisplayDecimal(_loose),
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: primaryColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14),

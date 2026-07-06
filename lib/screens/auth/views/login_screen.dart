@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/providers/auth_provider.dart';
 import 'package:pasar_now/route/route_constants.dart';
@@ -91,14 +90,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     onAppleTap: () async {
                       try {
-                        final appleToken = await AppleAuthService().signInWithApple();
+                        final appleToken =
+                            await AppleAuthService().signInWithApple();
                         if (appleToken != null) {
-                          await BiometricAuthService().saveSessionToken(appleToken);
-                          
+                          await BiometricAuthService()
+                              .saveSessionToken(appleToken);
+
                           if (!context.mounted) return;
-                          final auth = Provider.of<AuthProvider>(context, listen: false);
+                          final auth =
+                              Provider.of<AuthProvider>(context, listen: false);
                           await auth.initialize();
-                          
+
                           if (auth.isAuthenticated) {
                             if (!context.mounted) return;
                             Navigator.pushNamedAndRemoveUntil(context,
@@ -116,7 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              content: Text('Failed to sign in with Apple: $e')),
+                              content:
+                                  Text('Failed to sign in with Apple: $e')),
                         );
                       }
                     },

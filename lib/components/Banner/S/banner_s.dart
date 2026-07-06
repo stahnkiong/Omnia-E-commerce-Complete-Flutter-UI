@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pasar_now/components/skleton/skelton.dart';
-import '../../../constants.dart';
 
 class BannerS extends StatelessWidget {
   const BannerS({
