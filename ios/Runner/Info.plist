@@ -49,6 +49,7 @@
 	<array>
 	<string>http</string>
 	<string>https</string>
+	<string>mailto</string>
 	</array>
 	<!-- Custom URL scheme for Google OAuth deep link callback -->
 	<key>CFBundleURLTypes</key>

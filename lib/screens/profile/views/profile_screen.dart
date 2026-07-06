@@ -175,6 +175,62 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
           ProfileMenuListTile(
+            text: "Delete Account",
+            svgSrc: "assets/icons/Delete.svg",
+            press: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: const Text("Delete Account"),
+                    content: const Text(
+                      "Account deletion is permanent and cannot be undone. We may still be required to retain transaction records for statutory legal compliance as mentioned above.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(dialogContext); // Close dialog
+                          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                          final customerEmail = authProvider.customer?['email'] ?? '';
+                          const String email = 'feedback@omniafoodsupply.com.my';
+                          final String subject = Uri.encodeComponent('Requesting Data Deletion');
+                          final String body = Uri.encodeComponent(
+                            'Dear Omnia Support Team,\n\n'
+                            'I am writing to request the permanent deletion of my account and all associated personal data from your systems.\n\n'
+                            'Account Details:\n'
+                            '- Email Address: $customerEmail\n\n'
+                            'Please process this request and confirm once the deletion is complete.\n\n'
+                            'Thank you.',
+                          );
+                          final Uri url = Uri.parse('mailto:$email?subject=$subject&body=$body');
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url);
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Could not launch mail application."),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(color: errorColor),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          ProfileMenuListTile(
             text: "FAQ",
             svgSrc: "assets/icons/FAQ.svg",
             press: () async {
