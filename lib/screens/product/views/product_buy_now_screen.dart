@@ -21,7 +21,8 @@ class ProductBuyNowScreen extends StatefulWidget {
   final String productId;
   final String? selectedVariantId;
 
-  const ProductBuyNowScreen({super.key, required this.productId, this.selectedVariantId});
+  const ProductBuyNowScreen(
+      {super.key, required this.productId, this.selectedVariantId});
 
   @override
   ProductBuyNowScreenState createState() => ProductBuyNowScreenState();
@@ -37,7 +38,8 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   @override
   void initState() {
     super.initState();
-    _productFuture = ProductService().fetchProduct(widget.productId).then((product) {
+    _productFuture =
+        ProductService().fetchProduct(widget.productId).then((product) {
       if (product != null) {
         _initializeSelectedOptions(product);
       }
@@ -123,7 +125,7 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         }
 
         final product = snapshot.data!;
-        
+
         // Safety initialization in case builder runs before or during async initialization completion
         _initializeSelectedOptions(product);
 
@@ -193,7 +195,9 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                             Expanded(
                               child: UnitPrice(
                                 price: _selectedVariant?.price ?? product.price,
-                                priceAfterDiscount: _selectedVariant?.priceAfterDiscount ?? product.priceAfetDiscount,
+                                priceAfterDiscount:
+                                    _selectedVariant?.priceAfterDiscount ??
+                                        product.priceAfetDiscount,
                               ),
                             ),
                             ProductQuantity(
@@ -233,58 +237,59 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                           }).toList(),
                         ),
                       ),
-                    SliverPadding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: defaultPadding),
-                      sliver: ProductListTile(
-                        title: "Shipping Info",
-                        svgSrc: "assets/icons/Express.svg",
-                        isShowBottomBorder: true,
-                        press: () {
-                          customModalBottomSheet(
-                            context,
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding:
-                                      const EdgeInsets.all(defaultPadding / 2),
-                                  margin: const EdgeInsets.all(defaultPadding),
-                                  child: const Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: defaultPadding),
-                                      Text(
-                                        "Shipping Information",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      SizedBox(height: defaultPadding),
-                                      Text(
-                                        "Processing Time: Orders typically ship within 1 business days following placement.",
-                                      ),
-                                      SizedBox(height: defaultPadding),
-                                      Text(
-                                        "Delivery Estimate: Standard shipping usually takes an additional 1-2 business days to arrive after dispatch.",
-                                      ),
-                                      SizedBox(height: defaultPadding),
-                                      Text(
-                                        "Please note: Times may vary during peak seasons or due to unforeseen carrier delays.",
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    // const SliverPadding(
+                    // padding: EdgeInsets.symmetric(vertical: defaultPadding),
+                    // sliver: ProductListTile(
+                    //   title: "Shipping Info",
+                    //   svgSrc: "assets/icons/Express.svg",
+                    //   isShowBottomBorder: true,
+                    //   press: () {
+                    //     customModalBottomSheet(
+                    //       context,
+                    //       height: MediaQuery.of(context).size.height * 0.5,
+                    //       child: Column(
+                    //         mainAxisAlignment: MainAxisAlignment.start,
+                    //         children: [
+                    //           Container(
+                    //             padding:
+                    //                 const EdgeInsets.all(defaultPadding / 2),
+                    //             margin: const EdgeInsets.all(defaultPadding),
+                    //             child: const Column(
+                    //               crossAxisAlignment:
+                    //                   CrossAxisAlignment.start,
+                    //               children: [
+                    //                 SizedBox(height: defaultPadding),
+                    //                 Text(
+                    //                   "Shipping Information",
+                    //                   style: TextStyle(
+                    //                     fontSize: 20,
+                    //                     fontWeight: FontWeight.bold,
+                    //                     color: Colors.black,
+                    //                   ),
+                    //                 ),
+                    //                 SizedBox(height: defaultPadding),
+                    //                 Text(
+                    //                   "Processing Time: Orders typically ship within 1 business days following placement.",
+                    //                 ),
+                    //                 SizedBox(height: defaultPadding),
+                    //                 Text(
+                    //                   "Delivery Estimate: Standard shipping usually takes an additional 1-2 business days to arrive after dispatch.",
+                    //                 ),
+                    //                 SizedBox(height: defaultPadding),
+                    //                 Text(
+                    //                   "Please note: Times may vary during peak seasons or due to unforeseen carrier delays.",
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
+                    // ),
+                    const SliverToBoxAdapter(
+                        child: SizedBox(height: defaultPadding)),
                     SliverPadding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: defaultPadding),

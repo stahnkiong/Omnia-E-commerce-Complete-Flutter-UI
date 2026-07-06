@@ -11,11 +11,14 @@ class BannerG extends StatelessWidget {
     required this.press,
     this.title,
     this.subtitle,
+    this.aspectRatio,
   });
+
   final String? image;
   final VoidCallback press;
   final String? title;
   final String? subtitle;
+  final double? aspectRatio;
 
   @override
   Widget build(BuildContext context) {
@@ -25,85 +28,88 @@ class BannerG extends StatelessWidget {
     return BannerS(
       image: image!,
       press: press,
+      aspectRatio: aspectRatio,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(defaultPadding),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (hasOverlay)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (title != null && title!.isNotEmpty)
-                              Text(
-                                title!,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.all(defaultPadding),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (hasOverlay)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
-                            if (title != null &&
-                                title!.isNotEmpty &&
-                                subtitle != null &&
-                                subtitle!.isNotEmpty)
-                              const SizedBox(height: 4),
-                            if (subtitle != null && subtitle!.isNotEmpty)
-                              Text(
-                                subtitle!,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54,
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (title != null && title!.isNotEmpty)
+                                Text(
+                                  title!,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
                                 ),
-                              ),
-                          ],
-                        ),
-                      )
-                    else
-                      const SizedBox(height: defaultPadding / 4),
-                  ],
-                ),
-              ),
-              const SizedBox(width: defaultPadding),
-              SizedBox(
-                height: 48,
-                width: 48,
-                child: ElevatedButton(
-                  onPressed: press,
-                  style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    backgroundColor: Colors.white,
-                  ),
-                  child: SvgPicture.asset(
-                    "assets/icons/Arrow - Right.svg",
-                    colorFilter:
-                        const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                              if (title != null &&
+                                  title!.isNotEmpty &&
+                                  subtitle != null &&
+                                  subtitle!.isNotEmpty)
+                                const SizedBox(height: 4),
+                              if (subtitle != null && subtitle!.isNotEmpty)
+                                Text(
+                                  subtitle!,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        )
+                      else
+                        const SizedBox(height: defaultPadding / 4),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: defaultPadding),
+                SizedBox(
+                  height: 48,
+                  width: 48,
+                  child: ElevatedButton(
+                    onPressed: press,
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.white,
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/icons/Arrow - Right.svg",
+                      colorFilter:
+                          const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

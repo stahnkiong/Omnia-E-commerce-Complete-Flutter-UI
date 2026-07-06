@@ -102,6 +102,12 @@ class _ProductCategoriesScreenState extends State<ProductCategoriesScreen> {
                         ),
                       ),
                     ),
+                    const SliverPadding(
+                      padding: EdgeInsets.all(defaultPadding),
+                      sliver: SliverToBoxAdapter(
+                        child: SizedBox(height: defaultPadding),
+                      ),
+                    ),
                   ],
                 );
               },

@@ -61,20 +61,22 @@ class ProductInfo extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: defaultPadding),
-            Text(
-              "Product info",
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: defaultPadding / 2),
-            Text(
-              description,
-              style: const TextStyle(height: 1.4),
-            ),
-            const SizedBox(height: defaultPadding / 2),
+            if (description.trim().isNotEmpty) ...[
+              const SizedBox(height: defaultPadding),
+              Text(
+                "Product info",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: defaultPadding / 2),
+              Text(
+                description,
+                style: const TextStyle(height: 1.4),
+              ),
+              const SizedBox(height: defaultPadding / 2),
+            ],
           ],
         ),
       ),

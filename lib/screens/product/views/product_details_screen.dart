@@ -8,6 +8,8 @@ import 'package:pasar_now/route/screen_export.dart';
 import 'package:pasar_now/screens/home/views/components/flash_sale.dart';
 import 'package:pasar_now/screens/product/views/components/unavailable_card.dart';
 import 'package:pasar_now/screens/product/views/product_returns_screen.dart';
+import 'dart:math';
+import 'package:pasar_now/services/api_service.dart';
 import 'package:pasar_now/services/product_service.dart';
 import 'package:pasar_now/models/product_model.dart';
 // import 'components/notify_me_card.dart';
@@ -17,8 +19,10 @@ import 'components/product_list_tile.dart';
 import 'components/product_option_selector.dart';
 
 import 'package:pasar_now/components/product/product_card.dart';
-import 'package:pasar_now/components/review_card.dart';
+// import 'package:pasar_now/components/review_card.dart';
 import 'product_buy_now_screen.dart';
+import 'delivery_details_screen.dart';
+import 'payment_options_screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   const ProductDetailsScreen(
@@ -33,23 +37,50 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   late Future<ProductModel?> _productFuture;
+  late Future<List<ProductModel>> _relatedProductsFuture;
   final Map<String, String> _selectedOptions = {};
   ProductVariantModel? _selectedVariant;
 
   @override
   void initState() {
     super.initState();
-    _productFuture = ProductService().fetchProduct(widget.productId).then((product) {
+    _productFuture =
+        ProductService().fetchProduct(widget.productId).then((product) {
       if (product != null) {
         _initializeSelectedOptions(product);
       }
       return product;
     });
+    _relatedProductsFuture = _fetchRelatedProducts();
+  }
+
+  Future<List<ProductModel>> _fetchRelatedProducts() async {
+    try {
+      final response = await ApiService().client.get(
+        '/store/products',
+        queryParameters: {
+          'category_id': 'pcat_01KB5C4AQA8SHM330PCA224ZJD',
+          'limit': 50,
+          'fields': '*variants.calculated_price',
+        },
+      );
+      if (response.data != null && response.data['products'] != null) {
+        final List<dynamic> productsJson = response.data['products'];
+        final List<ProductModel> products =
+            productsJson.map((json) => ProductModel.fromJson(json)).toList();
+        products.shuffle(Random());
+        return products.take(18).toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint("Error fetching related products: $e");
+      return [];
+    }
   }
 
   void _initializeSelectedOptions(ProductModel product) {
     if (_selectedOptions.isNotEmpty) return;
-    
+
     // Find the default variant
     ProductVariantModel? defaultVar;
     for (var v in product.variants) {
@@ -58,11 +89,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         break;
       }
     }
-    
+
     if (defaultVar == null && product.variants.isNotEmpty) {
       defaultVar = product.variants.first;
     }
-    
+
     if (defaultVar != null) {
       for (var opt in defaultVar.options) {
         _selectedOptions[opt.optionId] = opt.value;
@@ -113,7 +144,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         }
 
         final product = snapshot.data!;
-        
+
         // Safety initialization in case builder runs before or during async initialization completion
         _initializeSelectedOptions(product);
 
@@ -124,7 +155,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   press: () {
                     customModalBottomSheet(
                       context,
-                      height: MediaQuery.of(context).size.height * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.7,
                       child: ProductBuyNowScreen(
                         productId: product.id,
                         selectedVariantId: _selectedVariant?.id,
@@ -174,12 +205,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                 ProductListTile(
                   svgSrc: "assets/icons/Product.svg",
-                  title: "Product Details",
+                  title: "Delivery Details",
                   press: () {
                     customModalBottomSheet(
                       context,
                       height: MediaQuery.of(context).size.height * 0.7,
-                      child: ProductAttributesScreen(productId: product.id),
+                      child: const DeliveryDetailScreen(),
+                    );
+                  },
+                ),
+                ProductListTile(
+                  svgSrc: "assets/icons/Cash.svg",
+                  title: "Payment & Bulk Options",
+                  press: () {
+                    customModalBottomSheet(
+                      context,
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: const PaymentOptionsScreen(),
                     );
                   },
                 ),
@@ -195,20 +237,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     );
                   },
                 ),
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(defaultPadding),
-                    child: ReviewCard(
-                      rating: 5.0,
-                      numOfReviews: 1,
-                      numOfFiveStar: 1,
-                      numOfFourStar: 0,
-                      numOfThreeStar: 0,
-                      numOfTwoStar: 0,
-                      numOfOneStar: 0,
-                    ),
-                  ),
-                ),
+                // const SliverToBoxAdapter(
+                //   child: Padding(
+                //     padding: EdgeInsets.all(defaultPadding),
+                //     child: ReviewCard(
+                //       rating: 5.0,
+                //       numOfReviews: 1,
+                //       numOfFiveStar: 1,
+                //       numOfFourStar: 0,
+                //       numOfThreeStar: 0,
+                //       numOfTwoStar: 0,
+                //       numOfOneStar: 0,
+                //     ),
+                //   ),
+                // ),
                 const SliverToBoxAdapter(child: FlashSale()),
                 SliverPadding(
                   padding: const EdgeInsets.all(defaultPadding),
@@ -219,29 +261,71 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 220,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.only(
-                            left: defaultPadding,
-                            right: index == 4 ? defaultPadding : 0),
-                        child: ProductCard(
-                          productId: "demo_related_$index",
-                          image: productDemoImg7,
-                          title: "Pizza Pepperoni 320g",
-                          brandName: "Ristorante",
-                          price: 24.65,
-                          priceAfetDiscount: index.isEven ? 20.99 : null,
-                          dicountpercent: index.isEven ? 25 : null,
-                          press: () {},
+                FutureBuilder<List<ProductModel>>(
+                  future: _relatedProductsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(defaultPadding),
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return const SliverToBoxAdapter(
+                        child: SizedBox.shrink(),
+                      );
+                    }
+                    final products = snapshot.data ?? [];
+                    if (products.isEmpty) {
+                      return const SliverToBoxAdapter(
+                        child: SizedBox.shrink(),
+                      );
+                    }
+                    return SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: defaultPadding),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: defaultPadding,
+                          crossAxisSpacing: defaultPadding,
+                          childAspectRatio: 0.54,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final product = products[index];
+                            return ProductCard(
+                              productId: product.id,
+                              image: product.image,
+                              brandName: product.brandName,
+                              title: product.title,
+                              price: product.price,
+                              priceAfetDiscount: product.priceAfetDiscount,
+                              dicountpercent: product.dicountpercent,
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: Size.zero,
+                                maximumSize: Size.infinite,
+                                padding: const EdgeInsets.all(4),
+                              ),
+                              press: () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  productDetailsScreenRoute,
+                                  arguments: product.id,
+                                );
+                              },
+                            );
+                          },
+                          childCount: products.length,
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 const SliverToBoxAdapter(
                   child: SizedBox(height: defaultPadding),
