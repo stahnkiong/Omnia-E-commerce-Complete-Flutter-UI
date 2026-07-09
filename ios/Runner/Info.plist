@@ -67,5 +67,7 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Scan your Face ID to unlock your secure customer session</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
