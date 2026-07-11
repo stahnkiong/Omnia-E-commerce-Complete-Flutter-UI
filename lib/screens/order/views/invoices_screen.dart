@@ -65,7 +65,7 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
                     vertical: defaultPadding / 2,
                   ),
                   child: Text(
-                    "You have pending invoices here",
+                    "You can view your invoices here",
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).hintColor,
                         ),
