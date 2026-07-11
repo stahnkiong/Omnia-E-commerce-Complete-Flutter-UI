@@ -306,8 +306,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               dicountpercent:
                                   _paginatedProducts[firstIndex].dicountpercent,
                               style: OutlinedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 240),
-                                maximumSize: const Size(double.infinity, 240),
+                                minimumSize: const Size(double.infinity, 250),
+                                maximumSize: const Size(double.infinity, 250),
                                 padding: const EdgeInsets.all(8),
                               ),
                               press: () {
@@ -338,8 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         _paginatedProducts[secondIndex]
                                             .dicountpercent,
                                     style: OutlinedButton.styleFrom(
-                                      minimumSize: const Size(double.infinity, 240),
-                                      maximumSize: const Size(double.infinity, 240),
+                                      minimumSize: const Size(double.infinity, 250),
+                                      maximumSize: const Size(double.infinity, 250),
                                       padding: const EdgeInsets.all(8),
                                     ),
                                     press: () {

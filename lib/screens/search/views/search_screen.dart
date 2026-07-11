@@ -237,8 +237,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   priceAfetDiscount: _products[firstIndex].priceAfetDiscount,
                   dicountpercent: _products[firstIndex].dicountpercent,
                   style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 240),
-                    maximumSize: const Size(double.infinity, 240),
+                    minimumSize: const Size(double.infinity, 250),
+                    maximumSize: const Size(double.infinity, 250),
                     padding: const EdgeInsets.all(8),
                   ),
                   press: () {
@@ -265,8 +265,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         priceAfetDiscount: _products[secondIndex].priceAfetDiscount,
                         dicountpercent: _products[secondIndex].dicountpercent,
                         style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 240),
-                          maximumSize: const Size(double.infinity, 240),
+                          minimumSize: const Size(double.infinity, 250),
+                          maximumSize: const Size(double.infinity, 250),
                           padding: const EdgeInsets.all(8),
                         ),
                         press: () {
