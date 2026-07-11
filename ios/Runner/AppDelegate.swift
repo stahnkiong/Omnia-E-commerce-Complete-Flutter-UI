@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import Stripe
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -12,5 +13,17 @@ import UIKit
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+  }
+
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+  ) -> Bool {
+    let stripeHandled = StripeAPI.handleURLCallback(with: url)
+    if (stripeHandled) {
+      return true
+    }
+    return super.application(app, open: url, options: options)
   }
 }

@@ -300,6 +300,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: clientSecret,
             merchantDisplayName: 'Pasar Now',
+            allowsDelayedPaymentMethods: true,
+            returnURL: 'omniafoods://stripe-redirect',
           ),
         );
 
