@@ -303,8 +303,8 @@ class InventoryScreen extends StatelessWidget {
                                     const Color(0xFF1B1638)
                                   ]
                                 : [
-                                    primaryColor.withOpacity(0.08),
-                                    primaryColor.withOpacity(0.02)
+                                    primaryColor.withValues(alpha: 0.08),
+                                    primaryColor.withValues(alpha: 0.02)
                                   ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -312,7 +312,7 @@ class InventoryScreen extends StatelessWidget {
                           borderRadius:
                               BorderRadius.circular(defaultBorderRadious),
                           border: Border.all(
-                            color: primaryColor.withOpacity(0.15),
+                            color: primaryColor.withValues(alpha: 0.15),
                             width: 1,
                           ),
                         ),
@@ -471,16 +471,8 @@ class InventoryScreen extends StatelessWidget {
                                 final ProductParsedInfo parsed =
                                     itemData['parsed'];
                                 final double weight = itemData['weight'];
-                                final double totalUnits = calculateTotalUnits(
-                                  parsedInfo: parsed,
-                                  quantity: item.quantity,
-                                  loose: item.loose,
-                                  looseType: item.looseType,
-                                );
-                                final String totalUnitsStr = totalUnits ==
-                                        totalUnits.toInt()
-                                    ? "${totalUnits.toInt()} ${parsed.packagingType}${totalUnits.toInt() == 1 ? '' : 's'}"
-                                    : "${totalUnits.toStringAsFixed(2)} ${parsed.packagingType}s";
+                                // unused totalUnits removed
+                                // unused variable removed
 
                                 final isWishlisted =
                                     wishlistedIds.contains(product.id);
@@ -518,7 +510,7 @@ class InventoryScreen extends StatelessWidget {
                                         boxShadow: [
                                           BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.02),
+                                                Colors.black.withValues(alpha: 0.02),
                                             blurRadius: 4,
                                             offset: const Offset(0, 2),
                                           ),
@@ -619,8 +611,8 @@ class InventoryScreen extends StatelessWidget {
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: primaryColor
-                                                                    .withOpacity(
-                                                                        0.1),
+                                                                    .withValues(
+                                                                        alpha: 0.1),
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
@@ -741,7 +733,7 @@ class InventoryScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: primaryColor, size: 20),
@@ -887,7 +879,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -1087,7 +1079,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
               max: 1.0,
               divisions: 20, // 0.05 increments
               activeColor: primaryColor,
-              inactiveColor: primaryColor.withOpacity(0.1),
+              inactiveColor: primaryColor.withValues(alpha: 0.1),
               onChanged: (val) {
                 setState(() {
                   _loose = double.parse(val.toStringAsFixed(2));
@@ -1116,7 +1108,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
               max: _maxLoosePacks.toDouble(),
               divisions: _maxLoosePacks > 0 ? _maxLoosePacks : 1,
               activeColor: primaryColor,
-              inactiveColor: primaryColor.withOpacity(0.1),
+              inactiveColor: primaryColor.withValues(alpha: 0.1),
               onChanged: (val) {
                 setState(() {
                   _loose = val;
@@ -1178,7 +1170,7 @@ class _EditStockBottomSheetState extends State<_EditStockBottomSheet> {
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF23232F) : lightGreyColor,
                 borderRadius: BorderRadius.circular(defaultBorderRadious),
-                border: Border.all(color: primaryColor.withOpacity(0.1)),
+                border: Border.all(color: primaryColor.withValues(alpha: 0.1)),
               ),
               child: Column(
                 children: [

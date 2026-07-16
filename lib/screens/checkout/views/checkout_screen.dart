@@ -231,10 +231,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } catch (e) {
       debugPrint("Error updating promotion: $e");
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _isLoadingCart = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoadingCart = false;
+        });
+      }
     }
   }
 
