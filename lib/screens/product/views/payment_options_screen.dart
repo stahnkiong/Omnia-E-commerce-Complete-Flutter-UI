@@ -79,7 +79,7 @@ class PaymentOptionsScreen extends StatelessWidget {
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: () =>
-                                    _launchUrl(context, 'tel:+60129388996'),
+                                    _launchUrl(context, 'tel:+60182519988'),
                                 icon: const Icon(Icons.phone),
                                 label: const Text("Call"),
                               ),
@@ -88,7 +88,7 @@ class PaymentOptionsScreen extends StatelessWidget {
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: () => _launchUrl(
-                                    context, 'https://wa.me/60129388996'),
+                                    context, 'https://wa.me/60182519988'),
                                 icon: const Icon(Icons.chat),
                                 label: const Text("WhatsApp"),
                                 style: ElevatedButton.styleFrom(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pasar_now/constants.dart';
 import 'package:pasar_now/services/api_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:pasar_now/models/address_model.dart';
 
@@ -15,6 +16,7 @@ class AddNewAddressScreen extends StatefulWidget {
 class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  String? _selectedCity;
 
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _companyController = TextEditingController();
@@ -28,15 +30,24 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   @override
   void initState() {
     super.initState();
+    _provinceController.text = "Sarawak"; // Locked into Sarawak
     if (widget.address != null) {
       _phoneController.text = widget.address!.phone ?? '';
       _companyController.text =
           widget.address!.company ?? widget.address!.addressName;
       _address1Controller.text = widget.address!.address1 ?? '';
       _address2Controller.text = widget.address!.address2 ?? '';
-      _cityController.text = widget.address!.city ?? '';
+      
+      final cityLower = (widget.address!.city ?? '').trim().toLowerCase();
+      if (cityLower == 'kuching') {
+        _selectedCity = 'Kuching';
+      } else if (cityLower == 'samarahan') {
+        _selectedCity = 'Samarahan';
+      } else {
+        _selectedCity = null;
+      }
+      _cityController.text = _selectedCity ?? '';
       _postalCodeController.text = widget.address!.postalCode ?? '';
-      _provinceController.text = widget.address!.province ?? 'Sarawak';
     }
   }
 
@@ -159,14 +170,25 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
               ),
               const SizedBox(height: defaultPadding),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _cityController,
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _selectedCity,
                       decoration: const InputDecoration(
                         labelText: "City",
                         border: OutlineInputBorder(),
                       ),
+                      items: const [
+                        DropdownMenuItem(value: "Kuching", child: Text("Kuching")),
+                        DropdownMenuItem(value: "Samarahan", child: Text("Samarahan")),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedCity = value;
+                          _cityController.text = value ?? '';
+                        });
+                      },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Required';
@@ -188,6 +210,10 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Required';
                         }
+                        final regExp = RegExp(r'^(93|94)\d{3}$');
+                        if (!regExp.hasMatch(value)) {
+                          return 'Must be 93xxx - 94xxx';
+                        }
                         return null;
                       },
                     ),
@@ -197,16 +223,63 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
               const SizedBox(height: defaultPadding),
               TextFormField(
                 controller: _provinceController,
+                readOnly: true,
                 decoration: const InputDecoration(
                   labelText: "State / Province",
                   border: OutlineInputBorder(),
+                  filled: true,
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter state';
+              ),
+              const SizedBox(height: defaultPadding),
+              InkWell(
+                onTap: () async {
+                  final Uri url = Uri.parse("https://wa.me/60182519988");
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Could not launch WhatsApp")),
+                      );
+                    }
                   }
-                  return null;
                 },
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(defaultBorderRadious),
+                    border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, color: Colors.blue),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: Colors.blue[800],
+                                  fontSize: 12,
+                                  height: 1.4,
+                                ),
+                            children: const [
+                              TextSpan(
+                                  text: "For bulk order and client outside of Kuching and Samarahan, please "),
+                              TextSpan(
+                                text: "contact office",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: defaultPadding * 2),
               SizedBox(
