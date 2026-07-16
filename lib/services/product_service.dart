@@ -150,24 +150,35 @@ class ProductService {
     }
   }
 
-  Future<List<ProductModel>> fetchProductsByCategory(String categoryId) async {
+  Future<Map<String, dynamic>> fetchProductsByCategory(
+      String categoryId, int offset, int limit) async {
     try {
       final response = await _api.client.get(
         '/store/products',
         queryParameters: {
           'category_id': categoryId,
-          'limit': 10,
+          'offset': offset,
+          'limit': limit,
           'fields': '*variants.calculated_price'
         },
       );
 
       if (response.data != null && response.data['products'] != null) {
         final List<dynamic> productsJson = response.data['products'];
-        return productsJson.map((json) => ProductModel.fromJson(json)).toList();
+        final List<ProductModel> products =
+            productsJson.map((json) => ProductModel.fromJson(json)).toList();
+        final int count = response.data['count'] ?? products.length;
+        return {
+          'products': products,
+          'count': count,
+        };
       }
-      return [];
+      return {
+        'products': <ProductModel>[],
+        'count': 0,
+      };
     } catch (e) {
-      throw Exception('Failed to fetch products by collection: $e');
+      throw Exception('Failed to fetch products by category: $e');
     }
   }
 
@@ -205,7 +216,8 @@ class ProductService {
     }
   }
 
-  Future<Map<String, dynamic>> fetchProductsPaginated(int offset, int limit) async {
+  Future<Map<String, dynamic>> fetchProductsPaginated(
+      int offset, int limit) async {
     try {
       final response = await _api.client.get(
         '/store/products',
