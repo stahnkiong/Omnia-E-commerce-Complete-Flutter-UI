@@ -73,6 +73,20 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       initialVariant = product.variants.first;
     }
 
+    // if first variant is unavailable, loop thru all the variants once available. if all unavailable returns to first 1
+    if (initialVariant != null && (initialVariant.manageInventory || initialVariant.price == null)) {
+      ProductVariantModel? availableVar;
+      for (var v in product.variants) {
+        if (!v.manageInventory && v.price != null) {
+          availableVar = v;
+          break;
+        }
+      }
+      if (availableVar != null) {
+        initialVariant = availableVar;
+      }
+    }
+
     if (initialVariant != null) {
       for (var opt in initialVariant.options) {
         _selectedOptions[opt.optionId] = opt.value;
@@ -129,41 +143,71 @@ class ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         // Safety initialization in case builder runs before or during async initialization completion
         _initializeSelectedOptions(product);
 
+        final isUnavailable = (_selectedVariant?.manageInventory == true) || (_selectedVariant?.price == null);
+
         return Scaffold(
-          bottomNavigationBar: CartButton(
-            price: (_selectedVariant?.price ?? product.price) * _quantity,
-            title: "Add to cart",
-            subTitle: "Total price",
-            isLoading: _isAddingToCart,
-            press: () async {
-              setState(() {
-                _isAddingToCart = true;
-              });
-              try {
-                final targetVariantId = _selectedVariant?.id ?? product.variant;
-                await CartService().addToCart(targetVariantId, _quantity);
-                if (context.mounted) {
-                  customModalBottomSheet(
-                    context,
-                    isDismissible: false,
-                    child: const AddedToCartMessageScreen(),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Failed to add to cart: $e")),
-                  );
-                }
-              } finally {
-                if (mounted) {
-                  setState(() {
-                    _isAddingToCart = false;
-                  });
-                }
-              }
-            },
-          ),
+          bottomNavigationBar: isUnavailable
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      color: Colors.red.withValues(alpha: 0.1),
+                      child: const Center(
+                        child: Text(
+                          "Unavailable at the moment",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ),
+                    CartButton(
+                      price: (_selectedVariant?.price ?? product.price) * _quantity,
+                      title: "Unavailable",
+                      subTitle: "Total price",
+                      isEnabled: false,
+                      press: null,
+                    ),
+                  ],
+                )
+              : CartButton(
+                  price: (_selectedVariant?.price ?? product.price) * _quantity,
+                  title: "Add to cart",
+                  subTitle: "Total price",
+                  isLoading: _isAddingToCart,
+                  press: () async {
+                    setState(() {
+                      _isAddingToCart = true;
+                    });
+                    try {
+                      final targetVariantId = _selectedVariant?.id ?? product.variant;
+                      await CartService().addToCart(targetVariantId, _quantity);
+                      if (context.mounted) {
+                        customModalBottomSheet(
+                          context,
+                          isDismissible: false,
+                          child: const AddedToCartMessageScreen(),
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Failed to add to cart: $e")),
+                        );
+                      }
+                    } finally {
+                      if (mounted) {
+                        setState(() {
+                          _isAddingToCart = false;
+                        });
+                      }
+                    }
+                  },
+                ),
           body: Column(
             children: [
               Padding(

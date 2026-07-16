@@ -104,6 +104,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       defaultVar = product.variants.first;
     }
 
+    // if first variant is unavailable, loop thru all the variants once available. if all unavailable returns to first 1
+    if (defaultVar != null && (defaultVar.manageInventory || defaultVar.price == null)) {
+      ProductVariantModel? availableVar;
+      for (var v in product.variants) {
+        if (!v.manageInventory && v.price != null) {
+          availableVar = v;
+          break;
+        }
+      }
+      if (availableVar != null) {
+        defaultVar = availableVar;
+      }
+    }
+
     if (defaultVar != null) {
       for (var opt in defaultVar.options) {
         _selectedOptions[opt.optionId] = opt.value;
@@ -160,19 +174,46 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
         return Scaffold(
           bottomNavigationBar: widget.isProductAvailable
-              ? CartButton(
-                  price: _selectedVariant?.price ?? product.price,
-                  press: () {
-                    customModalBottomSheet(
-                      context,
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: ProductBuyNowScreen(
-                        productId: product.id,
-                        selectedVariantId: _selectedVariant?.id,
-                      ),
-                    );
-                  },
-                )
+              ? ((_selectedVariant?.manageInventory == true || _selectedVariant?.price == null)
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          color: Colors.red.withValues(alpha: 0.1),
+                          child: const Center(
+                            child: Text(
+                              "Unavailable at the moment",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                        CartButton(
+                          price: _selectedVariant?.price ?? product.price,
+                          title: "Unavailable",
+                          isEnabled: false,
+                          press: null,
+                        ),
+                      ],
+                    )
+                  : CartButton(
+                      price: _selectedVariant?.price ?? product.price,
+                      press: () {
+                        customModalBottomSheet(
+                          context,
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: ProductBuyNowScreen(
+                            productId: product.id,
+                            selectedVariantId: _selectedVariant?.id,
+                          ),
+                        );
+                      },
+                    ))
               : const UnavailableCard(),
           body: SafeArea(
             child: CustomScrollView(
@@ -191,7 +232,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   productId: product.id,
                   brand: product.brandName,
                   title: product.title,
-                  isAvailable: widget.isProductAvailable,
+                  isAvailable: widget.isProductAvailable &&
+                      !(_selectedVariant?.manageInventory == true ||
+                          _selectedVariant?.price == null),
                   description:
                       product.description.isNotEmpty ? product.description : "",
                 ),

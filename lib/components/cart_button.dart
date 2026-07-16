@@ -10,12 +10,14 @@ class CartButton extends StatelessWidget {
     this.subTitle = "Unit price",
     required this.press,
     this.isLoading = false,
+    this.isEnabled = true,
   });
 
   final double price;
   final String title, subTitle;
-  final VoidCallback press;
+  final VoidCallback? press;
   final bool isLoading;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,9 @@ class CartButton extends StatelessWidget {
         child: SizedBox(
           height: 64,
           child: Material(
-            color: isLoading ? primaryColor.withAlpha(153) : primaryColor,
+            color: !isEnabled
+                ? Colors.grey
+                : (isLoading ? primaryColor.withValues(alpha: 0.6) : primaryColor),
             clipBehavior: Clip.hardEdge,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -34,7 +38,7 @@ class CartButton extends StatelessWidget {
               ),
             ),
             child: InkWell(
-              onTap: isLoading ? null : press,
+              onTap: (isLoading || !isEnabled) ? null : press,
               child: Row(
                 children: [
                   Expanded(

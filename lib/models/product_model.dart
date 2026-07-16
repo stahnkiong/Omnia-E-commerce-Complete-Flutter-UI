@@ -185,9 +185,10 @@ class VariantOptionAssociationModel {
 class ProductVariantModel {
   final String id;
   final String title;
-  final double price;
+  final double? price;
   final double? priceAfterDiscount;
   final List<VariantOptionAssociationModel> options;
+  final bool manageInventory;
 
   ProductVariantModel({
     required this.id,
@@ -195,14 +196,15 @@ class ProductVariantModel {
     required this.price,
     this.priceAfterDiscount,
     required this.options,
+    this.manageInventory = false,
   });
 
   factory ProductVariantModel.fromJson(Map<String, dynamic> json) {
-    double calculatedPrice = 0.0;
+    double? calculatedPrice;
     double? originalPrice;
     
     if (json['calculated_price'] != null) {
-      calculatedPrice = (json['calculated_price']['calculated_amount'] as num?)?.toDouble() ?? 0.0;
+      calculatedPrice = (json['calculated_price']['calculated_amount'] as num?)?.toDouble();
       originalPrice = (json['calculated_price']['original_amount'] as num?)?.toDouble();
     }
     
@@ -212,8 +214,9 @@ class ProductVariantModel {
       id: json['id'] ?? '',
       title: json['title'] ?? '',
       price: calculatedPrice,
-      priceAfterDiscount: originalPrice != null && originalPrice > calculatedPrice ? originalPrice : null,
+      priceAfterDiscount: originalPrice != null && calculatedPrice != null && originalPrice > calculatedPrice ? originalPrice : null,
       options: opts.map((o) => VariantOptionAssociationModel.fromJson(o)).toList(),
+      manageInventory: json['manage_inventory'] ?? false,
     );
   }
 }
