@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../config.dart';
 import 'biometric_auth_service.dart';
 import 'medusa_auth_interceptor.dart';
+import 'retry_interceptor.dart';
 
 import 'package:pasar_now/models/payment_provider_model.dart';
 import 'package:pasar_now/models/shipping_option_model.dart';
@@ -32,7 +33,11 @@ class ApiService {
         },
       ),
     );
+
+    // Register the retry interceptor to handle transient socket and connection errors
+    client.interceptors.add(RetryInterceptor(dio: client));
   }
+
 
   Future<List<dynamic>> getAddresses() async {
     try {
