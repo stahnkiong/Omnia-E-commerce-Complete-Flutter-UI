@@ -411,6 +411,18 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         builder: (context) => const InvoicesScreen(),
       );
+    case memberCenterScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const MemberCenterScreen(),
+      );
+    case couponCenterScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const CouponCenterScreen(),
+      );
+    case myCouponsScreenRoute:
+      return MaterialPageRoute(
+        builder: (context) => const MyCouponsScreen(),
+      );
     default:
       return MaterialPageRoute(
         // Make a screen for undefine

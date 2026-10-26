@@ -6,11 +6,25 @@ import 'package:pasar_now/route/screen_export.dart';
 import 'components/profile_card.dart';
 import 'components/profile_menu_item_list_tile.dart';
 import 'package:pasar_now/providers/auth_provider.dart';
+import 'package:pasar_now/providers/loyalty_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LoyaltyProvider>(context, listen: false).fetchLoyalty(silent: true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,25 +44,133 @@ class ProfileScreen extends StatelessWidget {
                     : "Guest",
                 email: customer?['email'] ?? "No Email",
                 imageSrc: "assets/Illustration/profile_icon.png",
-                // press: () {
-                //   Navigator.pushNamed(context, userInfoScreenRoute);
-                // },
               );
             },
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding * 1.5),
-          //   child: GestureDetector(
-          //     onTap: () {},
-          //     child: const AspectRatio(
-          //       aspectRatio: 1.8,
-          //       child:
-          //           NetworkImageWithLoader("https://i.imgur.com/dz0BBom.png"),
-          //     ),
-          //   ),
-          // ),
 
+          // VIP Membership Quick Banner
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: defaultPadding,
+              vertical: defaultPadding / 2,
+            ),
+            child: Consumer<LoyaltyProvider>(
+              builder: (context, loyaltyProvider, child) {
+                final loyalty = loyaltyProvider.loyalty;
+                final tierName = loyalty?.tierName ?? "Bronze";
+                final points = loyalty?.pointsBalance ?? 0;
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, memberCenterScreenRoute);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF2C3240), Color(0xFF4B5366)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.workspace_premium, color: Colors.amberAccent, size: 28),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "$tierName Member",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                Text(
+                                  "Points: $points pts · View Perks",
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.8),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Row(
+                            children: [
+                              Text(
+                                "Enter",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.white, size: 16),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Membership & Rewards Section
+          const SizedBox(height: defaultPadding / 2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+            child: Text(
+              "Membership & Rewards (会员特权)",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ),
+          const SizedBox(height: defaultPadding / 2),
+          ProfileMenuListTile(
+            text: "Member Center (会员中心)",
+            svgSrc: "assets/icons/diamond.svg",
+            press: () {
+              Navigator.pushNamed(context, memberCenterScreenRoute);
+            },
+          ),
+          ProfileMenuListTile(
+            text: "Coupon Center (领券中心)",
+            svgSrc: "assets/icons/Coupon.svg",
+            press: () {
+              Navigator.pushNamed(context, couponCenterScreenRoute);
+            },
+          ),
+          ProfileMenuListTile(
+            text: "My Coupons (我的优惠券)",
+            svgSrc: "assets/icons/Discount.svg",
+            press: () {
+              Navigator.pushNamed(context, myCouponsScreenRoute);
+            },
+          ),
+
+          const SizedBox(height: defaultPadding / 2),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
             child: Text(
@@ -71,16 +193,6 @@ class ProfileScreen extends StatelessWidget {
               Navigator.pushNamed(context, ordersScreenRoute);
             },
           ),
-          // ProfileMenuListTile(
-          //   text: "Returns",
-          //   svgSrc: "assets/icons/Return.svg",
-          //   press: () {},
-          // ),
-          // ProfileMenuListTile(
-          //   text: "Wishlist",
-          //   svgSrc: "assets/icons/Wishlist.svg",
-          //   press: () {},
-          // ),
           ProfileMenuListTile(
             text: "Addresses",
             svgSrc: "assets/icons/Address.svg",
@@ -102,58 +214,7 @@ class ProfileScreen extends StatelessWidget {
               Navigator.pushNamed(context, enableBiometricLoginScreenRoute);
             },
           ),
-          // ProfileMenuListTile(
-          //   text: "Wallet",
-          //   svgSrc: "assets/icons/Wallet.svg",
-          //   press: () {
-          //     Navigator.pushNamed(context, walletScreenRoute);
-          //   },
-          // ),
-          // const SizedBox(height: defaultPadding),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
-          //   child: Text(
-          //     "Personalization",
-          //     style: Theme.of(context).textTheme.titleSmall,
-          //   ),
-          // ),
-          // DividerListTileWithTrilingText(
-          //   svgSrc: "assets/icons/Notification.svg",
-          //   title: "Notification",
-          //   trilingText: "Off",
-          //   press: () {
-          //     Navigator.pushNamed(context, enableNotificationScreenRoute);
-          //   },
-          // ),
-          // ProfileMenuListTile(
-          //   text: "Preferences",
-          //   svgSrc: "assets/icons/Preferences.svg",
-          //   press: () {
-          //     Navigator.pushNamed(context, preferencesScreenRoute);
-          //   },
-          // ),
-          // const SizedBox(height: defaultPadding),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(
-          //       horizontal: defaultPadding, vertical: defaultPadding / 2),
-          //   child: Text(
-          //     "Settings",
-          //     style: Theme.of(context).textTheme.titleSmall,
-          //   ),
-          // ),
-          // ProfileMenuListTile(
-          //   text: "Language",
-          //   svgSrc: "assets/icons/Language.svg",
-          //   press: () {
-          //     Navigator.pushNamed(context, selectLanguageScreenRoute);
-          //   },
-          // ),
-          // ProfileMenuListTile(
-          //   text: "Location",
-          //   svgSrc: "assets/icons/Location.svg",
-          //   press: () {},
-          // ),
+
           const SizedBox(height: defaultPadding),
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -225,7 +286,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             trailing: const Icon(Icons.chevron_right, size: 18),
                             onTap: () async {
-                              Navigator.pop(dialogContext); // Close dialog
+                              Navigator.pop(dialogContext);
                               final authProvider = Provider.of<AuthProvider>(context, listen: false);
                               final customerEmail = authProvider.customer?['email'] ?? '';
                               const String email = 'feedback@omniafoodsupply.com.my';
@@ -285,6 +346,9 @@ class ProfileScreen extends StatelessWidget {
             onTap: () async {
               final authProvider = context.read<AuthProvider>();
               await authProvider.logout();
+              if (context.mounted) {
+                context.read<LoyaltyProvider>().reset();
+              }
 
               if (!context.mounted) return;
               Navigator.pushNamedAndRemoveUntil(

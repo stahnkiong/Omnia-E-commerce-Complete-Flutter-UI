@@ -15,6 +15,7 @@ import 'firebase_options.dart';
 import 'package:pasar_now/config.dart';
 import 'package:pasar_now/providers/wishlist_provider.dart';
 import 'package:pasar_now/providers/inventory_provider.dart';
+import 'package:pasar_now/providers/loyalty_provider.dart';
 import 'package:pasar_now/services/cart_service.dart';
 import 'package:pasar_now/services/notification_service.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
@@ -40,6 +41,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
         ChangeNotifierProvider(create: (_) => InventoryProvider()),
+        ChangeNotifierProvider(create: (_) => LoyaltyProvider()),
       ],
       child: const MyApp(),
     ),

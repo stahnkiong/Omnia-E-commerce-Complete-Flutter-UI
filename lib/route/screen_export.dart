@@ -36,3 +36,7 @@ export '/screens/user_info/views/user_info_screen.dart';
 export '/screens/order/views/order_history_screen.dart';
 export '/screens/order/views/current_orders_screen.dart';
 export '/screens/order/views/invoices_screen.dart';
+
+export '/screens/loyalty/views/member_center_screen.dart';
+export '/screens/loyalty/views/coupon_center_screen.dart';
+export '/screens/loyalty/views/my_coupons_screen.dart';

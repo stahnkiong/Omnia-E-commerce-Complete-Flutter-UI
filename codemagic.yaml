@@ -1,0 +1,125 @@
+# ==============================================================================
+# Codemagic CI/CD Configuration for Omnia Flutter App
+# Package: my.com.omniafoodsupply.shop
+# ==============================================================================
+
+workflows:
+  # ----------------------------------------------------------------------------
+  # 1. Android Release Build & Publishing
+  # ----------------------------------------------------------------------------
+  android-workflow:
+    name: Android Release Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      groups:
+        - android_signing
+      vars:
+        PACKAGE_NAME: "my.com.omniafoodsupply.shop"
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+        - pattern: master
+          include: true
+          source: true
+    scripts:
+      - name: Set up Android Keystore
+        script: |
+          if [ -n "$CM_KEYSTORE" ]; then
+            echo "$CM_KEYSTORE" | base64 --decode > /tmp/keystore.jks
+            echo "keystore.properties setup..."
+            cat <<EOF > android/key.properties
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=/tmp/keystore.jks
+          EOF
+          else
+            echo "CM_KEYSTORE is not set. Building unsigned or with default debug key."
+          fi
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Build Android App Bundle (AAB) & Universal APK
+        script: |
+          # Build .aab for Google Play Store upload
+          flutter build appbundle --release
+          
+          # Build .apk for direct testing on physical Android devices
+          flutter build apk --release
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - admin@omniafoodsupply.com.my
+        notify:
+          on_build_failure: true
+          on_build_success: true
+      # Uncomment after adding GCLOUD_SERVICE_ACCOUNT_KEY in Codemagic
+      # google_play:
+      #   credentials: $GCLOUD_SERVICE_ACCOUNT_KEY
+      #   track: internal
+
+  # ----------------------------------------------------------------------------
+  # 2. iOS Release Build & TestFlight Publishing
+  # ----------------------------------------------------------------------------
+  ios-workflow:
+    name: iOS Release Workflow
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: omnia_app_store_connect # Matches name in Codemagic UI Integrations
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "my.com.omniafoodsupply.shop"
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+    triggering:
+      events:
+        - push
+        - tag
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+        - pattern: master
+          include: true
+          source: true
+    scripts:
+      - name: Install dependencies & CocoaPods
+        script: |
+          flutter pub get
+          cd ios
+          pod install --repo-update
+          cd ..
+      - name: Set up code signing on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - admin@omniafoodsupply.com.my
+        notify:
+          on_build_failure: true
+          on_build_success: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        expire_build_submitted_for_testing: false

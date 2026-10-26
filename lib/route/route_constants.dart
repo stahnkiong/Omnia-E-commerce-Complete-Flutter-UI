@@ -67,3 +67,7 @@ const String addNewCardScreenRoute = "add_new_card";
 const String thanksForOrderScreenRoute = "thanks_order";
 const String googleAuthCallbackScreenRoute = "google_auth_callback";
 const String enableBiometricLoginScreenRoute = "enable_biometric_login";
+
+const String memberCenterScreenRoute = "member_center";
+const String couponCenterScreenRoute = "coupon_center";
+const String myCouponsScreenRoute = "my_coupons";
