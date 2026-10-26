@@ -15,6 +15,7 @@ workflows:
       flutter: stable
       groups:
         - android_signing
+        - firebase_credentials
       vars:
         PACKAGE_NAME: "my.com.omniafoodsupply.shop"
     triggering:
@@ -29,16 +30,26 @@ workflows:
           include: true
           source: true
     scripts:
+      - name: Set up Firebase credentials
+        script: |
+          if [ -n "$FIREBASE_OPTIONS_BASE64" ]; then
+            echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
+            echo "lib/firebase_options.dart generated."
+          fi
+          if [ -n "$ANDROID_GOOGLE_SERVICES_BASE64" ]; then
+            echo "$ANDROID_GOOGLE_SERVICES_BASE64" | base64 --decode > android/app/google-services.json
+            echo "android/app/google-services.json generated."
+          fi
       - name: Set up Android Keystore
         script: |
           if [ -n "$CM_KEYSTORE" ]; then
-            echo "$CM_KEYSTORE" | base64 --decode > /tmp/keystore.jks
+            echo "$CM_KEYSTORE" | base64 --decode > android/app/upload-keystore.jks
             echo "keystore.properties setup..."
             cat <<EOF > android/key.properties
           storePassword=$CM_KEYSTORE_PASSWORD
           keyPassword=$CM_KEY_PASSWORD
           keyAlias=$CM_KEY_ALIAS
-          storeFile=/tmp/keystore.jks
+          storeFile=upload-keystore.jks
           EOF
           else
             echo "CM_KEYSTORE is not set. Building unsigned or with default debug key."
@@ -80,6 +91,8 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - firebase_credentials
       vars:
         BUNDLE_ID: "my.com.omniafoodsupply.shop"
         XCODE_WORKSPACE: "Runner.xcworkspace"
@@ -96,6 +109,16 @@ workflows:
           include: true
           source: true
     scripts:
+      - name: Set up Firebase credentials
+        script: |
+          if [ -n "$FIREBASE_OPTIONS_BASE64" ]; then
+            echo "$FIREBASE_OPTIONS_BASE64" | base64 --decode > lib/firebase_options.dart
+            echo "lib/firebase_options.dart generated."
+          fi
+          if [ -n "$IOS_GOOGLE_SERVICES_BASE64" ]; then
+            echo "$IOS_GOOGLE_SERVICES_BASE64" | base64 --decode > ios/Runner/GoogleService-Info.plist
+            echo "ios/Runner/GoogleService-Info.plist generated."
+          fi
       - name: Install dependencies & CocoaPods
         script: |
           flutter pub get
