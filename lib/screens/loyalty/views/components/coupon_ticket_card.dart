@@ -26,11 +26,11 @@ class CouponTicketCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isClaimed ? Colors.grey.shade300 : primaryColor.withOpacity(0.3),
+          color: isClaimed ? Colors.grey.shade300 : primaryColor.withValues(alpha: 0.3),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -47,7 +47,7 @@ class CouponTicketCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isClaimed
                     ? Colors.grey.shade200
-                    : primaryColor.withOpacity(0.08),
+                    : primaryColor.withValues(alpha: 0.08),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(11),
                   bottomLeft: Radius.circular(11),
@@ -100,7 +100,7 @@ class CouponTicketCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.12),
+                            color: primaryColor.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(

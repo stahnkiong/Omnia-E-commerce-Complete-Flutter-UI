@@ -99,7 +99,7 @@ class _CouponCenterScreenState extends State<CouponCenterScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor.withOpacity(0.25),
+                        color: primaryColor.withValues(alpha: 0.25),
                         blurRadius: 12,
                         offset: const Offset(0, 6),
                       ),
@@ -123,7 +123,7 @@ class _CouponCenterScreenState extends State<CouponCenterScreen> {
                             Text(
                               "Claim vouchers now & apply discounts automatically at checkout",
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 fontSize: 12,
                               ),
                             ),

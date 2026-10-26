@@ -60,8 +60,8 @@ workflows:
         recipients:
           - admin@omniafoodsupply.com.my
         notify:
-          on_build_failure: true
-          on_build_success: true
+          failure: true
+          success: true
       # Uncomment after adding GCLOUD_SERVICE_ACCOUNT_KEY in Codemagic
       # google_play:
       #   credentials: $GCLOUD_SERVICE_ACCOUNT_KEY
@@ -117,8 +117,8 @@ workflows:
         recipients:
           - admin@omniafoodsupply.com.my
         notify:
-          on_build_failure: true
-          on_build_success: true
+          failure: true
+          success: true
       app_store_connect:
         auth: integration
         submit_to_testflight: true
