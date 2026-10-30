@@ -146,11 +146,11 @@ class _MyCouponsScreenState extends State<MyCouponsScreen>
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
                 ),
-                child: Row(
+                child: const Row(
                   children: [
-                    const Icon(Icons.lightbulb_outline, size: 18, color: primaryColor),
-                    const SizedBox(width: 10),
-                    const Expanded(
+                    Icon(Icons.lightbulb_outline, size: 18, color: primaryColor),
+                    SizedBox(width: 10),
+                    Expanded(
                       child: Text(
                         "Tap 'Copy' or 'Use Now' to apply discount codes at checkout.",
                         style: TextStyle(
