@@ -38,7 +38,7 @@ class LoyaltyService {
     }
   }
 
-  /// Fetches available coupons for the Coupon Center (领券中心) with tier eligibility.
+  /// Fetches available coupons for the Coupon Center with tier eligibility.
   Future<List<CouponModel>> getAvailableCoupons() async {
     try {
       final response = await _api.client.get('/store/loyalty/coupons');
@@ -52,7 +52,7 @@ class LoyaltyService {
     }
   }
 
-  /// Claims a voucher into the user's wallet (领券 action).
+  /// Claims a voucher into the user's wallet.
   Future<Map<String, dynamic>> claimCoupon(String promotionId) async {
     try {
       final response = await _api.client.post('/store/loyalty/coupons/$promotionId/claim');
@@ -75,7 +75,7 @@ class LoyaltyService {
     }
   }
 
-  /// Fetches claimed vouchers in user's wallet ("我的优惠券").
+  /// Fetches claimed vouchers in user's wallet ("My Coupons").
   Future<List<UserCouponModel>> getMyCoupons({String? status}) async {
     try {
       final queryParams = status != null ? {'status': status} : null;

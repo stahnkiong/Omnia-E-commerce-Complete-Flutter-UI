@@ -65,7 +65,7 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Points History (积分明细)",
+                            "Points History",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -177,7 +177,7 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Member Center (会员中心)",
+          "Member Center",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -237,7 +237,7 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
                       _buildQuickAction(
                         icon: Icons.confirmation_number_outlined,
                         color: Colors.deepOrange,
-                        label: "领券中心",
+                        label: "Coupons",
                         badge: "${availableCoupons.where((c) => c.canClaim).length}",
                         onTap: () {
                           Navigator.pushNamed(context, couponCenterScreenRoute);
@@ -246,7 +246,7 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
                       _buildQuickAction(
                         icon: Icons.wallet,
                         color: primaryColor,
-                        label: "我的券包",
+                        label: "My Vouchers",
                         badge: "${loyalty?.availableCouponsCount ?? 0}",
                         onTap: () {
                           Navigator.pushNamed(context, myCouponsScreenRoute);
@@ -255,13 +255,13 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
                       _buildQuickAction(
                         icon: Icons.stars,
                         color: Colors.amber.shade700,
-                        label: "积分明细",
+                        label: "Points",
                         onTap: () => _showPointsHistory(context),
                       ),
                       _buildQuickAction(
                         icon: Icons.verified_user_outlined,
                         color: Colors.teal,
-                        label: "会员权益",
+                        label: "Benefits",
                         onTap: () => _scrollToPerks(),
                       ),
                     ],
@@ -270,12 +270,12 @@ class _MemberCenterScreenState extends State<MemberCenterScreen> {
 
                 const SizedBox(height: 24),
 
-                // 3. Coupon Center Preview (领券中心)
+                // 3. Coupon Center Preview
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Member Vouchers (会员特权券)",
+                      "Member Vouchers",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

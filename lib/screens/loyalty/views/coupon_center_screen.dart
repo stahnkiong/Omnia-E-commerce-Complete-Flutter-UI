@@ -54,7 +54,7 @@ class _CouponCenterScreenState extends State<CouponCenterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Coupon Center (领券中心)",
+          "Coupon Center",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -112,7 +112,7 @@ class _CouponCenterScreenState extends State<CouponCenterScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "领券中心 · 限时专享",
+                              "Coupon Center · Exclusive Deals",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,

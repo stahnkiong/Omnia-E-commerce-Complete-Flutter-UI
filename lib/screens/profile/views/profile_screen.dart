@@ -143,27 +143,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
             child: Text(
-              "Membership & Rewards (会员特权)",
+              "Membership & Rewards",
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           const SizedBox(height: defaultPadding / 2),
           ProfileMenuListTile(
-            text: "Member Center (会员中心)",
+            text: "Member Center",
             svgSrc: "assets/icons/diamond.svg",
             press: () {
               Navigator.pushNamed(context, memberCenterScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Coupon Center (领券中心)",
+            text: "Coupon Center",
             svgSrc: "assets/icons/Coupon.svg",
             press: () {
               Navigator.pushNamed(context, couponCenterScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "My Coupons (我的优惠券)",
+            text: "My Coupons",
             svgSrc: "assets/icons/Discount.svg",
             press: () {
               Navigator.pushNamed(context, myCouponsScreenRoute);

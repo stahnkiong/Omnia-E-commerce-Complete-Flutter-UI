@@ -19,9 +19,9 @@ class NextTierInfo {
     return NextTierInfo(
       name: json['name'] ?? '',
       minMonthlySpend: (json['min_monthly_spend'] as num?)?.toInt() ?? 0,
-      minMonthlySpendFormatted: json['min_monthly_spend_formatted'] ?? '\$0.00',
+      minMonthlySpendFormatted: json['min_monthly_spend_formatted'] ?? 'RM 0.00',
       spendNeeded: (json['spend_needed'] as num?)?.toInt() ?? 0,
-      spendNeededFormatted: json['spend_needed_formatted'] ?? '\$0.00',
+      spendNeededFormatted: json['spend_needed_formatted'] ?? 'RM 0.00',
       progressPercentage: (json['progress_percentage'] as num?)?.toInt() ?? 0,
     );
   }
@@ -153,7 +153,8 @@ class CouponModel {
     if (discountType == 'percentage') {
       return "${value.toInt()}% OFF";
     }
-    return "\$${value.toStringAsFixed(0)} OFF";
+    final cur = (currencyCode == null || currencyCode!.toUpperCase() == 'MYR') ? 'RM ' : '$currencyCode ';
+    return "$cur${value.toStringAsFixed(value % 1 == 0 ? 0 : 2)} OFF";
   }
 }
 
@@ -168,6 +169,9 @@ class UserCouponModel {
   final DateTime? usedAt;
   final String? orderId;
   final Map<String, dynamic>? metadata;
+  final String discountType;
+  final num discountValue;
+  final String? currencyCode;
 
   UserCouponModel({
     required this.id,
@@ -180,9 +184,17 @@ class UserCouponModel {
     this.usedAt,
     this.orderId,
     this.metadata,
+    this.discountType = 'percentage',
+    this.discountValue = 0,
+    this.currencyCode,
   });
 
   factory UserCouponModel.fromJson(Map<String, dynamic> json) {
+    final meta = json['metadata'] as Map<String, dynamic>?;
+    final dType = json['discount_type'] ?? meta?['discount_type'] ?? 'percentage';
+    final dVal = (json['discount_value'] as num?) ?? (meta?['discount_value'] as num?) ?? 0;
+    final cCode = json['currency_code'] ?? meta?['currency_code'];
+
     return UserCouponModel(
       id: json['id'] ?? '',
       customerId: json['customer_id'] ?? '',
@@ -193,16 +205,48 @@ class UserCouponModel {
       expiresAt: json['expires_at'] != null ? DateTime.tryParse(json['expires_at']) : null,
       usedAt: json['used_at'] != null ? DateTime.tryParse(json['used_at']) : null,
       orderId: json['order_id'],
-      metadata: json['metadata'] as Map<String, dynamic>?,
+      metadata: meta,
+      discountType: dType,
+      discountValue: dVal,
+      currencyCode: cCode,
     );
   }
 
   String get formattedDiscount {
-    final type = metadata?['discount_type'] ?? 'percentage';
-    final val = metadata?['discount_value'] ?? 0;
-    if (type == 'percentage') {
-      return "${val.toInt()}% OFF";
+    if (discountType == 'percentage') {
+      if (discountValue > 0) {
+        return "${discountValue.toInt()}% OFF";
+      }
+      return "DISCOUNT";
     }
-    return "\$${val.toString()} OFF";
+    if (discountValue > 0) {
+      final cur = (currencyCode == null || currencyCode!.toUpperCase() == 'MYR') ? 'RM ' : '$currencyCode ';
+      return "$cur${discountValue.toStringAsFixed(discountValue % 1 == 0 ? 0 : 2)} OFF";
+    }
+    return "VOUCHER";
+  }
+
+  String get formattedClaimDate {
+    if (claimedAt == null) return '';
+    return "${claimedAt!.day} ${_monthName(claimedAt!.month)} ${claimedAt!.year}";
+  }
+
+  String get formattedUsedDate {
+    if (usedAt == null) return '';
+    return "${usedAt!.day} ${_monthName(usedAt!.month)} ${usedAt!.year}";
+  }
+
+  String get formattedExpiryDate {
+    if (expiresAt == null) return '';
+    return "${expiresAt!.day} ${_monthName(expiresAt!.month)} ${expiresAt!.year}";
+  }
+
+  static String _monthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    if (month >= 1 && month <= 12) return months[month - 1];
+    return '';
   }
 }

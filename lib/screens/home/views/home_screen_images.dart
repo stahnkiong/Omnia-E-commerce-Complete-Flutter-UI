@@ -1,17 +1,14 @@
 class HomeScreenImages {
   // Offers Carousel Images
-  static String banner1 = "assets/banners/misshan_1.jpg";
-  static String banner2 = "assets/banners/misshan_2.jpg";
+  static String banner1 = "assets/banners/banner-1.jpeg";
+  static String banner2 = "assets/banners/banner-2.jpeg";
 
   // Banner S Style 1 Image
-  static String banner3 =
-      "https://www.shutterstock.com/image-photo/wagyu-beef-beautiful-red-pattern-600nw-2486090373.jpg";
+  static String banner3 = "assets/banners/banner-3.jpeg";
 
   // Banner S Style 5 Image
-  static String banner4 =
-      "https://johnsonsfoodservices.com.au/cdn/shop/products/website-710x532px-jpg.jpg";
+  static String banner4 = "assets/banners/banner-3.jpeg";
 
   // Banner G 5 Image
-  static String banner5 =
-      "https://images.unsplash.com/photo-1438907046657-4ae137eb8c5e";
+  static String banner5 = "assets/banners/banner-3.jpeg";
 }

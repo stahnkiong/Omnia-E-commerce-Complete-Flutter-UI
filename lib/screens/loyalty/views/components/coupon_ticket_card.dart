@@ -149,7 +149,7 @@ class CouponTicketCard extends StatelessWidget {
               ),
             ),
 
-            // Right Box: Action Button ("领券" / "已领取" / "仅限会员")
+            // Right Box: Action Button ("Claim" / "Claimed" / "VIP Only")
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               child: Center(
@@ -183,12 +183,12 @@ class CouponTicketCard extends StatelessWidget {
                           ),
                           child: Text(
                             isClaimed
-                                ? "已领取"
+                                ? "Claimed"
                                 : isRestricted
-                                    ? "等级未达"
+                                    ? "VIP Only"
                                     : isLoginRequired
-                                        ? "登录领取"
-                                        : "领券",
+                                        ? "Sign In"
+                                        : "Claim",
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,

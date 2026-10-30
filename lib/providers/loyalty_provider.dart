@@ -45,7 +45,7 @@ class LoyaltyProvider extends ChangeNotifier {
     }
   }
 
-  /// Fetch available coupons in Coupon Center ("领券中心").
+  /// Fetch available coupons in Coupon Center.
   Future<void> fetchAvailableCoupons({bool silent = false}) async {
     if (!silent) {
       _isLoadingCoupons = true;
@@ -62,7 +62,7 @@ class LoyaltyProvider extends ChangeNotifier {
     }
   }
 
-  /// Claim a voucher into user wallet (领券 action).
+  /// Claim a voucher into user wallet.
   Future<Map<String, dynamic>> claimCoupon(String promotionId) async {
     final result = await _loyaltyService.claimCoupon(promotionId);
     if (result['success'] == true) {
@@ -92,7 +92,7 @@ class LoyaltyProvider extends ChangeNotifier {
     return result;
   }
 
-  /// Fetch customer claimed vouchers ("我的优惠券").
+  /// Fetch customer claimed vouchers ("My Coupons").
   Future<void> fetchMyCoupons({String? status, bool silent = false}) async {
     if (!silent) {
       _isLoadingMyCoupons = true;
